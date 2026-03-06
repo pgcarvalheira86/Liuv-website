@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog — LIUV | AI-Powered Investment Insights</title>
+    <meta name="description" content="Explore LIUV's blog for insights on AI-powered value investing, Buffett/Graham methodology, and how autonomous agents are democratizing institutional-grade intelligence.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           CSS VARIABLES — LIUV Brand Palette
+           ======================================== */
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        /* ========================================
+           RESET & BASE
+           ======================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        a:hover { opacity: 0.8; }
+
+        img { max-width: 100%; display: block; }
+
+        /* ========================================
+           LAYOUT UTILITIES
+           ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ========================================
+           ANIMATED BACKGROUND
+           ======================================== */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow--teal {
+            background: var(--accent-teal);
+            top: -200px;
+            right: -100px;
+        }
+
+        .bg-glow--purple {
+            background: #A78BFA;
+            bottom: 20%;
+            left: -200px;
+        }
+
+        /* ========================================
+           NAVIGATION
+           ======================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            background: rgba(6, 9, 16, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+
+        .nav__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .nav__logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav__logomark {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 28px;
+        }
+
+        .nav__logomark span {
+            display: block;
+            width: 5px;
+            border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+
+        .nav__wordmark {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .nav__tagline {
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: -2px;
+        }
+
+        .nav__links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            list-style: none;
+        }
+
+        .nav__links a {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+
+        .nav__cta {
+            background: var(--accent-teal);
+            color: var(--bg-primary) !important;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .nav__cta:hover {
+            opacity: 1 !important;
+            box-shadow: 0 0 30px var(--accent-teal-glow);
+            transform: translateY(-1px);
+        }
+
+        .nav__mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* ========================================
+           BLOG HERO
+           ======================================== */
+        .blog-hero {
+            padding: 160px 0 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .blog-hero__overline {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .blog-hero__overline::before {
+            content: '';
+            display: block;
+            width: 32px;
+            height: 1px;
+            background: var(--accent-teal);
+        }
+
+        .blog-hero__title {
+            font-family: var(--font-display);
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        .blog-hero__subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           BLOG GRID
+           ======================================== */
+        .blog-grid {
+            position: relative;
+            z-index: 1;
+            padding-bottom: 120px;
+        }
+
+        .blog-grid__list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .blog-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 40px 36px;
+            transition: all 0.35s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent-teal);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+
+        .blog-card:hover::before { opacity: 1; }
+        .blog-card:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-card--featured {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .blog-card__category {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 16px;
+        }
+
+        .blog-card__title {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 1.3;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            transition: color 0.2s;
+        }
+
+        .blog-card--featured .blog-card__title {
+            font-size: 30px;
+        }
+
+        .blog-card:hover .blog-card__title {
+            color: var(--accent-teal);
+        }
+
+        .blog-card__excerpt {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        .blog-card__meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .blog-card__meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .blog-card__meta .separator {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--text-dim);
+        }
+
+        .blog-card__link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-teal);
+            transition: gap 0.2s;
+        }
+
+        .blog-card__link:hover {
+            gap: 12px;
+            opacity: 1;
+        }
+
+        .blog-card--featured .blog-card__visual {
+            background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04));
+            border: 1px solid rgba(20, 184, 156, 0.1);
+            border-radius: 8px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 260px;
+        }
+
+        .blog-card--featured .blog-card__visual-icon {
+            font-size: 64px;
+            opacity: 0.6;
+        }
+
+        /* Upcoming posts teaser */
+        .blog-upcoming {
+            margin-top: 64px;
+            padding: 48px 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .blog-upcoming__title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .blog-upcoming__list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .blog-upcoming__item {
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .blog-upcoming__item:hover {
+            border-color: rgba(20, 184, 156, 0.15);
+        }
+
+        .blog-upcoming__item-category {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 10px;
+        }
+
+        .blog-upcoming__item-title {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .blog-upcoming__item-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .blog-upcoming__badge {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-top: 12px;
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        .footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer__inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+        }
+
+        .footer__brand p {
+            color: var(--text-muted);
+            font-size: 14px;
+            max-width: 300px;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        .footer__links {
+            display: flex;
+            gap: 64px;
+        }
+
+        .footer__col-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .footer__col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer__col a {
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+
+        .footer__bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .footer__copy {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .footer__legal {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer__legal a {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* ========================================
+           ANIMATIONS
+           ======================================== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+        .fade-in--d4 { animation-delay: 0.4s; }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .blog-card--featured {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-upcoming__list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav__links { display: none; }
+            .nav__mobile-toggle { display: block; }
+
+            .blog-grid__list {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-upcoming__list {
+                grid-template-columns: 1fr;
+            }
+
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#how">How It Works</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/blog.html" class="active">Blog</a></li>
+            <li><a href="/#pricing" class="nav__cta">Start Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- ========== BLOG HERO ========== -->
+<section class="blog-hero container">
+    <div class="blog-hero__overline fade-in fade-in--d1">Insights &amp; Analysis</div>
+    <h1 class="blog-hero__title fade-in fade-in--d2">The LIUV <em style="font-style:italic;color:var(--accent-teal);">Blog</em></h1>
+    <p class="blog-hero__subtitle fade-in fade-in--d3">AI-powered perspectives on value investing, market intelligence, and the future of autonomous wealth management.</p>
+</section>
+
+<!-- ========== BLOG POSTS GRID ========== -->
+<section class="blog-grid container">
+    <div class="blog-grid__list">
+
+        <!-- Featured Post (Blog #1) -->
+        <a href="/blog/buffett-greedy-fearful-right-data.html" class="blog-card blog-card--featured fade-in fade-in--d3">
+            <div>
+                <div class="blog-card__category">Investment Philosophy</div>
+                <h2 class="blog-card__title">Why Buffett's "Be Greedy When Others Are Fearful" Still Works&nbsp;&mdash; But Only If You Have the Right Data</h2>
+                <p class="blog-card__excerpt">Warren Buffett's most famous advice is deceptively simple. Acting on fear and greed requires more than intuition — it demands real-time data, disciplined models, and the courage to trust the numbers. Here's how AI is changing what "the right data" actually means.</p>
+                <div class="blog-card__meta">
+                    <span>March 6, 2026</span>
+                    <span class="separator"></span>
+                    <span>8 min read</span>
+                </div>
+            </div>
+            <div class="blog-card__visual">
+                <div class="blog-card__visual-icon">&#128200;</div>
+            </div>
+        </a>
+
+    </div>
+
+    <!-- Upcoming Posts -->
+    <div class="blog-upcoming fade-in fade-in--d4">
+        <div class="blog-upcoming__title">Coming Soon</div>
+        <div class="blog-upcoming__list">
+            <div class="blog-upcoming__item">
+                <div class="blog-upcoming__item-category">Product Deep-Dive</div>
+                <div class="blog-upcoming__item-title">Inside the LIUV Portfolio Agent: How AI Builds a Buffett-Style Portfolio</div>
+                <div class="blog-upcoming__item-desc">A technical walkthrough of how LIUV's Portfolio Agent identifies undervalued stocks using DCF models and margin-of-safety analysis.</div>
+                <div class="blog-upcoming__badge">Coming soon</div>
+            </div>
+            <div class="blog-upcoming__item">
+                <div class="blog-upcoming__item-category">Market Commentary</div>
+                <div class="blog-upcoming__item-title">AI vs. Wall Street: Can Autonomous Agents Outperform Human Fund Managers?</div>
+                <div class="blog-upcoming__item-desc">Exploring the data behind AI-driven investment strategies and where autonomous agents have a structural advantage.</div>
+                <div class="blog-upcoming__badge">Coming soon</div>
+            </div>
+            <div class="blog-upcoming__item">
+                <div class="blog-upcoming__item-category">Educational</div>
+                <div class="blog-upcoming__item-title">Intrinsic Value 101: The Metric Wall Street Doesn't Want You to Understand</div>
+                <div class="blog-upcoming__item-desc">A beginner-friendly guide to calculating intrinsic value and why it remains the cornerstone of intelligent investing.</div>
+                <div class="blog-upcoming__badge">Coming soon</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/#methodology">Methodology</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/#founder">About</a></li>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
