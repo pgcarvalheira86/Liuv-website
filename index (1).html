@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIUV — AI Wealth Agent | Institutional-Grade Investment Intelligence</title>
+    <meta name="description" content="LIUV democratizes institutional-grade investment intelligence using AI. Buffett/Graham value investing methodology powered by autonomous AI agents.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           CSS VARIABLES — LIUV Brand Palette
+           ======================================== */
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --agent-portfolio: #14B89C;
+            --agent-spending: #3B82F6;
+            --agent-strategy: #A78BFA;
+            --agent-crossborder: #F59E0B;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        /* ========================================
+           RESET & BASE
+           ======================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        a:hover { opacity: 0.8; }
+
+        img { max-width: 100%; display: block; }
+
+        /* ========================================
+           LAYOUT UTILITIES
+           ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        /* ========================================
+           ANIMATED BACKGROUND GRID
+           ======================================== */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow--teal {
+            background: var(--accent-teal);
+            top: -200px;
+            right: -100px;
+        }
+
+        .bg-glow--purple {
+            background: var(--agent-strategy);
+            bottom: 20%;
+            left: -200px;
+        }
+
+        /* ========================================
+           NAVIGATION
+           ======================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            background: rgba(6, 9, 16, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+
+        .nav__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .nav__logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav__logomark {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 28px;
+        }
+
+        .nav__logomark span {
+            display: block;
+            width: 5px;
+            border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+
+        .nav__wordmark {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .nav__tagline {
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: -2px;
+        }
+
+        .nav__links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            list-style: none;
+        }
+
+        .nav__links a {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+
+        .nav__cta {
+            background: var(--accent-teal);
+            color: var(--bg-primary) !important;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .nav__cta:hover {
+            opacity: 1 !important;
+            box-shadow: 0 0 30px var(--accent-teal-glow);
+            transform: translateY(-1px);
+        }
+
+        .nav__mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* ========================================
+           HERO SECTION
+           ======================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .hero__content {
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero__overline {
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.2s forwards;
+        }
+
+        .hero__overline::before {
+            content: '';
+            display: block;
+            width: 32px;
+            height: 1px;
+            background: var(--accent-teal);
+        }
+
+        .hero__title {
+            font-family: var(--font-display);
+            font-size: clamp(42px, 6vw, 72px);
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 28px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.4s forwards;
+        }
+
+        .hero__title em {
+            font-style: italic;
+            color: var(--accent-teal);
+        }
+
+        .hero__subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            max-width: 560px;
+            margin-bottom: 48px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.6s forwards;
+        }
+
+        .hero__actions {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 0.8s forwards;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-teal);
+            color: var(--bg-primary);
+            padding: 16px 36px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-primary:hover {
+            color: var(--bg-primary);
+            box-shadow: 0 0 40px var(--accent-teal-glow);
+            transform: translateY(-2px);
+            opacity: 1;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            padding: 16px 0;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+        .btn-secondary:hover { color: var(--text-primary); opacity: 1; }
+
+        .hero__visual {
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 480px;
+            height: 480px;
+            opacity: 0;
+            animation: fadeIn 1.2s ease 1s forwards;
+        }
+
+        .hero__ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid;
+            animation: spin 30s linear infinite;
+        }
+
+        .hero__ring--1 {
+            width: 100%; height: 100%;
+            border-color: rgba(20, 184, 156, 0.1);
+        }
+        .hero__ring--2 {
+            width: 75%; height: 75%;
+            top: 12.5%; left: 12.5%;
+            border-color: rgba(59, 130, 246, 0.1);
+            animation-direction: reverse;
+            animation-duration: 25s;
+        }
+        .hero__ring--3 {
+            width: 50%; height: 50%;
+            top: 25%; left: 25%;
+            border-color: rgba(167, 139, 250, 0.1);
+            animation-duration: 20s;
+        }
+
+        .hero__ring-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            top: -5px;
+            left: 50%;
+        }
+
+        .hero__ring--1 .hero__ring-dot { background: var(--agent-portfolio); box-shadow: 0 0 15px var(--agent-portfolio); }
+        .hero__ring--2 .hero__ring-dot { background: var(--agent-spending); box-shadow: 0 0 15px var(--agent-spending); }
+        .hero__ring--3 .hero__ring-dot { background: var(--agent-strategy); box-shadow: 0 0 15px var(--agent-strategy); }
+
+        /* ========================================
+           TICKER BAR
+           ======================================== */
+        .ticker {
+            border-top: 1px solid rgba(20, 184, 156, 0.08);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+            padding: 16px 0;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ticker__track {
+            display: flex;
+            gap: 48px;
+            animation: scroll 40s linear infinite;
+            width: max-content;
+        }
+
+        .ticker__item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            white-space: nowrap;
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .ticker__symbol {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .ticker__price {
+            color: var(--text-muted);
+        }
+
+        .ticker__change--up {
+            color: var(--accent-teal);
+        }
+
+        .ticker__change--down {
+            color: #ef4444;
+        }
+
+        /* ========================================
+           SOCIAL PROOF
+           ======================================== */
+        .proof {
+            padding: 80px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .proof__grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: rgba(20, 184, 156, 0.08);
+            border: 1px solid rgba(20, 184, 156, 0.08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .proof__item {
+            background: var(--bg-primary);
+            padding: 40px 32px;
+            text-align: center;
+        }
+
+        .proof__number {
+            font-family: var(--font-mono);
+            font-size: 36px;
+            font-weight: 500;
+            color: var(--accent-teal);
+            margin-bottom: 8px;
+        }
+
+        .proof__label {
+            font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        /* ========================================
+           SECTION HEADERS
+           ======================================== */
+        .section__overline {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 16px;
+        }
+
+        .section__title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .section__subtitle {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 560px;
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           AGENTS SECTION
+           ======================================== */
+        .agents__grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 64px;
+        }
+
+        .agent-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 40px 36px;
+            transition: all 0.35s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+
+        .agent-card:hover::before { opacity: 1; }
+        .agent-card:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .agent-card--portfolio::before { background: var(--agent-portfolio); }
+        .agent-card--spending::before { background: var(--agent-spending); }
+        .agent-card--strategy::before { background: var(--agent-strategy); }
+        .agent-card--crossborder::before { background: var(--agent-crossborder); }
+
+        .agent-card__icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 24px;
+        }
+
+        .agent-card--portfolio .agent-card__icon { background: rgba(20, 184, 156, 0.12); }
+        .agent-card--spending .agent-card__icon { background: rgba(59, 130, 246, 0.12); }
+        .agent-card--strategy .agent-card__icon { background: rgba(167, 139, 250, 0.12); }
+        .agent-card--crossborder .agent-card__icon { background: rgba(245, 158, 11, 0.12); }
+
+        .agent-card__title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .agent-card__desc {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .agent-card__features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .agent-card__features li {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .agent-card__features li::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .agent-card--portfolio .agent-card__features li::before { background: var(--agent-portfolio); }
+        .agent-card--spending .agent-card__features li::before { background: var(--agent-spending); }
+        .agent-card--strategy .agent-card__features li::before { background: var(--agent-strategy); }
+        .agent-card--crossborder .agent-card__features li::before { background: var(--agent-crossborder); }
+
+        /* ========================================
+           HOW IT WORKS
+           ======================================== */
+        .how__steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 64px;
+            position: relative;
+        }
+
+        .how__steps::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 16%;
+            right: 16%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-teal-dim), transparent);
+        }
+
+        .how__step {
+            text-align: center;
+            position: relative;
+        }
+
+        .how__step-num {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 1px solid var(--accent-teal-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            font-family: var(--font-mono);
+            font-size: 28px;
+            color: var(--accent-teal);
+            background: var(--bg-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .how__step-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .how__step-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ========================================
+           PRICING SECTION
+           ======================================== */
+        .pricing__grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 64px;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 44px 36px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .pricing-card--featured {
+            border-color: var(--accent-teal);
+            background: linear-gradient(to bottom, rgba(20, 184, 156, 0.06), var(--bg-card));
+        }
+        .pricing-card--featured:hover {
+            border-color: var(--accent-teal);
+        }
+
+        .pricing-card__badge {
+            position: absolute;
+            top: -12px;
+            left: 36px;
+            background: var(--accent-teal);
+            color: var(--bg-primary);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 4px 16px;
+            border-radius: 4px;
+        }
+
+        .pricing-card__name {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .pricing-card__price {
+            font-family: var(--font-mono);
+            font-size: 48px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .pricing-card__price span {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        .pricing-card__period {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .pricing-card__features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 36px;
+        }
+
+        .pricing-card__features li {
+            font-size: 14px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .pricing-card__features li::before {
+            content: '✓';
+            color: var(--accent-teal);
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .pricing-card__btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-align: center;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .pricing-card__btn:hover {
+            border-color: var(--accent-teal);
+            color: var(--accent-teal);
+            opacity: 1;
+        }
+
+        .pricing-card--featured .pricing-card__btn {
+            background: var(--accent-teal);
+            color: var(--bg-primary);
+            border-color: var(--accent-teal);
+        }
+        .pricing-card--featured .pricing-card__btn:hover {
+            box-shadow: 0 0 30px var(--accent-teal-glow);
+        }
+
+        /* ========================================
+           METHODOLOGY / WHY SECTION
+           ======================================== */
+        .why__layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin-top: 64px;
+        }
+
+        .why__principles {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .why__principle {
+            display: flex;
+            gap: 20px;
+        }
+
+        .why__principle-num {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--accent-teal);
+            padding-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .why__principle-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .why__principle-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        .why__visual {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 40px;
+        }
+
+        .why__quote {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-style: italic;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .why__attribution {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .why__divider {
+            width: 40px;
+            height: 2px;
+            background: var(--accent-teal);
+            margin-bottom: 24px;
+        }
+
+        .why__metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .why__metric-value {
+            font-family: var(--font-mono);
+            font-size: 28px;
+            color: var(--accent-teal);
+            margin-bottom: 4px;
+        }
+
+        .why__metric-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ========================================
+           CTA SECTION
+           ======================================== */
+        .cta {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta__box {
+            background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04));
+            border: 1px solid rgba(20, 184, 156, 0.15);
+            border-radius: 16px;
+            padding: 80px 60px;
+        }
+
+        .cta__title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 4vw, 48px);
+            margin-bottom: 20px;
+        }
+
+        .cta__desc {
+            color: var(--text-muted);
+            font-size: 17px;
+            max-width: 480px;
+            margin: 0 auto 40px;
+        }
+
+        .cta__form {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .cta__input {
+            flex: 1;
+            padding: 16px 20px;
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .cta__input:focus {
+            border-color: var(--accent-teal);
+        }
+        .cta__input::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        .footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer__inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+        }
+
+        .footer__brand p {
+            color: var(--text-muted);
+            font-size: 14px;
+            max-width: 300px;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        .footer__links {
+            display: flex;
+            gap: 64px;
+        }
+
+        .footer__col-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .footer__col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer__col a {
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+
+        .footer__bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .footer__copy {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .footer__legal {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer__legal a {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* ========================================
+           ANIMATIONS
+           ======================================== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal--visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 1024px) {
+            .hero__visual { display: none; }
+            .agents__grid { grid-template-columns: 1fr; }
+            .why__layout { grid-template-columns: 1fr; gap: 48px; }
+        }
+
+        @media (max-width: 768px) {
+            .section { padding: 80px 0; }
+
+            .nav__links { display: none; }
+            .nav__mobile-toggle { display: block; }
+
+            .proof__grid { grid-template-columns: repeat(2, 1fr); }
+            .pricing__grid { grid-template-columns: 1fr; max-width: 420px; }
+            .how__steps { grid-template-columns: 1fr; gap: 48px; }
+            .how__steps::before { display: none; }
+
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+
+            .cta__form { flex-direction: column; }
+            .cta__box { padding: 60px 32px; }
+
+            .hero__actions { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 480px) {
+            .proof__grid { grid-template-columns: 1fr; }
+            .footer__links { flex-direction: column; gap: 32px; }
+            .why__metrics { grid-template-columns: 1fr; }
+        }
+
+        /* Language Selector */
+        .lang-selector {
+            margin-top: 16px;
+        }
+
+        .lang-selector__label {
+            font-size: 12px;
+            color: var(--text-dim);
+            display: block;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .lang-selector__select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            font-size: 13px;
+            padding: 8px 32px 8px 12px;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236B7A8D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .lang-selector__select:hover,
+        .lang-selector__select:focus {
+            border-color: var(--accent-teal);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="#" class="nav__logo">
+            <div class="nav__logomark">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="#agents">Agents</a></li>
+            <li><a href="#how">How It Works</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#cta" class="nav__cta">Get Early Access</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">☰</button>
+    </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="hero container">
+    <div class="hero__content">
+        <div class="hero__overline">AI-Powered Value Investing</div>
+        <h1 class="hero__title">Institutional-grade<br>investment <em>intelligence,</em><br>for everyone.</h1>
+        <p class="hero__subtitle">Autonomous AI agents that analyze stocks using the Buffett/Graham methodology, build DCF models, and optimize your portfolio — 24/7.</p>
+        <div class="hero__actions">
+            <a href="#cta" class="btn-primary">
+                Join the Waitlist
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#agents" class="btn-secondary">
+                Explore the agents
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </div>
+    </div>
+    <div class="hero__visual">
+        <div class="hero__ring hero__ring--1"><div class="hero__ring-dot"></div></div>
+        <div class="hero__ring hero__ring--2"><div class="hero__ring-dot"></div></div>
+        <div class="hero__ring hero__ring--3"><div class="hero__ring-dot"></div></div>
+    </div>
+</section>
+
+<!-- ========== TICKER ========== -->
+<div class="ticker">
+    <div class="ticker__track">
+        <div class="ticker__item"><span class="ticker__symbol">AAPL</span> <span class="ticker__price">$241.84</span> <span class="ticker__change--up">+1.23%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">MSFT</span> <span class="ticker__price">$389.12</span> <span class="ticker__change--up">+0.87%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">BRK.B</span> <span class="ticker__price">$462.50</span> <span class="ticker__change--up">+0.34%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">JNJ</span> <span class="ticker__price">$155.20</span> <span class="ticker__change--down">-0.45%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">V</span> <span class="ticker__price">$279.63</span> <span class="ticker__change--up">+1.05%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">KO</span> <span class="ticker__price">$62.18</span> <span class="ticker__change--up">+0.22%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">PG</span> <span class="ticker__price">$168.44</span> <span class="ticker__change--down">-0.18%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">AMZN</span> <span class="ticker__price">$186.52</span> <span class="ticker__change--up">+2.14%</span></div>
+        <!-- Duplicate for seamless loop -->
+        <div class="ticker__item"><span class="ticker__symbol">AAPL</span> <span class="ticker__price">$241.84</span> <span class="ticker__change--up">+1.23%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">MSFT</span> <span class="ticker__price">$389.12</span> <span class="ticker__change--up">+0.87%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">BRK.B</span> <span class="ticker__price">$462.50</span> <span class="ticker__change--up">+0.34%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">JNJ</span> <span class="ticker__price">$155.20</span> <span class="ticker__change--down">-0.45%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">V</span> <span class="ticker__price">$279.63</span> <span class="ticker__change--up">+1.05%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">KO</span> <span class="ticker__price">$62.18</span> <span class="ticker__change--up">+0.22%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">PG</span> <span class="ticker__price">$168.44</span> <span class="ticker__change--down">-0.18%</span></div>
+        <div class="ticker__item"><span class="ticker__symbol">AMZN</span> <span class="ticker__price">$186.52</span> <span class="ticker__change--up">+2.14%</span></div>
+    </div>
+</div>
+
+<!-- ========== SOCIAL PROOF ========== -->
+<section class="proof container">
+    <div class="proof__grid reveal">
+        <div class="proof__item">
+            <div class="proof__number">$52B</div>
+            <div class="proof__label">Agentic AI market by 2030</div>
+        </div>
+        <div class="proof__item">
+            <div class="proof__number">$7.2B</div>
+            <div class="proof__label">AI wealth management by 2028</div>
+        </div>
+        <div class="proof__item">
+            <div class="proof__number">4</div>
+            <div class="proof__label">Specialized AI agents</div>
+        </div>
+        <div class="proof__item">
+            <div class="proof__number">24/7</div>
+            <div class="proof__label">Autonomous analysis</div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== AI AGENTS ========== -->
+<section class="section container" id="agents">
+    <div class="reveal">
+        <div class="section__overline">Multi-Agent Architecture</div>
+        <h2 class="section__title">Four agents. One mission.<br>Your wealth, amplified.</h2>
+        <p class="section__subtitle">Each AI agent specializes in a distinct analytical function, collaborating to deliver research that rivals teams of human analysts.</p>
+    </div>
+    <div class="agents__grid">
+        <div class="agent-card agent-card--portfolio reveal">
+            <div class="agent-card__icon">📊</div>
+            <h3 class="agent-card__title">Portfolio Advisor</h3>
+            <p class="agent-card__desc">Deep value analysis using the 10-pillar framework. DCF valuation, stock screening, and risk-adjusted portfolio allocation.</p>
+            <ul class="agent-card__features">
+                <li>DCF intrinsic value modeling</li>
+                <li>10-pillar Buffett/Graham screening</li>
+                <li>Portfolio allocation optimization</li>
+                <li>Risk tolerance calibration</li>
+            </ul>
+        </div>
+        <div class="agent-card agent-card--spending reveal">
+            <div class="agent-card__icon">💰</div>
+            <h3 class="agent-card__title">Spending Intelligence</h3>
+            <p class="agent-card__desc">Analyzes transaction patterns, identifies savings, and tracks cash flow to maximize your investable capital.</p>
+            <ul class="agent-card__features">
+                <li>Transaction pattern analysis</li>
+                <li>Cash flow optimization</li>
+                <li>Spending category insights</li>
+                <li>Savings opportunity alerts</li>
+            </ul>
+        </div>
+        <div class="agent-card agent-card--strategy reveal">
+            <div class="agent-card__icon">🎯</div>
+            <h3 class="agent-card__title">Strategy Agent</h3>
+            <p class="agent-card__desc">Aligns your investments with long-term goals. Compound growth modeling and macroeconomic stress testing.</p>
+            <ul class="agent-card__features">
+                <li>Goal-based investment planning</li>
+                <li>Compound growth scenarios</li>
+                <li>Macro stress-test simulations</li>
+                <li>Rebalancing recommendations</li>
+            </ul>
+        </div>
+        <div class="agent-card agent-card--crossborder reveal">
+            <div class="agent-card__icon">🌐</div>
+            <h3 class="agent-card__title">Cross-Border Intel</h3>
+            <p class="agent-card__desc">Scans international markets, analyzes regulatory environments, and identifies arbitrage across currencies.</p>
+            <ul class="agent-card__features">
+                <li>Multi-market scanning (EU, US, BR)</li>
+                <li>Currency arbitrage detection</li>
+                <li>Regulatory environment analysis</li>
+                <li>Cross-border tax implications</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ========== HOW IT WORKS ========== -->
+<section class="section container" id="how">
+    <div class="reveal" style="text-align: center;">
+        <div class="section__overline">How It Works</div>
+        <h2 class="section__title">From data to decision<br>in three steps</h2>
+        <p class="section__subtitle" style="margin: 20px auto 0;">No complexity. No jargon. Just actionable intelligence delivered to your dashboard.</p>
+    </div>
+    <div class="how__steps">
+        <div class="how__step reveal">
+            <div class="how__step-num">01</div>
+            <h3 class="how__step-title">Connect</h3>
+            <p class="how__step-desc">Link your portfolio or start fresh. Set your risk tolerance, goals, and investment thesis. The agents learn your preferences.</p>
+        </div>
+        <div class="how__step reveal">
+            <div class="how__step-num">02</div>
+            <h3 class="how__step-title">Analyze</h3>
+            <p class="how__step-desc">Four specialized agents run deep analysis 24/7 — screening stocks, building DCF models, scanning global markets.</p>
+        </div>
+        <div class="how__step reveal">
+            <div class="how__step-num">03</div>
+            <h3 class="how__step-title">Act</h3>
+            <p class="how__step-desc">Receive clear, explainable recommendations with full reasoning. Every insight shows you the "why" behind the decision.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ========== METHODOLOGY ========== -->
+<section class="section container" id="methodology">
+    <div class="reveal">
+        <div class="section__overline">Methodology</div>
+        <h2 class="section__title">Built on Buffett & Graham.<br>Powered by AI.</h2>
+    </div>
+    <div class="why__layout">
+        <div class="why__principles">
+            <div class="why__principle reveal">
+                <div class="why__principle-num">01</div>
+                <div>
+                    <h3 class="why__principle-title">Intrinsic Value First</h3>
+                    <p class="why__principle-desc">Every stock is valued through discounted cash flow analysis, not sentiment or momentum. We calculate what a business is actually worth.</p>
+                </div>
+            </div>
+            <div class="why__principle reveal">
+                <div class="why__principle-num">02</div>
+                <div>
+                    <h3 class="why__principle-title">Margin of Safety</h3>
+                    <p class="why__principle-desc">Only recommend positions when market price sits meaningfully below intrinsic value — the timeless principle that protects your downside.</p>
+                </div>
+            </div>
+            <div class="why__principle reveal">
+                <div class="why__principle-num">03</div>
+                <div>
+                    <h3 class="why__principle-title">Transparent Reasoning</h3>
+                    <p class="why__principle-desc">Every recommendation comes with full explainable AI rationale. You see the data, the model, and the logic — never a black box.</p>
+                </div>
+            </div>
+        </div>
+        <div class="why__visual reveal">
+            <div class="why__divider"></div>
+            <blockquote class="why__quote">"Price is what you pay. Value is what you get."</blockquote>
+            <p class="why__attribution">Warren Buffett</p>
+            <div class="why__metrics">
+                <div>
+                    <div class="why__metric-value">10</div>
+                    <div class="why__metric-label">Value analysis pillars</div>
+                </div>
+                <div>
+                    <div class="why__metric-value">82%</div>
+                    <div class="why__metric-label">Target gross margin</div>
+                </div>
+                <div>
+                    <div class="why__metric-value">4</div>
+                    <div class="why__metric-label">Markets at launch</div>
+                </div>
+                <div>
+                    <div class="why__metric-value">MiFID II</div>
+                    <div class="why__metric-label">EU compliance built-in</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== PRICING ========== -->
+<section class="section container" id="pricing">
+    <div class="reveal" style="text-align: center;">
+        <div class="section__overline">Pricing</div>
+        <h2 class="section__title">Invest in your edge</h2>
+        <p class="section__subtitle" style="margin: 20px auto 0;">Institutional-grade intelligence at a fraction of the cost. Choose the tier that matches your ambition.</p>
+    </div>
+    <div class="pricing__grid">
+        <div class="pricing-card reveal">
+            <div class="pricing-card__name">Explorer</div>
+            <div class="pricing-card__price"><span>$</span>29<span>/mo</span></div>
+            <div class="pricing-card__period">Billed monthly</div>
+            <ul class="pricing-card__features">
+                <li>Basic stock screening</li>
+                <li>Portfolio tracking dashboard</li>
+                <li>3 AI analyses per day</li>
+                <li>Single portfolio</li>
+                <li>Email support</li>
+            </ul>
+            <a href="#cta" class="pricing-card__btn">Get Started</a>
+        </div>
+        <div class="pricing-card pricing-card--featured reveal">
+            <div class="pricing-card__badge">Most Popular</div>
+            <div class="pricing-card__name">Investor</div>
+            <div class="pricing-card__price"><span>$</span>99<span>/mo</span></div>
+            <div class="pricing-card__period">Billed monthly</div>
+            <ul class="pricing-card__features">
+                <li>Unlimited AI analyses</li>
+                <li>Full DCF modeling engine</li>
+                <li>Portfolio optimization</li>
+                <li>Real-time alerts</li>
+                <li>Cross-market intelligence</li>
+                <li>Priority support</li>
+            </ul>
+            <a href="#cta" class="pricing-card__btn">Get Started</a>
+        </div>
+        <div class="pricing-card reveal">
+            <div class="pricing-card__name">Professional</div>
+            <div class="pricing-card__price"><span>$</span>299<span>/mo</span></div>
+            <div class="pricing-card__period">Billed monthly</div>
+            <ul class="pricing-card__features">
+                <li>Everything in Investor</li>
+                <li>API access</li>
+                <li>White-label capabilities</li>
+                <li>Multi-portfolio management</li>
+                <li>Custom agent configurations</li>
+                <li>Dedicated account manager</li>
+            </ul>
+            <a href="#cta" class="pricing-card__btn">Contact Sales</a>
+        </div>
+    </div>
+</section>
+
+<!-- ========== CTA ========== -->
+<section class="section container" id="cta">
+    <div class="cta__box reveal">
+        <div class="section__overline" style="text-align:center;">Early Access</div>
+        <h2 class="cta__title" style="text-align:center;">Start investing with<br>an unfair advantage</h2>
+        <p class="cta__desc">Join the waitlist for early access. Be among the first to experience AI-powered value investing.</p>
+        <div class="cta__form">
+            <input type="email" class="cta__input" placeholder="Enter your email address">
+            <button class="btn-primary" onclick="handleWaitlist()">Join Waitlist</button>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="#" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+                <div class="lang-selector">
+                    <label class="lang-selector__label" for="lang-select">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align: middle; margin-right: 6px;">
+                            <circle cx="8" cy="8" r="7" stroke="#6B7A8D" stroke-width="1.2"/>
+                            <ellipse cx="8" cy="8" rx="3.5" ry="7" stroke="#6B7A8D" stroke-width="1.2"/>
+                            <line x1="1" y1="8" x2="15" y2="8" stroke="#6B7A8D" stroke-width="1.2"/>
+                        </svg>
+                        Language
+                    </label>
+                    <select id="lang-select" class="lang-selector__select" onchange="changeLanguage(this.value)">
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                        <option value="nl">Nederlands</option>
+                        <option value="pt">Portugu&#234;s</option>
+                        <option value="zh">&#20013;&#25991;</option>
+                        <option value="hi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;</option>
+                        <option value="tr">T&#252;rk&#231;e</option>
+                        <option value="el">&#917;&#955;&#955;&#951;&#957;&#953;&#954;&#940;</option>
+                    </select>
+                </div>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="#agents">AI Agents</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#methodology">Methodology</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ========== SCRIPTS ========== -->
+<script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal--visible');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    reveals.forEach(el => observer.observe(el));
+
+    // Nav background on scroll
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            nav.style.padding = '12px 0';
+        } else {
+            nav.style.padding = '20px 0';
+        }
+    });
+
+    // Waitlist handler
+    function handleWaitlist() {
+        const input = document.querySelector('.cta__input');
+        const email = input.value.trim();
+        if (email && email.includes('@')) {
+            input.value = '';
+            input.placeholder = 'Thank you! We\'ll be in touch.';
+            input.style.borderColor = 'var(--accent-teal)';
+        } else {
+            input.style.borderColor = '#ef4444';
+            setTimeout(() => { input.style.borderColor = 'rgba(255, 255, 255, 0.1)'; }, 2000);
+        }
+    }
+
+    // Enter key for waitlist
+    document.querySelector('.cta__input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleWaitlist();
+    });
+
+    // ========== TRANSLATION ENGINE ==========
+    const T = {
+        en: {
+            heroOverline: "AI-Powered Value Investing",
+            heroTitle: 'Institutional-grade<br>investment <em>intelligence,</em><br>for everyone.',
+            heroSub: "Autonomous AI agents that analyze stocks using the Buffett/Graham methodology, build DCF models, and optimize your portfolio \u2014 24/7.",
+            btnWait: "Join the Waitlist", btnExplore: "Explore the agents",
+            proofMkt: "Agentic AI market by 2030", proofWealth: "AI wealth management by 2028", proofAgents: "Specialized AI agents", proofAuto: "Autonomous analysis",
+            agOvr: "Multi-Agent Architecture", agTitle: "Four agents. One mission.<br>Your wealth, amplified.", agSub: "Each AI agent specializes in a distinct analytical function, collaborating to deliver research that rivals teams of human analysts.",
+            c1t: "Portfolio Advisor", c1d: "Deep value analysis using the 10-pillar framework. DCF valuation, stock screening, and risk-adjusted portfolio allocation.",
+            c2t: "Spending Intelligence", c2d: "Analyzes transaction patterns, identifies savings, and tracks cash flow to maximize your investable capital.",
+            c3t: "Strategy Agent", c3d: "Aligns your investments with long-term goals. Compound growth modeling and macroeconomic stress testing.",
+            c4t: "Cross-Border Intel", c4d: "Scans international markets, analyzes regulatory environments, and identifies arbitrage across currencies.",
+            howOvr: "How It Works", howTitle: "From data to decision<br>in three steps", howSub: "No complexity. No jargon. Just actionable intelligence delivered to your dashboard.",
+            s1t: "Connect", s1d: "Link your portfolio or start fresh. Set your risk tolerance, goals, and investment thesis. The agents learn your preferences.",
+            s2t: "Analyze", s2d: "Four specialized agents run deep analysis 24/7 \u2014 screening stocks, building DCF models, scanning global markets.",
+            s3t: "Act", s3d: "Receive clear, explainable recommendations with full reasoning. Every insight shows you the rationale behind the decision.",
+            methOvr: "Methodology", methTitle: "Built on Buffett & Graham.<br>Powered by AI.",
+            p1t: "Intrinsic Value First", p1d: "Every stock is valued through discounted cash flow analysis, not sentiment or momentum. We calculate what a business is actually worth.",
+            p2t: "Margin of Safety", p2d: "Only recommend positions when market price sits meaningfully below intrinsic value \u2014 the timeless principle that protects your downside.",
+            p3t: "Transparent Reasoning", p3d: "Every recommendation comes with full explainable AI rationale. You see the data, the model, and the logic \u2014 never a black box.",
+            mPillars: "Value analysis pillars", mMargin: "Target gross margin", mMarkets: "Markets at launch", mComply: "EU compliance built-in",
+            prOvr: "Pricing", prTitle: "Invest in your edge", prSub: "Institutional-grade intelligence at a fraction of the cost. Choose the tier that matches your ambition.",
+            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Most Popular", billed: "Billed monthly", getStart: "Get Started", contactSales: "Contact Sales",
+            ctaOvr: "Early Access", ctaTitle: "Start investing with<br>an unfair advantage", ctaDesc: "Join the waitlist for early access. Be among the first to experience AI-powered value investing.",
+            ctaPh: "Enter your email address", ctaBtn: "Join Waitlist", ctaOk: "Thank you! We'll be in touch.",
+            fDesc: "Democratizing institutional-grade investment intelligence through autonomous AI agents.",
+            fProd: "Product", fComp: "Company", fConn: "Connect",
+            nAg: "Agents", nHow: "How It Works", nMeth: "Methodology", nPr: "Pricing", nCta: "Get Early Access",
+            copy: "\u00a9 2026 LIUV Ventures. All rights reserved.", priv: "Privacy Policy", terms: "Terms of Service", disc: "Disclaimer"
+        },
+        de: {
+            heroOverline: "KI-gest\u00fctztes Value Investing",
+            heroTitle: 'Institutionelle<br>Anlage-<em>Intelligenz,</em><br>f\u00fcr alle.',
+            heroSub: "Autonome KI-Agenten analysieren Aktien nach der Buffett/Graham-Methodik, erstellen DCF-Modelle und optimieren Ihr Portfolio \u2014 rund um die Uhr.",
+            btnWait: "Auf die Warteliste", btnExplore: "Agenten entdecken",
+            proofMkt: "Agentischer KI-Markt bis 2030", proofWealth: "KI-Verm\u00f6gensverwaltung bis 2028", proofAgents: "Spezialisierte KI-Agenten", proofAuto: "Autonome Analyse",
+            agOvr: "Multi-Agenten-Architektur", agTitle: "Vier Agenten. Eine Mission.<br>Ihr Verm\u00f6gen, verst\u00e4rkt.", agSub: "Jeder KI-Agent ist auf eine analytische Funktion spezialisiert und arbeitet zusammen, um institutionelles Research zu liefern.",
+            c1t: "Portfolio-Berater", c1d: "Tiefgehende Wertanalyse mit dem 10-S\u00e4ulen-Framework. DCF-Bewertung, Aktien-Screening und risikoadjustierte Allokation.",
+            c2t: "Ausgaben-Intelligenz", c2d: "Analysiert Transaktionsmuster, identifiziert Einsparungen und verfolgt Cashflows.",
+            c3t: "Strategie-Agent", c3d: "Richtet Ihre Investments an langfristigen Zielen aus. Zinseszins-Modellierung und Stresstests.",
+            c4t: "Grenz\u00fcbergreifende Intel", c4d: "Scannt internationale M\u00e4rkte, analysiert regulatorische Umgebungen und identifiziert W\u00e4hrungs-Arbitrage.",
+            howOvr: "So Funktioniert Es", howTitle: "Von Daten zur Entscheidung<br>in drei Schritten", howSub: "Keine Komplexit\u00e4t. Kein Fachjargon. Handlungsf\u00e4hige Intelligenz in Ihrem Dashboard.",
+            s1t: "Verbinden", s1d: "Verkn\u00fcpfen Sie Ihr Portfolio oder starten Sie neu. Legen Sie Risikotoleranz und Anlageziele fest.",
+            s2t: "Analysieren", s2d: "Vier spezialisierte Agenten analysieren rund um die Uhr \u2014 Aktien-Screening, DCF-Modelle, globale M\u00e4rkte.",
+            s3t: "Handeln", s3d: "Erhalten Sie klare Empfehlungen mit vollst\u00e4ndiger Begr\u00fcndung. Jeder Einblick zeigt das Warum hinter der Entscheidung.",
+            methOvr: "Methodik", methTitle: "Basierend auf Buffett & Graham.<br>Angetrieben von KI.",
+            p1t: "Innerer Wert zuerst", p1d: "Jede Aktie wird durch DCF-Analyse bewertet, nicht durch Stimmung. Wir berechnen den tats\u00e4chlichen Gesch\u00e4ftswert.",
+            p2t: "Sicherheitsmarge", p2d: "Empfehlungen nur wenn der Marktpreis deutlich unter dem inneren Wert liegt.",
+            p3t: "Transparente Begr\u00fcndung", p3d: "Jede Empfehlung enth\u00e4lt die vollst\u00e4ndige KI-Erkl\u00e4rung. Sie sehen Daten, Modell und Logik.",
+            mPillars: "Wertanalyse-S\u00e4ulen", mMargin: "Ziel-Bruttomarge", mMarkets: "M\u00e4rkte zum Start", mComply: "EU-Konformit\u00e4t integriert",
+            prOvr: "Preise", prTitle: "Investieren Sie in Ihren Vorteil", prSub: "Institutionelle Intelligenz zu einem Bruchteil der Kosten.",
+            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Am Beliebtesten", billed: "Monatliche Abrechnung", getStart: "Loslegen", contactSales: "Vertrieb kontaktieren",
+            ctaOvr: "Fr\u00fchzugang", ctaTitle: "Investieren Sie mit<br>einem unfairen Vorteil", ctaDesc: "Melden Sie sich f\u00fcr die Warteliste an. Geh\u00f6ren Sie zu den Ersten mit KI-Value-Investing.",
+            ctaPh: "Ihre E-Mail-Adresse", ctaBtn: "Anmelden", ctaOk: "Danke! Wir melden uns bei Ihnen.",
+            fDesc: "Demokratisierung institutioneller Anlage-Intelligenz durch autonome KI-Agenten.",
+            fProd: "Produkt", fComp: "Unternehmen", fConn: "Kontakt",
+            nAg: "Agenten", nHow: "So Funktioniert Es", nMeth: "Methodik", nPr: "Preise", nCta: "Fr\u00fchzugang",
+            copy: "\u00a9 2026 LIUV Ventures. Alle Rechte vorbehalten.", priv: "Datenschutz", terms: "Nutzungsbedingungen", disc: "Haftungsausschluss"
+        },
+        nl: {
+            heroOverline: "AI-Aangedreven Value Investing",
+            heroTitle: 'Institutionele<br>investerings-<em>intelligentie,</em><br>voor iedereen.',
+            heroSub: "Autonome AI-agenten die aandelen analyseren met de Buffett/Graham-methode, DCF-modellen bouwen en uw portefeuille optimaliseren \u2014 24/7.",
+            btnWait: "Schrijf Je In", btnExplore: "Ontdek de agenten",
+            proofMkt: "Agentische AI-markt tegen 2030", proofWealth: "AI-vermogensbeheer tegen 2028", proofAgents: "Gespecialiseerde AI-agenten", proofAuto: "Autonome analyse",
+            agOvr: "Multi-Agent Architectuur", agTitle: "Vier agenten. E\u00e9n missie.<br>Uw vermogen, versterkt.", agSub: "Elke AI-agent is gespecialiseerd in een analytische functie en werkt samen om institutioneel onderzoek te leveren.",
+            c1t: "Portefeuille Adviseur", c1d: "Diepgaande waardeanalyse met het 10-pijler framework. DCF-waardering, aandelen-screening en risico-aangepaste allocatie.",
+            c2t: "Uitgaven Intelligentie", c2d: "Analyseert transactiepatronen, identificeert besparingen en volgt cashflows.",
+            c3t: "Strategie Agent", c3d: "Stemt uw investeringen af op langetermijndoelen. Samengestelde groeimodellering en stresstests.",
+            c4t: "Grensoverschrijdende Intel", c4d: "Scant internationale markten, analyseert regelgevingsomgevingen en identificeert valuta-arbitrage.",
+            howOvr: "Hoe Het Werkt", howTitle: "Van data naar beslissing<br>in drie stappen", howSub: "Geen complexiteit. Geen jargon. Bruikbare intelligentie op uw dashboard.",
+            s1t: "Verbinden", s1d: "Koppel uw portefeuille of begin opnieuw. Stel uw risicotolerantie en doelen in.",
+            s2t: "Analyseren", s2d: "Vier gespecialiseerde agenten voeren 24/7 diepgaande analyses uit \u2014 screening, DCF-modellen, wereldwijde markten.",
+            s3t: "Handelen", s3d: "Ontvang duidelijke aanbevelingen met volledige onderbouwing. Elk inzicht toont het waarom achter de beslissing.",
+            methOvr: "Methodologie", methTitle: "Gebaseerd op Buffett & Graham.<br>Aangedreven door AI.",
+            p1t: "Intrinsieke Waarde Eerst", p1d: "Elk aandeel wordt gewaardeerd via DCF-analyse, niet op sentiment. Wij berekenen de werkelijke bedrijfswaarde.",
+            p2t: "Veiligheidsmarge", p2d: "Alleen aanbevelingen wanneer de marktprijs aanzienlijk onder de intrinsieke waarde ligt.",
+            p3t: "Transparante Onderbouwing", p3d: "Elke aanbeveling bevat volledige AI-uitleg. U ziet de data, het model en de logica.",
+            mPillars: "Waardeanalyse-pijlers", mMargin: "Doelbrutowinst", mMarkets: "Markten bij lancering", mComply: "EU-compliance ingebouwd",
+            prOvr: "Prijzen", prTitle: "Investeer in uw voorsprong", prSub: "Institutionele intelligentie voor een fractie van de kosten.",
+            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Meest Populair", billed: "Maandelijks gefactureerd", getStart: "Aan de Slag", contactSales: "Contact Verkoop",
+            ctaOvr: "Vroege Toegang", ctaTitle: "Begin met investeren met<br>een oneerlijk voordeel", ctaDesc: "Schrijf u in voor de wachtlijst. Wees een van de eersten die AI-gestuurd value investing ervaart.",
+            ctaPh: "Voer uw e-mailadres in", ctaBtn: "Inschrijven", ctaOk: "Bedankt! We nemen contact op.",
+            fDesc: "Democratisering van institutionele investeringsintelligentie door autonome AI-agenten.",
+            fProd: "Product", fComp: "Bedrijf", fConn: "Contact",
+            nAg: "Agenten", nHow: "Hoe Het Werkt", nMeth: "Methodologie", nPr: "Prijzen", nCta: "Vroege Toegang",
+            copy: "\u00a9 2026 LIUV Ventures. Alle rechten voorbehouden.", priv: "Privacybeleid", terms: "Gebruiksvoorwaarden", disc: "Disclaimer"
+        },
+        pt: {
+            heroOverline: "Investimento em Valor com IA",
+            heroTitle: 'Intelig\u00eancia de<br>investimento <em>institucional,</em><br>para todos.',
+            heroSub: "Agentes aut\u00f4nomos de IA que analisam a\u00e7\u00f5es usando a metodologia Buffett/Graham, criam modelos DCF e otimizam seu portf\u00f3lio \u2014 24/7.",
+            btnWait: "Entrar na Lista de Espera", btnExplore: "Explorar os agentes",
+            proofMkt: "Mercado de IA ag\u00eantica at\u00e9 2030", proofWealth: "Gest\u00e3o de patrim\u00f4nio com IA at\u00e9 2028", proofAgents: "Agentes de IA especializados", proofAuto: "An\u00e1lise aut\u00f4noma",
+            agOvr: "Arquitetura Multi-Agente", agTitle: "Quatro agentes. Uma miss\u00e3o.<br>Seu patrim\u00f4nio, amplificado.", agSub: "Cada agente de IA \u00e9 especializado em uma fun\u00e7\u00e3o anal\u00edtica distinta, colaborando para entregar pesquisas de n\u00edvel institucional.",
+            c1t: "Consultor de Portf\u00f3lio", c1d: "An\u00e1lise profunda de valor usando o framework de 10 pilares. Avalia\u00e7\u00e3o DCF, triagem de a\u00e7\u00f5es e aloca\u00e7\u00e3o ajustada ao risco.",
+            c2t: "Intelig\u00eancia de Gastos", c2d: "Analisa padr\u00f5es de transa\u00e7\u00e3o, identifica economias e rastreia fluxo de caixa.",
+            c3t: "Agente de Estrat\u00e9gia", c3d: "Alinha seus investimentos com metas de longo prazo. Modelagem de crescimento composto e testes de estresse.",
+            c4t: "Intel Transfronteiri\u00e7o", c4d: "Analisa mercados internacionais, ambientes regulat\u00f3rios e identifica arbitragem entre moedas.",
+            howOvr: "Como Funciona", howTitle: "De dados \u00e0 decis\u00e3o<br>em tr\u00eas passos", howSub: "Sem complexidade. Sem jarg\u00e3o. Intelig\u00eancia acion\u00e1vel entregue no seu painel.",
+            s1t: "Conectar", s1d: "Vincule seu portf\u00f3lio ou comece do zero. Defina sua toler\u00e2ncia ao risco e objetivos.",
+            s2t: "Analisar", s2d: "Quatro agentes especializados executam an\u00e1lises profundas 24/7 \u2014 triagem de a\u00e7\u00f5es, modelos DCF, mercados globais.",
+            s3t: "Agir", s3d: "Receba recomenda\u00e7\u00f5es claras e explic\u00e1veis com racioc\u00ednio completo. Cada insight mostra o porqu\u00ea da decis\u00e3o.",
+            methOvr: "Metodologia", methTitle: "Baseado em Buffett & Graham.<br>Impulsionado por IA.",
+            p1t: "Valor Intr\u00ednseco Primeiro", p1d: "Cada a\u00e7\u00e3o \u00e9 avaliada por an\u00e1lise de fluxo de caixa descontado. Calculamos o valor real do neg\u00f3cio.",
+            p2t: "Margem de Seguran\u00e7a", p2d: "S\u00f3 recomendamos quando o pre\u00e7o est\u00e1 significativamente abaixo do valor intr\u00ednseco.",
+            p3t: "Racioc\u00ednio Transparente", p3d: "Cada recomenda\u00e7\u00e3o vem com explica\u00e7\u00e3o completa da IA. Voc\u00ea v\u00ea dados, modelo e l\u00f3gica.",
+            mPillars: "Pilares de an\u00e1lise de valor", mMargin: "Margem bruta alvo", mMarkets: "Mercados no lan\u00e7amento", mComply: "Conformidade UE integrada",
+            prOvr: "Pre\u00e7os", prTitle: "Invista na sua vantagem", prSub: "Intelig\u00eancia institucional por uma fra\u00e7\u00e3o do custo.",
+            t1: "Explorador", t2: "Investidor", t3: "Profissional", popular: "Mais Popular", billed: "Cobrado mensalmente", getStart: "Come\u00e7ar", contactSales: "Falar com Vendas",
+            ctaOvr: "Acesso Antecipado", ctaTitle: "Comece a investir com<br>uma vantagem injusta", ctaDesc: "Entre na lista de espera. Seja um dos primeiros a experimentar investimento em valor com IA.",
+            ctaPh: "Digite seu e-mail", ctaBtn: "Entrar na Lista", ctaOk: "Obrigado! Entraremos em contato.",
+            fDesc: "Democratizando intelig\u00eancia de investimento institucional atrav\u00e9s de agentes aut\u00f4nomos de IA.",
+            fProd: "Produto", fComp: "Empresa", fConn: "Conectar",
+            nAg: "Agentes", nHow: "Como Funciona", nMeth: "Metodologia", nPr: "Pre\u00e7os", nCta: "Acesso Antecipado",
+            copy: "\u00a9 2026 LIUV Ventures. Todos os direitos reservados.", priv: "Pol\u00edtica de Privacidade", terms: "Termos de Servi\u00e7o", disc: "Aviso Legal"
+        },
+        zh: {
+            heroOverline: "AI\u9a71\u52a8\u7684\u4ef7\u503c\u6295\u8d44",
+            heroTitle: "\u673a\u6784\u7ea7<br>\u6295\u8d44<em>\u667a\u80fd\uff0c</em><br>\u4e3a\u6bcf\u4e00\u4e2a\u4eba\u3002",
+            heroSub: "\u81ea\u4e3bAI\u4ee3\u7406\u4f7f\u7528\u5df4\u83f2\u7279/\u683c\u96f7\u5384\u59c6\u65b9\u6cd5\u8bba\u5206\u6790\u80a1\u7968\uff0c\u6784\u5efaDCF\u6a21\u578b\uff0c\u5e76\u5168\u5929\u5019\u4f18\u5316\u60a8\u7684\u6295\u8d44\u7ec4\u5408\u3002",
+            btnWait: "\u52a0\u5165\u7b49\u5019\u540d\u5355", btnExplore: "\u63a2\u7d22AI\u4ee3\u7406",
+            proofMkt: "2030\u5e74\u4ee3\u7406AI\u5e02\u573a", proofWealth: "2028\u5e74AI\u8d22\u5bcc\u7ba1\u7406", proofAgents: "\u4e13\u4e1aAI\u4ee3\u7406", proofAuto: "\u5168\u5929\u5019\u81ea\u4e3b\u5206\u6790",
+            agOvr: "\u591a\u4ee3\u7406\u67b6\u6784", agTitle: "\u56db\u4e2a\u4ee3\u7406\u3002\u4e00\u4e2a\u4f7f\u547d\u3002<br>\u60a8\u7684\u8d22\u5bcc\uff0c\u589e\u5f3a\u3002", agSub: "\u6bcf\u4e2aAI\u4ee3\u7406\u4e13\u6ce8\u4e8e\u4e00\u4e2a\u5206\u6790\u529f\u80fd\uff0c\u534f\u4f5c\u63d0\u4f9b\u5ab2\u7f8e\u673a\u6784\u5206\u6790\u5e08\u56e2\u961f\u7684\u7814\u7a76\u3002",
+            c1t: "\u6295\u8d44\u7ec4\u5408\u987e\u95ee", c1d: "\u4f7f\u752810\u652f\u67f1\u6846\u67b6\u7684\u6df1\u5ea6\u4ef7\u503c\u5206\u6790\u3002DCF\u4f30\u503c\u3001\u80a1\u7968\u7b5b\u9009\u548c\u98ce\u9669\u8c03\u6574\u540e\u7684\u6295\u8d44\u7ec4\u5408\u914d\u7f6e\u3002",
+            c2t: "\u652f\u51fa\u667a\u80fd", c2d: "\u5206\u6790\u4ea4\u6613\u6a21\u5f0f\uff0c\u8bc6\u522b\u8282\u7701\u673a\u4f1a\uff0c\u8ddf\u8e2a\u73b0\u91d1\u6d41\u4ee5\u6700\u5927\u5316\u53ef\u6295\u8d44\u8d44\u672c\u3002",
+            c3t: "\u7b56\u7565\u4ee3\u7406", c3d: "\u5c06\u60a8\u7684\u6295\u8d44\u4e0e\u957f\u671f\u76ee\u6807\u5bf9\u9f50\u3002\u590d\u5408\u589e\u957f\u5efa\u6a21\u548c\u5b8f\u89c2\u7ecf\u6d4e\u538b\u529b\u6d4b\u8bd5\u3002",
+            c4t: "\u8de8\u5883\u60c5\u62a5", c4d: "\u626b\u63cf\u56fd\u9645\u5e02\u573a\uff0c\u5206\u6790\u76d1\u7ba1\u73af\u5883\uff0c\u8bc6\u522b\u8de8\u8d27\u5e01\u5957\u5229\u673a\u4f1a\u3002",
+            howOvr: "\u5de5\u4f5c\u539f\u7406", howTitle: "\u4ece\u6570\u636e\u5230\u51b3\u7b56<br>\u53ea\u9700\u4e09\u6b65", howSub: "\u6ca1\u6709\u590d\u6742\u6027\u3002\u6ca1\u6709\u672f\u8bed\u3002\u53ef\u64cd\u4f5c\u7684\u667a\u80fd\u76f4\u8fbe\u60a8\u7684\u4eea\u8868\u677f\u3002",
+            s1t: "\u8fde\u63a5", s1d: "\u5173\u8054\u60a8\u7684\u6295\u8d44\u7ec4\u5408\u6216\u4ece\u5934\u5f00\u59cb\u3002\u8bbe\u7f6e\u98ce\u9669\u627f\u53d7\u80fd\u529b\u548c\u6295\u8d44\u76ee\u6807\u3002",
+            s2t: "\u5206\u6790", s2d: "\u56db\u4e2a\u4e13\u4e1a\u4ee3\u7406\u5168\u5929\u5019\u8fd0\u884c\u6df1\u5ea6\u5206\u6790 \u2014 \u80a1\u7968\u7b5b\u9009\u3001DCF\u6a21\u578b\u3001\u5168\u7403\u5e02\u573a\u626b\u63cf\u3002",
+            s3t: "\u884c\u52a8", s3d: "\u83b7\u5f97\u6e05\u6670\u3001\u53ef\u89e3\u91ca\u7684\u5efa\u8bae\u548c\u5b8c\u6574\u63a8\u7406\u3002\u6bcf\u4e2a\u6d1e\u5bdf\u5c55\u793a\u51b3\u7b56\u80cc\u540e\u7684\u903b\u8f91\u3002",
+            methOvr: "\u65b9\u6cd5\u8bba", methTitle: "\u57fa\u4e8e\u5df4\u83f2\u7279\u4e0e\u683c\u96f7\u5384\u59c6\u3002<br>\u7531AI\u9a71\u52a8\u3002",
+            p1t: "\u5185\u5728\u4ef7\u503c\u4f18\u5148", p1d: "\u6bcf\u53ea\u80a1\u7968\u901a\u8fc7\u73b0\u91d1\u6d41\u6298\u73b0\u5206\u6790\u4f30\u503c\uff0c\u800c\u975e\u60c5\u7eea\u3002\u6211\u4eec\u8ba1\u7b97\u4f01\u4e1a\u7684\u771f\u5b9e\u4ef7\u503c\u3002",
+            p2t: "\u5b89\u5168\u8fb9\u9645", p2d: "\u4ec5\u5728\u5e02\u573a\u4ef7\u683c\u663e\u8457\u4f4e\u4e8e\u5185\u5728\u4ef7\u503c\u65f6\u63a8\u8350 \u2014 \u4fdd\u62a4\u60a8\u7684\u4e0b\u884c\u98ce\u9669\u3002",
+            p3t: "\u900f\u660e\u63a8\u7406", p3d: "\u6bcf\u6761\u5efa\u8bae\u90fd\u9644\u6709\u5b8c\u6574\u7684AI\u89e3\u91ca\u3002\u60a8\u770b\u5230\u6570\u636e\u3001\u6a21\u578b\u548c\u903b\u8f91 \u2014 \u7edd\u975e\u9ed1\u7bb1\u3002",
+            mPillars: "\u4ef7\u503c\u5206\u6790\u652f\u67f1", mMargin: "\u76ee\u6807\u6bdb\u5229\u7387", mMarkets: "\u542f\u52a8\u5e02\u573a", mComply: "\u5185\u7f6e\u6b27\u76df\u5408\u89c4",
+            prOvr: "\u5b9a\u4ef7", prTitle: "\u6295\u8d44\u60a8\u7684\u4f18\u52bf", prSub: "\u4ee5\u6781\u4f4e\u7684\u6210\u672c\u83b7\u5f97\u673a\u6784\u7ea7\u667a\u80fd\u3002\u9009\u62e9\u5339\u914d\u60a8\u96c4\u5fc3\u7684\u65b9\u6848\u3002",
+            t1: "\u63a2\u7d22\u8005", t2: "\u6295\u8d44\u8005", t3: "\u4e13\u4e1a\u7248", popular: "\u6700\u53d7\u6b22\u8fce", billed: "\u6309\u6708\u8ba1\u8d39", getStart: "\u7acb\u5373\u5f00\u59cb", contactSales: "\u8054\u7cfb\u9500\u552e",
+            ctaOvr: "\u62a2\u5148\u4f53\u9a8c", ctaTitle: "\u4ee5\u4e0d\u516c\u5e73\u7684\u4f18\u52bf<br>\u5f00\u59cb\u6295\u8d44", ctaDesc: "\u52a0\u5165\u7b49\u5019\u540d\u5355\u3002\u6210\u4e3a\u9996\u6279\u4f53\u9a8cAI\u9a71\u52a8\u4ef7\u503c\u6295\u8d44\u7684\u4eba\u3002",
+            ctaPh: "\u8f93\u5165\u60a8\u7684\u7535\u5b50\u90ae\u7bb1", ctaBtn: "\u7acb\u5373\u52a0\u5165", ctaOk: "\u8c22\u8c22\uff01\u6211\u4eec\u4f1a\u5c3d\u5feb\u8054\u7cfb\u60a8\u3002",
+            fDesc: "\u901a\u8fc7\u81ea\u4e3bAI\u4ee3\u7406\uff0c\u8ba9\u673a\u6784\u7ea7\u6295\u8d44\u667a\u80fd\u89e6\u624b\u53ef\u53ca\u3002",
+            fProd: "\u4ea7\u54c1", fComp: "\u516c\u53f8", fConn: "\u8054\u7cfb",
+            nAg: "\u4ee3\u7406", nHow: "\u5de5\u4f5c\u539f\u7406", nMeth: "\u65b9\u6cd5\u8bba", nPr: "\u5b9a\u4ef7", nCta: "\u62a2\u5148\u4f53\u9a8c",
+            copy: "\u00a9 2026 LIUV Ventures. \u7248\u6743\u6240\u6709\u3002", priv: "\u9690\u79c1\u653f\u7b56", terms: "\u670d\u52a1\u6761\u6b3e", disc: "\u514d\u8d23\u58f0\u660e"
+        },
+        hi: {
+            heroOverline: "AI-\u0938\u0902\u091a\u093e\u0932\u093f\u0924 \u0935\u0948\u0932\u094d\u092f\u0942 \u0928\u093f\u0935\u0947\u0936",
+            heroTitle: "\u0938\u0902\u0938\u094d\u0925\u093e\u0917\u0924-\u0938\u094d\u0924\u0930\u0940\u092f<br>\u0928\u093f\u0935\u0947\u0936 <em>\u092c\u0941\u0926\u094d\u0927\u093f\u092e\u0924\u094d\u0924\u093e,</em><br>\u0938\u092c\u0915\u0947 \u0932\u093f\u090f\u0964",
+            heroSub: "\u0938\u094d\u0935\u093e\u092f\u0924\u094d\u0924 AI \u090f\u091c\u0947\u0902\u091f \u091c\u094b Buffett/Graham \u092a\u0926\u094d\u0927\u0924\u093f \u0938\u0947 \u0936\u0947\u092f\u0930\u094b\u0902 \u0915\u093e \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0915\u0930\u0924\u0947 \u0939\u0948\u0902, DCF \u092e\u0949\u0921\u0932 \u092c\u0928\u093e\u0924\u0947 \u0939\u0948\u0902 \u0914\u0930 \u0906\u092a\u0915\u0947 \u092a\u094b\u0930\u094d\u091f\u092b\u094b\u0932\u093f\u092f\u094b \u0915\u094b \u0905\u0928\u0941\u0915\u0942\u0932\u093f\u0924 \u0915\u0930\u0924\u0947 \u0939\u0948\u0902 \u2014 24/7\u0964",
+            btnWait: "\u092a\u094d\u0930\u0924\u0940\u0915\u094d\u0937\u093e \u0938\u0942\u091a\u0940 \u092e\u0947\u0902 \u0936\u093e\u092e\u093f\u0932 \u0939\u094b\u0902", btnExplore: "\u090f\u091c\u0947\u0902\u091f\u094d\u0938 \u0926\u0947\u0916\u0947\u0902",
+            proofMkt: "2030 \u0924\u0915 \u090f\u091c\u0947\u0902\u091f\u093f\u0915 AI \u092c\u093e\u091c\u093c\u093e\u0930", proofWealth: "2028 \u0924\u0915 AI \u0927\u0928 \u092a\u094d\u0930\u092c\u0902\u0927\u0928", proofAgents: "\u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e AI \u090f\u091c\u0947\u0902\u091f", proofAuto: "\u0938\u094d\u0935\u093e\u092f\u0924\u094d\u0924 \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923",
+            agOvr: "\u092e\u0932\u094d\u091f\u0940-\u090f\u091c\u0947\u0902\u091f \u0906\u0930\u094d\u0915\u093f\u091f\u0947\u0915\u094d\u091a\u0930", agTitle: "\u091a\u093e\u0930 \u090f\u091c\u0947\u0902\u091f\u0964 \u090f\u0915 \u092e\u093f\u0936\u0928\u0964<br>\u0906\u092a\u0915\u0940 \u0938\u0902\u092a\u0924\u094d\u0924\u093f, \u092c\u0922\u093c\u093e\u0908 \u0939\u0941\u0908\u0964", agSub: "\u092a\u094d\u0930\u0924\u094d\u092f\u0947\u0915 AI \u090f\u091c\u0947\u0902\u091f \u090f\u0915 \u0935\u093f\u0936\u093f\u0937\u094d\u091f \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923\u093e\u0924\u094d\u092e\u0915 \u0915\u093e\u0930\u094d\u092f \u092e\u0947\u0902 \u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e \u0939\u0948, \u0938\u0902\u0938\u094d\u0925\u093e\u0917\u0924 \u0938\u094d\u0924\u0930 \u0915\u0940 \u0930\u093f\u0938\u0930\u094d\u091a \u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0924\u093e \u0939\u0948\u0964",
+            c1t: "\u092a\u094b\u0930\u094d\u091f\u092b\u094b\u0932\u093f\u092f\u094b \u0938\u0932\u093e\u0939\u0915\u093e\u0930", c1d: "10-\u0938\u094d\u0924\u0902\u092d \u092b\u094d\u0930\u0947\u092e\u0935\u0930\u094d\u0915 \u0938\u0947 \u0917\u0939\u0928 \u092e\u0942\u0932\u094d\u092f \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923\u0964 DCF \u092e\u0942\u0932\u094d\u092f\u093e\u0902\u0915\u0928, \u0936\u0947\u092f\u0930 \u0938\u094d\u0915\u094d\u0930\u0940\u0928\u093f\u0902\u0917 \u0914\u0930 \u091c\u094b\u0916\u093f\u092e-\u0938\u092e\u093e\u092f\u094b\u091c\u093f\u0924 \u0906\u0935\u0902\u091f\u0928\u0964",
+            c2t: "\u0916\u0930\u094d\u091a \u092c\u0941\u0926\u094d\u0927\u093f\u092e\u0924\u094d\u0924\u093e", c2d: "\u0932\u0947\u0928\u0926\u0947\u0928 \u092a\u0948\u091f\u0930\u094d\u0928 \u0915\u093e \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0915\u0930\u0924\u093e \u0939\u0948, \u092c\u091a\u0924 \u0915\u0940 \u092a\u0939\u091a\u093e\u0928 \u0915\u0930\u0924\u093e \u0939\u0948 \u0914\u0930 \u0928\u0915\u0926\u0940 \u092a\u094d\u0930\u0935\u093e\u0939 \u0915\u094b \u091f\u094d\u0930\u0948\u0915 \u0915\u0930\u0924\u093e \u0939\u0948\u0964",
+            c3t: "\u0930\u0923\u0928\u0940\u0924\u093f \u090f\u091c\u0947\u0902\u091f", c3d: "\u0906\u092a\u0915\u0947 \u0928\u093f\u0935\u0947\u0936 \u0915\u094b \u0926\u0940\u0930\u094d\u0918\u0915\u093e\u0932\u093f\u0915 \u0932\u0915\u094d\u0937\u094d\u092f\u094b\u0902 \u0938\u0947 \u091c\u094b\u0921\u093c\u0924\u093e \u0939\u0948\u0964 \u091a\u0915\u094d\u0930\u0935\u0943\u0926\u094d\u0927\u093f \u0935\u093f\u0915\u093e\u0938 \u092e\u0949\u0921\u0932\u093f\u0902\u0917 \u0914\u0930 \u0938\u094d\u091f\u094d\u0930\u0947\u0938 \u091f\u0947\u0938\u094d\u091f\u0964",
+            c4t: "\u0938\u0940\u092e\u093e-\u092a\u093e\u0930 \u0907\u0902\u091f\u0947\u0932", c4d: "\u0905\u0902\u0924\u0930\u0930\u093e\u0937\u094d\u091f\u094d\u0930\u0940\u092f \u092c\u093e\u091c\u093c\u093e\u0930\u094b\u0902 \u0915\u094b \u0938\u094d\u0915\u0948\u0928 \u0915\u0930\u0924\u093e \u0939\u0948, \u0928\u093f\u092f\u093e\u092e\u0915 \u0935\u093e\u0924\u093e\u0935\u0930\u0923 \u0915\u093e \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0915\u0930\u0924\u093e \u0939\u0948 \u0914\u0930 \u092e\u0941\u0926\u094d\u0930\u093e \u0906\u0930\u094d\u092c\u093f\u091f\u094d\u0930\u0947\u091c \u0915\u0940 \u092a\u0939\u091a\u093e\u0928 \u0915\u0930\u0924\u093e \u0939\u0948\u0964",
+            howOvr: "\u092f\u0939 \u0915\u0948\u0938\u0947 \u0915\u093e\u092e \u0915\u0930\u0924\u093e \u0939\u0948", howTitle: "\u0921\u0947\u091f\u093e \u0938\u0947 \u0928\u093f\u0930\u094d\u0923\u092f<br>\u0924\u0940\u0928 \u091a\u0930\u0923\u094b\u0902 \u092e\u0947\u0902", howSub: "\u0915\u094b\u0908 \u091c\u091f\u093f\u0932\u0924\u093e \u0928\u0939\u0940\u0902\u0964 \u0915\u094b\u0908 \u0936\u092c\u094d\u0926\u091c\u093e\u0932 \u0928\u0939\u0940\u0902\u0964 \u0915\u093e\u0930\u094d\u092f\u0915\u093e\u0930\u0940 \u092c\u0941\u0926\u094d\u0927\u093f\u092e\u0924\u094d\u0924\u093e \u0938\u0940\u0927\u0947 \u0906\u092a\u0915\u0947 \u0921\u0948\u0936\u092c\u094b\u0930\u094d\u0921 \u092a\u0930\u0964",
+            s1t: "\u091c\u094b\u0921\u093c\u0947\u0902", s1d: "\u0905\u092a\u0928\u093e \u092a\u094b\u0930\u094d\u091f\u092b\u094b\u0932\u093f\u092f\u094b \u0932\u093f\u0902\u0915 \u0915\u0930\u0947\u0902 \u092f\u093e \u0928\u090f \u0938\u093f\u0930\u0947 \u0938\u0947 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902\u0964 \u091c\u094b\u0916\u093f\u092e \u0938\u0939\u0928\u0936\u0940\u0932\u0924\u093e \u0914\u0930 \u0932\u0915\u094d\u0937\u094d\u092f \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u093f\u0924 \u0915\u0930\u0947\u0902\u0964",
+            s2t: "\u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923", s2d: "\u091a\u093e\u0930 \u0935\u093f\u0936\u0947\u0937\u091c\u094d\u091e \u090f\u091c\u0947\u0902\u091f 24/7 \u0917\u0939\u0928 \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u091a\u0932\u093e\u0924\u0947 \u0939\u0948\u0902 \u2014 \u0936\u0947\u092f\u0930 \u0938\u094d\u0915\u094d\u0930\u0940\u0928\u093f\u0902\u0917, DCF \u092e\u0949\u0921\u0932, \u0935\u0948\u0936\u094d\u0935\u093f\u0915 \u092c\u093e\u091c\u093c\u093e\u0930\u0964",
+            s3t: "\u0915\u093e\u0930\u094d\u0930\u0935\u093e\u0908", s3d: "\u0938\u094d\u092a\u0937\u094d\u091f \u0914\u0930 \u0935\u094d\u092f\u093e\u0916\u094d\u092f\u093e \u092f\u094b\u0917\u094d\u092f \u0938\u093f\u092b\u093e\u0930\u093f\u0936\u0947\u0902 \u092a\u094d\u0930\u093e\u092a\u094d\u0924 \u0915\u0930\u0947\u0902\u0964 \u092a\u094d\u0930\u0924\u094d\u092f\u0947\u0915 \u0905\u0902\u0924\u0930\u094d\u0926\u0943\u0937\u094d\u091f\u093f \u0928\u093f\u0930\u094d\u0923\u092f \u0915\u0947 \u092a\u0940\u091b\u0947 \u0915\u093e \u0924\u0930\u094d\u0915 \u0926\u093f\u0916\u093e\u0924\u0940 \u0939\u0948\u0964",
+            methOvr: "\u0915\u093e\u0930\u094d\u092f\u092a\u094d\u0930\u0923\u093e\u0932\u0940", methTitle: "Buffett \u0914\u0930 Graham \u092a\u0930 \u0906\u0927\u093e\u0930\u093f\u0924\u0964<br>AI \u0926\u094d\u0935\u093e\u0930\u093e \u0938\u0902\u091a\u093e\u0932\u093f\u0924\u0964",
+            p1t: "\u0906\u0902\u0924\u0930\u093f\u0915 \u092e\u0942\u0932\u094d\u092f \u092a\u0939\u0932\u0947", p1d: "\u092a\u094d\u0930\u0924\u094d\u092f\u0947\u0915 \u0936\u0947\u092f\u0930 \u0915\u093e DCF \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0938\u0947 \u092e\u0942\u0932\u094d\u092f\u093e\u0902\u0915\u0928\u0964 \u0939\u092e \u0935\u094d\u092f\u0935\u0938\u093e\u092f \u0915\u093e \u0935\u093e\u0938\u094d\u0924\u0935\u093f\u0915 \u092e\u0942\u0932\u094d\u092f \u0917\u0923\u0928\u093e \u0915\u0930\u0924\u0947 \u0939\u0948\u0902\u0964",
+            p2t: "\u0938\u0941\u0930\u0915\u094d\u0937\u093e \u092e\u093e\u0930\u094d\u091c\u093f\u0928", p2d: "\u0915\u0947\u0935\u0932 \u0924\u092c \u0938\u093f\u092b\u093e\u0930\u093f\u0936 \u091c\u092c \u092c\u093e\u091c\u093c\u093e\u0930 \u092e\u0942\u0932\u094d\u092f \u0906\u0902\u0924\u0930\u093f\u0915 \u092e\u0942\u0932\u094d\u092f \u0938\u0947 \u0915\u093e\u092b\u0940 \u0928\u0940\u091a\u0947 \u0939\u094b\u0964",
+            p3t: "\u092a\u093e\u0930\u0926\u0930\u094d\u0936\u0940 \u0924\u0930\u094d\u0915", p3d: "\u092a\u094d\u0930\u0924\u094d\u092f\u0947\u0915 \u0938\u093f\u092b\u093e\u0930\u093f\u0936 \u092e\u0947\u0902 \u092a\u0942\u0930\u094d\u0923 AI \u0935\u094d\u092f\u093e\u0916\u094d\u092f\u093e \u0936\u093e\u092e\u093f\u0932\u0964 \u0906\u092a \u0921\u0947\u091f\u093e, \u092e\u0949\u0921\u0932 \u0914\u0930 \u0924\u0930\u094d\u0915 \u0926\u0947\u0916\u0924\u0947 \u0939\u0948\u0902\u0964",
+            mPillars: "\u092e\u0942\u0932\u094d\u092f \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0938\u094d\u0924\u0902\u092d", mMargin: "\u0932\u0915\u094d\u0937\u094d\u092f \u0938\u0915\u0932 \u092e\u093e\u0930\u094d\u091c\u093f\u0928", mMarkets: "\u0932\u0949\u0928\u094d\u091a \u092c\u093e\u091c\u093c\u093e\u0930", mComply: "\u092f\u0942\u0930\u094b\u092a\u0940\u092f \u0938\u0902\u0918 \u0905\u0928\u0941\u092a\u093e\u0932\u0928 \u0905\u0902\u0924\u0930\u094d\u0928\u093f\u0939\u093f\u0924",
+            prOvr: "\u092e\u0942\u0932\u094d\u092f \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u0923", prTitle: "\u0905\u092a\u0928\u0947 \u0932\u093e\u092d \u092e\u0947\u0902 \u0928\u093f\u0935\u0947\u0936 \u0915\u0930\u0947\u0902", prSub: "\u0938\u0902\u0938\u094d\u0925\u093e\u0917\u0924 \u0938\u094d\u0924\u0930 \u0915\u0940 \u092c\u0941\u0926\u094d\u0927\u093f\u092e\u0924\u094d\u0924\u093e \u0915\u092e \u0932\u093e\u0917\u0924 \u092a\u0930\u0964",
+            t1: "\u090f\u0915\u094d\u0938\u092a\u094d\u0932\u094b\u0930\u0930", t2: "\u0928\u093f\u0935\u0947\u0936\u0915", t3: "\u092a\u094d\u0930\u094b\u092b\u0947\u0936\u0928\u0932", popular: "\u0938\u092c\u0938\u0947 \u0932\u094b\u0915\u092a\u094d\u0930\u093f\u092f", billed: "\u092e\u093e\u0938\u093f\u0915 \u092c\u093f\u0932\u093f\u0902\u0917", getStart: "\u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", contactSales: "\u092c\u093f\u0915\u094d\u0930\u0940 \u0938\u0947 \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0947\u0902",
+            ctaOvr: "\u0905\u0930\u094d\u0932\u0940 \u090f\u0915\u094d\u0938\u0947\u0938", ctaTitle: "\u090f\u0915 \u0905\u0928\u0941\u091a\u093f\u0924 \u0932\u093e\u092d \u0915\u0947 \u0938\u093e\u0925<br>\u0928\u093f\u0935\u0947\u0936 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", ctaDesc: "\u092a\u094d\u0930\u0924\u0940\u0915\u094d\u0937\u093e \u0938\u0942\u091a\u0940 \u092e\u0947\u0902 \u0936\u093e\u092e\u093f\u0932 \u0939\u094b\u0902\u0964 AI-\u0938\u0902\u091a\u093e\u0932\u093f\u0924 \u0935\u0948\u0932\u094d\u092f\u0942 \u0928\u093f\u0935\u0947\u0936 \u0905\u0928\u0941\u092d\u0935 \u0915\u0930\u0928\u0947 \u0935\u093e\u0932\u0947 \u092a\u0939\u0932\u0947 \u0932\u094b\u0917\u094b\u0902 \u092e\u0947\u0902 \u0938\u0947 \u092c\u0928\u0947\u0902\u0964",
+            ctaPh: "\u0905\u092a\u0928\u093e \u0908\u092e\u0947\u0932 \u0926\u0930\u094d\u091c \u0915\u0930\u0947\u0902", ctaBtn: "\u0936\u093e\u092e\u093f\u0932 \u0939\u094b\u0902", ctaOk: "\u0927\u0928\u094d\u092f\u0935\u093e\u0926! \u0939\u092e \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0947\u0902\u0917\u0947\u0964",
+            fDesc: "\u0938\u094d\u0935\u093e\u092f\u0924\u094d\u0924 AI \u090f\u091c\u0947\u0902\u091f\u094b\u0902 \u0915\u0947 \u092e\u093e\u0927\u094d\u092f\u092e \u0938\u0947 \u0938\u0902\u0938\u094d\u0925\u093e\u0917\u0924 \u0928\u093f\u0935\u0947\u0936 \u092c\u0941\u0926\u094d\u0927\u093f\u092e\u0924\u094d\u0924\u093e \u0915\u093e \u0932\u094b\u0915\u0924\u093e\u0902\u0924\u094d\u0930\u0940\u0915\u0930\u0923\u0964",
+            fProd: "\u0909\u0924\u094d\u092a\u093e\u0926", fComp: "\u0915\u0902\u092a\u0928\u0940", fConn: "\u0938\u0902\u092a\u0930\u094d\u0915",
+            nAg: "\u090f\u091c\u0947\u0902\u091f", nHow: "\u0915\u0948\u0938\u0947 \u0915\u093e\u092e \u0915\u0930\u0924\u093e \u0939\u0948", nMeth: "\u0915\u093e\u0930\u094d\u092f\u092a\u094d\u0930\u0923\u093e\u0932\u0940", nPr: "\u092e\u0942\u0932\u094d\u092f", nCta: "\u0905\u0930\u094d\u0932\u0940 \u090f\u0915\u094d\u0938\u0947\u0938",
+            copy: "\u00a9 2026 LIUV Ventures. \u0938\u0930\u094d\u0935\u093e\u0927\u093f\u0915\u093e\u0930 \u0938\u0941\u0930\u0915\u094d\u0937\u093f\u0924\u0964", priv: "\u0917\u094b\u092a\u0928\u0940\u092f\u0924\u093e \u0928\u0940\u0924\u093f", terms: "\u0938\u0947\u0935\u093e \u0915\u0940 \u0936\u0930\u094d\u0924\u0947\u0902", disc: "\u0905\u0938\u094d\u0935\u0940\u0915\u0930\u0923"
+        },
+        tr: {
+            heroOverline: "Yapay Zeka Destekli De\u011fer Yat\u0131r\u0131m\u0131",
+            heroTitle: "Kurumsal d\u00fczeyde<br>yat\u0131r\u0131m <em>zekas\u0131,</em><br>herkes i\u00e7in.",
+            heroSub: "Buffett/Graham metodolojisini kullanarak hisseleri analiz eden, DCF modelleri olu\u015fturan ve portf\u00f6y\u00fcn\u00fcz\u00fc optimize eden otonom AI ajanlar\u0131 \u2014 7/24.",
+            btnWait: "Bekleme Listesine Kat\u0131l", btnExplore: "Ajanlar\u0131 ke\u015ffet",
+            proofMkt: "2030 Ajantik AI pazar\u0131", proofWealth: "2028 AI varl\u0131k y\u00f6netimi", proofAgents: "Uzmanla\u015fm\u0131\u015f AI ajanlar\u0131", proofAuto: "Otonom analiz",
+            agOvr: "\u00c7oklu Ajan Mimarisi", agTitle: "D\u00f6rt ajan. Bir g\u00f6rev.<br>Varl\u0131\u011f\u0131n\u0131z, g\u00fc\u00e7lendirildi.", agSub: "Her AI ajan\u0131 farkl\u0131 bir analitik i\u015flevde uzmanla\u015f\u0131r ve kurumsal d\u00fczeyde ara\u015ft\u0131rma sunar.",
+            c1t: "Portf\u00f6y Dan\u0131\u015fman\u0131", c1d: "10 s\u00fctun \u00e7er\u00e7evesiyle derin de\u011fer analizi. DCF de\u011ferlemesi, hisse tarama ve risk ayarl\u0131 da\u011f\u0131l\u0131m.",
+            c2t: "Harcama Zekas\u0131", c2d: "\u0130\u015flem kal\u0131plar\u0131n\u0131 analiz eder, tasarruf f\u0131rsatlar\u0131n\u0131 belirler ve nakit ak\u0131\u015f\u0131n\u0131 takip eder.",
+            c3t: "Strateji Ajan\u0131", c3d: "Yat\u0131r\u0131mlar\u0131n\u0131z\u0131 uzun vadeli hedeflerle hizalar. Bile\u015fik b\u00fcy\u00fcme modellemesi ve stres testleri.",
+            c4t: "S\u0131n\u0131r \u00d6tesi \u0130stihbarat", c4d: "Uluslararas\u0131 piyasalar\u0131 tarar, d\u00fczenleyici ortamlar\u0131 analiz eder ve d\u00f6viz arbitraj\u0131 f\u0131rsatlar\u0131n\u0131 belirler.",
+            howOvr: "Nas\u0131l \u00c7al\u0131\u015f\u0131r", howTitle: "Veriden karara<br>\u00fc\u00e7 ad\u0131mda", howSub: "Karma\u015f\u0131kl\u0131k yok. Jargon yok. Uygulanabilir zeka do\u011frudan panelinize.",
+            s1t: "Ba\u011flan", s1d: "Portf\u00f6y\u00fcn\u00fcz\u00fc ba\u011flay\u0131n veya s\u0131f\u0131rdan ba\u015flay\u0131n. Risk tolerans\u0131n\u0131z\u0131 ve hedeflerinizi belirleyin.",
+            s2t: "Analiz Et", s2d: "D\u00f6rt uzman ajan 7/24 derin analiz y\u00fcr\u00fct\u00fcr \u2014 hisse tarama, DCF modelleri, k\u00fcresel piyasalar.",
+            s3t: "Harekete Ge\u00e7", s3d: "Tam gerek\u00e7esiyle a\u00e7\u0131k \u00f6neriler al\u0131n. Her i\u00e7g\u00f6r\u00fc karar\u0131n arkas\u0131ndaki mant\u0131\u011f\u0131 g\u00f6sterir.",
+            methOvr: "Metodoloji", methTitle: "Buffett ve Graham temelli.<br>Yapay zeka ile g\u00fc\u00e7lendirilmi\u015f.",
+            p1t: "\u00d6nce \u0130\u00e7sel De\u011fer", p1d: "Her hisse DCF analizi ile de\u011ferlenir. \u0130\u015fletmenin ger\u00e7ek de\u011ferini hesapl\u0131yoruz.",
+            p2t: "G\u00fcvenlik Marj\u0131", p2d: "Yaln\u0131zca piyasa fiyat\u0131 i\u00e7sel de\u011ferin \u00f6nemli \u00f6l\u00e7\u00fcde alt\u0131nda oldu\u011funda \u00f6neri.",
+            p3t: "\u015eeffaf Mant\u0131k", p3d: "Her \u00f6neri tam AI a\u00e7\u0131klamas\u0131 ile gelir. Veriyi, modeli ve mant\u0131\u011f\u0131 g\u00f6r\u00fcrs\u00fcn\u00fcz.",
+            mPillars: "De\u011fer analizi s\u00fctunlar\u0131", mMargin: "Hedef br\u00fct marj", mMarkets: "Lansman pazarlar\u0131", mComply: "AB uyumlulu\u011fu dahili",
+            prOvr: "Fiyatland\u0131rma", prTitle: "Avantaj\u0131n\u0131za yat\u0131r\u0131m yap\u0131n", prSub: "Kurumsal d\u00fczeyde zeka, maliyetin bir k\u0131sm\u0131na.",
+            t1: "Explorer", t2: "Yat\u0131r\u0131mc\u0131", t3: "Profesyonel", popular: "En Pop\u00fcler", billed: "Ayl\u0131k faturaland\u0131rma", getStart: "Ba\u015fla", contactSales: "Sat\u0131\u015fa Ba\u015fvur",
+            ctaOvr: "Erken Eri\u015fim", ctaTitle: "Haks\u0131z bir avantajla<br>yat\u0131r\u0131ma ba\u015flay\u0131n", ctaDesc: "Bekleme listesine kat\u0131l\u0131n. AI destekli de\u011fer yat\u0131r\u0131m\u0131n\u0131 ilk deneyenlerden olun.",
+            ctaPh: "E-posta adresinizi girin", ctaBtn: "Kat\u0131l", ctaOk: "Te\u015fekk\u00fcrler! Sizinle ileti\u015fime ge\u00e7ece\u011fiz.",
+            fDesc: "Otonom AI ajanlar\u0131 arac\u0131l\u0131\u011f\u0131yla kurumsal yat\u0131r\u0131m zekas\u0131n\u0131 demokratikle\u015ftiriyoruz.",
+            fProd: "\u00dcr\u00fcn", fComp: "\u015eirket", fConn: "\u0130leti\u015fim",
+            nAg: "Ajanlar", nHow: "Nas\u0131l \u00c7al\u0131\u015f\u0131r", nMeth: "Metodoloji", nPr: "Fiyatlar", nCta: "Erken Eri\u015fim",
+            copy: "\u00a9 2026 LIUV Ventures. T\u00fcm haklar\u0131 sakl\u0131d\u0131r.", priv: "Gizlilik Politikas\u0131", terms: "Kullan\u0131m Ko\u015fullar\u0131", disc: "Sorumluluk Reddi"
+        },
+        el: {
+            heroOverline: "\u0395\u03c0\u03b5\u03bd\u03b4\u03cd\u03c3\u03b5\u03b9\u03c2 \u0391\u03be\u03af\u03b1\u03c2 \u03bc\u03b5 AI",
+            heroTitle: "\u0398\u03b5\u03c3\u03bc\u03b9\u03ba\u03bf\u03cd \u03b5\u03c0\u03b9\u03c0\u03ad\u03b4\u03bf\u03c5<br>\u03b5\u03c0\u03b5\u03bd\u03b4\u03c5\u03c4\u03b9\u03ba\u03ae <em>\u03b5\u03c5\u03c6\u03c5\u0390\u03b1,</em><br>\u03b3\u03b9\u03b1 \u03cc\u03bb\u03bf\u03c5\u03c2.",
+            heroSub: "\u0391\u03c5\u03c4\u03cc\u03bd\u03bf\u03bc\u03bf\u03b9 AI \u03c0\u03c1\u03ac\u03ba\u03c4\u03bf\u03c1\u03b5\u03c2 \u03c0\u03bf\u03c5 \u03b1\u03bd\u03b1\u03bb\u03cd\u03bf\u03c5\u03bd \u03bc\u03b5\u03c4\u03bf\u03c7\u03ad\u03c2 \u03bc\u03b5 \u03c4\u03b7 \u03bc\u03b5\u03b8\u03bf\u03b4\u03bf\u03bb\u03bf\u03b3\u03af\u03b1 Buffett/Graham, \u03b4\u03b7\u03bc\u03b9\u03bf\u03c5\u03c1\u03b3\u03bf\u03cd\u03bd \u03bc\u03bf\u03bd\u03c4\u03ad\u03bb\u03b1 DCF \u03ba\u03b1\u03b9 \u03b2\u03b5\u03bb\u03c4\u03b9\u03c3\u03c4\u03bf\u03c0\u03bf\u03b9\u03bf\u03cd\u03bd \u03c4\u03bf \u03c7\u03b1\u03c1\u03c4\u03bf\u03c6\u03c5\u03bb\u03ac\u03ba\u03b9\u03cc \u03c3\u03b1\u03c2 \u2014 24/7.",
+            btnWait: "\u0395\u03b3\u03b3\u03c1\u03b1\u03c6\u03ae \u03c3\u03c4\u03b7 \u039b\u03af\u03c3\u03c4\u03b1", btnExplore: "\u0395\u03be\u03b5\u03c1\u03b5\u03c5\u03bd\u03ae\u03c3\u03c4\u03b5 \u03c4\u03bf\u03c5\u03c2 \u03c0\u03c1\u03ac\u03ba\u03c4\u03bf\u03c1\u03b5\u03c2",
+            proofMkt: "\u0391\u03b3\u03bf\u03c1\u03ac Agentic AI \u03ad\u03c9\u03c2 2030", proofWealth: "AI \u03b4\u03b9\u03b1\u03c7\u03b5\u03af\u03c1\u03b9\u03c3\u03b7 \u03c0\u03bb\u03bf\u03cd\u03c4\u03bf\u03c5 \u03ad\u03c9\u03c2 2028", proofAgents: "\u0395\u03be\u03b5\u03b9\u03b4\u03b9\u03ba\u03b5\u03c5\u03bc\u03ad\u03bd\u03bf\u03b9 AI \u03c0\u03c1\u03ac\u03ba\u03c4\u03bf\u03c1\u03b5\u03c2", proofAuto: "\u0391\u03c5\u03c4\u03cc\u03bd\u03bf\u03bc\u03b7 \u03b1\u03bd\u03ac\u03bb\u03c5\u03c3\u03b7",
+            agOvr: "\u0391\u03c1\u03c7\u03b9\u03c4\u03b5\u03ba\u03c4\u03bf\u03bd\u03b9\u03ba\u03ae \u03a0\u03bf\u03bb\u03bb\u03b1\u03c0\u03bb\u03ce\u03bd \u03a0\u03c1\u03b1\u03ba\u03c4\u03cc\u03c1\u03c9\u03bd", agTitle: "\u03a4\u03ad\u03c3\u03c3\u03b5\u03c1\u03b9\u03c2 \u03c0\u03c1\u03ac\u03ba\u03c4\u03bf\u03c1\u03b5\u03c2. \u039c\u03af\u03b1 \u03b1\u03c0\u03bf\u03c3\u03c4\u03bf\u03bb\u03ae.<br>\u039f \u03c0\u03bb\u03bf\u03cd\u03c4\u03bf\u03c2 \u03c3\u03b1\u03c2, \u03b5\u03bd\u03b9\u03c3\u03c7\u03c5\u03bc\u03ad\u03bd\u03bf\u03c2.", agSub: "\u039a\u03ac\u03b8\u03b5 AI \u03c0\u03c1\u03ac\u03ba\u03c4\u03bf\u03c1\u03b1\u03c2 \u03b5\u03be\u03b5\u03b9\u03b4\u03b9\u03ba\u03b5\u03cd\u03b5\u03c4\u03b1\u03b9 \u03c3\u03b5 \u03b4\u03b9\u03b1\u03c6\u03bf\u03c1\u03b5\u03c4\u03b9\u03ba\u03ae \u03b1\u03bd\u03b1\u03bb\u03c5\u03c4\u03b9\u03ba\u03ae \u03bb\u03b5\u03b9\u03c4\u03bf\u03c5\u03c1\u03b3\u03af\u03b1 \u03b3\u03b9\u03b1 \u03b8\u03b5\u03c3\u03bc\u03b9\u03ba\u03bf\u03cd \u03b5\u03c0\u03b9\u03c0\u03ad\u03b4\u03bf\u03c5 \u03ad\u03c1\u03b5\u03c5\u03bd\u03b1.",
+            c1t: "\u03a3\u03cd\u03bc\u03b2\u03bf\u03c5\u03bb\u03bf\u03c2 \u03a7\u03b1\u03c1\u03c4\u03bf\u03c6\u03c5\u03bb\u03b1\u03ba\u03af\u03bf\u03c5", c1d: "\u0392\u03b1\u03b8\u03b9\u03ac \u03b1\u03bd\u03ac\u03bb\u03c5\u03c3\u03b7 \u03b1\u03be\u03af\u03b1\u03c2 \u03bc\u03b5 \u03c4\u03bf \u03c0\u03bb\u03b1\u03af\u03c3\u03b9\u03bf 10 \u03c0\u03c5\u03bb\u03ce\u03bd\u03c9\u03bd. \u0391\u03c0\u03bf\u03c4\u03af\u03bc\u03b7\u03c3\u03b7 DCF, \u03ad\u03bb\u03b5\u03b3\u03c7\u03bf\u03c2 \u03bc\u03b5\u03c4\u03bf\u03c7\u03ce\u03bd \u03ba\u03b1\u03b9 \u03ba\u03b1\u03c4\u03b1\u03bd\u03bf\u03bc\u03ae \u03c0\u03c1\u03bf\u03c3\u03b1\u03c1\u03bc\u03bf\u03c3\u03bc\u03ad\u03bd\u03b7 \u03c3\u03c4\u03bf \u03c1\u03af\u03c3\u03ba\u03bf.",
+            c2t: "\u039d\u03bf\u03b7\u03bc\u03bf\u03c3\u03cd\u03bd\u03b7 \u0394\u03b1\u03c0\u03b1\u03bd\u03ce\u03bd", c2d: "\u0391\u03bd\u03b1\u03bb\u03cd\u03b5\u03b9 \u03c0\u03c1\u03cc\u03c4\u03c5\u03c0\u03b1 \u03c3\u03c5\u03bd\u03b1\u03bb\u03bb\u03b1\u03b3\u03ce\u03bd, \u03b5\u03bd\u03c4\u03bf\u03c0\u03af\u03b6\u03b5\u03b9 \u03b5\u03be\u03bf\u03b9\u03ba\u03bf\u03bd\u03bf\u03bc\u03ae\u03c3\u03b5\u03b9\u03c2 \u03ba\u03b1\u03b9 \u03c0\u03b1\u03c1\u03b1\u03ba\u03bf\u03bb\u03bf\u03c5\u03b8\u03b5\u03af \u03c4\u03b1\u03bc\u03b5\u03b9\u03b1\u03ba\u03ad\u03c2 \u03c1\u03bf\u03ad\u03c2.",
+            c3t: "\u03a0\u03c1\u03ac\u03ba\u03c4\u03bf\u03c1\u03b1\u03c2 \u03a3\u03c4\u03c1\u03b1\u03c4\u03b7\u03b3\u03b9\u03ba\u03ae\u03c2", c3d: "\u0395\u03c5\u03b8\u03c5\u03b3\u03c1\u03b1\u03bc\u03bc\u03af\u03b6\u03b5\u03b9 \u03c4\u03b9\u03c2 \u03b5\u03c0\u03b5\u03bd\u03b4\u03cd\u03c3\u03b5\u03b9\u03c2 \u03bc\u03b5 \u03bc\u03b1\u03ba\u03c1\u03bf\u03c0\u03c1\u03cc\u03b8\u03b5\u03c3\u03bc\u03bf\u03c5\u03c2 \u03c3\u03c4\u03cc\u03c7\u03bf\u03c5\u03c2. \u039c\u03bf\u03bd\u03c4\u03b5\u03bb\u03bf\u03c0\u03bf\u03af\u03b7\u03c3\u03b7 \u03c3\u03cd\u03bd\u03b8\u03b5\u03c4\u03b7\u03c2 \u03b1\u03bd\u03ac\u03c0\u03c4\u03c5\u03be\u03b7\u03c2 \u03ba\u03b1\u03b9 stress tests.",
+            c4t: "\u0394\u03b9\u03b1\u03c3\u03c5\u03bd\u03bf\u03c1\u03b9\u03b1\u03ba\u03ae \u03a0\u03bb\u03b7\u03c1\u03bf\u03c6\u03cc\u03c1\u03b7\u03c3\u03b7", c4d: "\u03a3\u03b1\u03c1\u03ce\u03bd\u03b5\u03b9 \u03b4\u03b9\u03b5\u03b8\u03bd\u03b5\u03af\u03c2 \u03b1\u03b3\u03bf\u03c1\u03ad\u03c2, \u03b1\u03bd\u03b1\u03bb\u03cd\u03b5\u03b9 \u03c1\u03c5\u03b8\u03bc\u03b9\u03c3\u03c4\u03b9\u03ba\u03ac \u03c0\u03b5\u03c1\u03b9\u03b2\u03ac\u03bb\u03bb\u03bf\u03bd\u03c4\u03b1 \u03ba\u03b1\u03b9 \u03b5\u03bd\u03c4\u03bf\u03c0\u03af\u03b6\u03b5\u03b9 arbitrage \u03c3\u03c5\u03bd\u03b1\u03bb\u03bb\u03ac\u03b3\u03bc\u03b1\u03c4\u03bf\u03c2.",
+            howOvr: "\u03a0\u03ce\u03c2 \u039b\u03b5\u03b9\u03c4\u03bf\u03c5\u03c1\u03b3\u03b5\u03af", howTitle: "\u0391\u03c0\u03cc \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03b1 \u03c3\u03b5 \u03b1\u03c0\u03cc\u03c6\u03b1\u03c3\u03b7<br>\u03c3\u03b5 \u03c4\u03c1\u03af\u03b1 \u03b2\u03ae\u03bc\u03b1\u03c4\u03b1", howSub: "\u03a7\u03c9\u03c1\u03af\u03c2 \u03c0\u03bf\u03bb\u03c5\u03c0\u03bb\u03bf\u03ba\u03cc\u03c4\u03b7\u03c4\u03b1. \u03a7\u03c9\u03c1\u03af\u03c2 \u03bf\u03c1\u03bf\u03bb\u03bf\u03b3\u03af\u03b1. \u0395\u03c6\u03b1\u03c1\u03bc\u03cc\u03c3\u03b9\u03bc\u03b7 \u03b5\u03c5\u03c6\u03c5\u0390\u03b1 \u03b1\u03c0\u03b5\u03c5\u03b8\u03b5\u03af\u03b1\u03c2 \u03c3\u03c4\u03bf\u03bd \u03c0\u03af\u03bd\u03b1\u03ba\u03ac \u03c3\u03b1\u03c2.",
+            s1t: "\u03a3\u03cd\u03bd\u03b4\u03b5\u03c3\u03b7", s1d: "\u03a3\u03c5\u03bd\u03b4\u03ad\u03c3\u03c4\u03b5 \u03c4\u03bf \u03c7\u03b1\u03c1\u03c4\u03bf\u03c6\u03c5\u03bb\u03ac\u03ba\u03b9\u03cc \u03c3\u03b1\u03c2 \u03ae \u03be\u03b5\u03ba\u03b9\u03bd\u03ae\u03c3\u03c4\u03b5 \u03b1\u03c0\u03cc \u03c4\u03b7\u03bd \u03b1\u03c1\u03c7\u03ae. \u039f\u03c1\u03af\u03c3\u03c4\u03b5 \u03c4\u03b7\u03bd \u03b1\u03bd\u03bf\u03c7\u03ae \u03c1\u03af\u03c3\u03ba\u03bf\u03c5 \u03ba\u03b1\u03b9 \u03c4\u03bf\u03c5\u03c2 \u03c3\u03c4\u03cc\u03c7\u03bf\u03c5\u03c2 \u03c3\u03b1\u03c2.",
+            s2t: "\u0391\u03bd\u03ac\u03bb\u03c5\u03c3\u03b7", s2d: "\u03a4\u03ad\u03c3\u03c3\u03b5\u03c1\u03b9\u03c2 \u03b5\u03be\u03b5\u03b9\u03b4\u03b9\u03ba\u03b5\u03c5\u03bc\u03ad\u03bd\u03bf\u03b9 \u03c0\u03c1\u03ac\u03ba\u03c4\u03bf\u03c1\u03b5\u03c2 24/7 \u2014 \u03ad\u03bb\u03b5\u03b3\u03c7\u03bf\u03c2 \u03bc\u03b5\u03c4\u03bf\u03c7\u03ce\u03bd, DCF \u03bc\u03bf\u03bd\u03c4\u03ad\u03bb\u03b1, \u03c0\u03b1\u03b3\u03ba\u03cc\u03c3\u03bc\u03b9\u03b5\u03c2 \u03b1\u03b3\u03bf\u03c1\u03ad\u03c2.",
+            s3t: "\u0394\u03c1\u03ac\u03c3\u03b7", s3d: "\u039b\u03ac\u03b2\u03b5\u03c4\u03b5 \u03c3\u03b1\u03c6\u03b5\u03af\u03c2 \u03c3\u03c5\u03c3\u03c4\u03ac\u03c3\u03b5\u03b9\u03c2 \u03bc\u03b5 \u03c0\u03bb\u03ae\u03c1\u03b7 \u03b1\u03b9\u03c4\u03b9\u03bf\u03bb\u03cc\u03b3\u03b7\u03c3\u03b7. \u039a\u03ac\u03b8\u03b5 \u03c0\u03bb\u03b7\u03c1\u03bf\u03c6\u03bf\u03c1\u03af\u03b1 \u03b4\u03b5\u03af\u03c7\u03bd\u03b5\u03b9 \u03c4\u03bf \u03b3\u03b9\u03b1\u03c4\u03af \u03c0\u03af\u03c3\u03c9 \u03b1\u03c0\u03cc \u03c4\u03b7\u03bd \u03b1\u03c0\u03cc\u03c6\u03b1\u03c3\u03b7.",
+            methOvr: "\u039c\u03b5\u03b8\u03bf\u03b4\u03bf\u03bb\u03bf\u03b3\u03af\u03b1", methTitle: "\u0392\u03b1\u03c3\u03b9\u03c3\u03bc\u03ad\u03bd\u03bf \u03c3\u03b5 Buffett & Graham.<br>\u039c\u03b5 \u03c4\u03b7 \u03b4\u03cd\u03bd\u03b1\u03bc\u03b7 \u03c4\u03b7\u03c2 AI.",
+            p1t: "\u0395\u03c3\u03c9\u03c4\u03b5\u03c1\u03b9\u03ba\u03ae \u0391\u03be\u03af\u03b1 \u03a0\u03c1\u03ce\u03c4\u03b1", p1d: "\u039a\u03ac\u03b8\u03b5 \u03bc\u03b5\u03c4\u03bf\u03c7\u03ae \u03b1\u03c0\u03bf\u03c4\u03b9\u03bc\u03ac\u03c4\u03b1\u03b9 \u03bc\u03b5 DCF, \u03cc\u03c7\u03b9 \u03bc\u03b5 \u03c3\u03c5\u03bd\u03b1\u03af\u03c3\u03b8\u03b7\u03bc\u03b1. \u03a5\u03c0\u03bf\u03bb\u03bf\u03b3\u03af\u03b6\u03bf\u03c5\u03bc\u03b5 \u03c4\u03b7\u03bd \u03c0\u03c1\u03b1\u03b3\u03bc\u03b1\u03c4\u03b9\u03ba\u03ae \u03b1\u03be\u03af\u03b1 \u03c4\u03b7\u03c2 \u03b5\u03c0\u03b9\u03c7\u03b5\u03af\u03c1\u03b7\u03c3\u03b7\u03c2.",
+            p2t: "\u03a0\u03b5\u03c1\u03b9\u03b8\u03ce\u03c1\u03b9\u03bf \u0391\u03c3\u03c6\u03b1\u03bb\u03b5\u03af\u03b1\u03c2", p2d: "\u03a3\u03c5\u03c3\u03c4\u03ac\u03c3\u03b5\u03b9\u03c2 \u03bc\u03cc\u03bd\u03bf \u03cc\u03c4\u03b1\u03bd \u03b7 \u03c4\u03b9\u03bc\u03ae \u03b5\u03af\u03bd\u03b1\u03b9 \u03c3\u03b7\u03bc\u03b1\u03bd\u03c4\u03b9\u03ba\u03ac \u03ba\u03ac\u03c4\u03c9 \u03b1\u03c0\u03cc \u03c4\u03b7\u03bd \u03b5\u03c3\u03c9\u03c4\u03b5\u03c1\u03b9\u03ba\u03ae \u03b1\u03be\u03af\u03b1.",
+            p3t: "\u0394\u03b9\u03b1\u03c6\u03b1\u03bd\u03ae\u03c2 \u039b\u03bf\u03b3\u03b9\u03ba\u03ae", p3d: "\u039a\u03ac\u03b8\u03b5 \u03c3\u03cd\u03c3\u03c4\u03b1\u03c3\u03b7 \u03c0\u03b5\u03c1\u03b9\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03b5\u03b9 \u03c0\u03bb\u03ae\u03c1\u03b7 \u03b5\u03be\u03ae\u03b3\u03b7\u03c3\u03b7 AI. \u0392\u03bb\u03ad\u03c0\u03b5\u03c4\u03b5 \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03b1, \u03bc\u03bf\u03bd\u03c4\u03ad\u03bb\u03bf \u03ba\u03b1\u03b9 \u03bb\u03bf\u03b3\u03b9\u03ba\u03ae.",
+            mPillars: "\u03a0\u03c5\u03bb\u03ce\u03bd\u03b5\u03c2 \u03b1\u03bd\u03ac\u03bb\u03c5\u03c3\u03b7\u03c2 \u03b1\u03be\u03af\u03b1\u03c2", mMargin: "\u03a3\u03c4\u03cc\u03c7\u03bf\u03c2 \u03bc\u03b9\u03ba\u03c4\u03bf\u03cd \u03c0\u03b5\u03c1\u03b9\u03b8\u03c9\u03c1\u03af\u03bf\u03c5", mMarkets: "\u0391\u03b3\u03bf\u03c1\u03ad\u03c2 \u03ba\u03b1\u03c4\u03ac \u03c4\u03b7\u03bd \u03ad\u03bd\u03b1\u03c1\u03be\u03b7", mComply: "\u0395\u03bd\u03c3\u03c9\u03bc\u03b1\u03c4\u03c9\u03bc\u03ad\u03bd\u03b7 \u03c3\u03c5\u03bc\u03bc\u03cc\u03c1\u03c6\u03c9\u03c3\u03b7 \u0395\u0395",
+            prOvr: "\u03a4\u03b9\u03bc\u03bf\u03bb\u03cc\u03b3\u03b7\u03c3\u03b7", prTitle: "\u0395\u03c0\u03b5\u03bd\u03b4\u03cd\u03c3\u03c4\u03b5 \u03c3\u03c4\u03bf \u03c0\u03bb\u03b5\u03bf\u03bd\u03ad\u03ba\u03c4\u03b7\u03bc\u03ac \u03c3\u03b1\u03c2", prSub: "\u0398\u03b5\u03c3\u03bc\u03b9\u03ba\u03bf\u03cd \u03b5\u03c0\u03b9\u03c0\u03ad\u03b4\u03bf\u03c5 \u03b5\u03c5\u03c6\u03c5\u0390\u03b1 \u03c3\u03b5 \u03ba\u03bb\u03ac\u03c3\u03bc\u03b1 \u03c4\u03bf\u03c5 \u03ba\u03cc\u03c3\u03c4\u03bf\u03c5\u03c2.",
+            t1: "Explorer", t2: "\u0395\u03c0\u03b5\u03bd\u03b4\u03c5\u03c4\u03ae\u03c2", t3: "Professional", popular: "\u0394\u03b7\u03bc\u03bf\u03c6\u03b9\u03bb\u03ad\u03c3\u03c4\u03b5\u03c1\u03bf", billed: "\u039c\u03b7\u03bd\u03b9\u03b1\u03af\u03b1 \u03c7\u03c1\u03ad\u03c9\u03c3\u03b7", getStart: "\u039e\u03b5\u03ba\u03b9\u03bd\u03ae\u03c3\u03c4\u03b5", contactSales: "\u0395\u03c0\u03b9\u03ba\u03bf\u03b9\u03bd\u03c9\u03bd\u03af\u03b1 \u03a0\u03c9\u03bb\u03ae\u03c3\u03b5\u03c9\u03bd",
+            ctaOvr: "\u03a0\u03c1\u03ce\u03b9\u03bc\u03b7 \u03a0\u03c1\u03cc\u03c3\u03b2\u03b1\u03c3\u03b7", ctaTitle: "\u0395\u03c0\u03b5\u03bd\u03b4\u03cd\u03c3\u03c4\u03b5 \u03bc\u03b5<br>\u03ad\u03bd\u03b1 \u03b1\u03b8\u03ad\u03bc\u03b9\u03c4\u03bf \u03c0\u03bb\u03b5\u03bf\u03bd\u03ad\u03ba\u03c4\u03b7\u03bc\u03b1", ctaDesc: "\u0393\u03c1\u03b1\u03c6\u03c4\u03b5\u03af\u03c4\u03b5 \u03c3\u03c4\u03b7 \u03bb\u03af\u03c3\u03c4\u03b1 \u03b1\u03bd\u03b1\u03bc\u03bf\u03bd\u03ae\u03c2. \u0393\u03af\u03bd\u03b5\u03c4\u03b5 \u03b1\u03c0\u03cc \u03c4\u03bf\u03c5\u03c2 \u03c0\u03c1\u03ce\u03c4\u03bf\u03c5\u03c2 \u03c0\u03bf\u03c5 \u03b8\u03b1 \u03b4\u03bf\u03ba\u03b9\u03bc\u03ac\u03c3\u03bf\u03c5\u03bd AI value investing.",
+            ctaPh: "\u0395\u03b9\u03c3\u03ac\u03b3\u03b5\u03c4\u03b5 \u03c4\u03bf email \u03c3\u03b1\u03c2", ctaBtn: "\u0395\u03b3\u03b3\u03c1\u03b1\u03c6\u03ae", ctaOk: "\u0395\u03c5\u03c7\u03b1\u03c1\u03b9\u03c3\u03c4\u03bf\u03cd\u03bc\u03b5! \u0398\u03b1 \u03b5\u03c0\u03b9\u03ba\u03bf\u03b9\u03bd\u03c9\u03bd\u03ae\u03c3\u03bf\u03c5\u03bc\u03b5.",
+            fDesc: "\u0394\u03b7\u03bc\u03bf\u03ba\u03c1\u03b1\u03c4\u03b9\u03ba\u03bf\u03c0\u03bf\u03af\u03b7\u03c3\u03b7 \u03c4\u03b7\u03c2 \u03b8\u03b5\u03c3\u03bc\u03b9\u03ba\u03ae\u03c2 \u03b5\u03c0\u03b5\u03bd\u03b4\u03c5\u03c4\u03b9\u03ba\u03ae\u03c2 \u03b5\u03c5\u03c6\u03c5\u0390\u03b1\u03c2 \u03bc\u03ad\u03c3\u03c9 \u03b1\u03c5\u03c4\u03cc\u03bd\u03bf\u03bc\u03c9\u03bd AI \u03c0\u03c1\u03b1\u03ba\u03c4\u03cc\u03c1\u03c9\u03bd.",
+            fProd: "\u03a0\u03c1\u03bf\u03ca\u03cc\u03bd", fComp: "\u0395\u03c4\u03b1\u03b9\u03c1\u03b5\u03af\u03b1", fConn: "\u0395\u03c0\u03b9\u03ba\u03bf\u03b9\u03bd\u03c9\u03bd\u03af\u03b1",
+            nAg: "\u03a0\u03c1\u03ac\u03ba\u03c4\u03bf\u03c1\u03b5\u03c2", nHow: "\u03a0\u03ce\u03c2 \u039b\u03b5\u03b9\u03c4\u03bf\u03c5\u03c1\u03b3\u03b5\u03af", nMeth: "\u039c\u03b5\u03b8\u03bf\u03b4\u03bf\u03bb\u03bf\u03b3\u03af\u03b1", nPr: "\u03a4\u03b9\u03bc\u03ad\u03c2", nCta: "\u03a0\u03c1\u03ce\u03b9\u03bc\u03b7 \u03a0\u03c1\u03cc\u03c3\u03b2\u03b1\u03c3\u03b7",
+            copy: "\u00a9 2026 LIUV Ventures. \u039c\u03b5 \u03b5\u03c0\u03b9\u03c6\u03cd\u03bb\u03b1\u03be\u03b7 \u03c0\u03b1\u03bd\u03c4\u03cc\u03c2 \u03b4\u03b9\u03ba\u03b1\u03b9\u03ce\u03bc\u03b1\u03c4\u03bf\u03c2.", priv: "\u03a0\u03bf\u03bb\u03b9\u03c4\u03b9\u03ba\u03ae \u0391\u03c0\u03bf\u03c1\u03c1\u03ae\u03c4\u03bf\u03c5", terms: "\u038c\u03c1\u03bf\u03b9 \u03a7\u03c1\u03ae\u03c3\u03b7\u03c2", disc: "\u0391\u03c0\u03bf\u03c0\u03bf\u03af\u03b7\u03c3\u03b7 \u0395\u03c5\u03b8\u03cd\u03bd\u03b7\u03c2"
+        }
+    };
+
+    const countryToLang = {
+        US:'en',GB:'en',AU:'en',CA:'en',IE:'en',NZ:'en',SG:'en',IN:'hi',
+        BR:'pt',PT:'pt',AO:'pt',MZ:'pt',
+        DE:'de',AT:'de',CH:'de',
+        NL:'nl',BE:'nl',
+        CN:'zh',TW:'zh',HK:'zh',MO:'zh',
+        TR:'tr',
+        GR:'el',CY:'el'
+    };
+
+    function applyTranslation(lang) {
+        const t = T[lang];
+        if (!t) return;
+        const q = s => document.querySelector(s);
+        const qa = s => document.querySelectorAll(s);
+
+        q('.hero__overline').lastChild.textContent = t.heroOverline;
+        q('.hero__title').innerHTML = t.heroTitle;
+        q('.hero__subtitle').textContent = t.heroSub;
+        qa('.hero__actions a')[0].firstChild.textContent = t.btnWait + ' ';
+        qa('.hero__actions a')[1].firstChild.textContent = t.btnExplore + ' ';
+
+        const pl = qa('.proof__label');
+        if(pl[0]) pl[0].textContent = t.proofMkt;
+        if(pl[1]) pl[1].textContent = t.proofWealth;
+        if(pl[2]) pl[2].textContent = t.proofAgents;
+        if(pl[3]) pl[3].textContent = t.proofAuto;
+
+        const as = document.getElementById('agents');
+        as.querySelector('.section__overline').textContent = t.agOvr;
+        as.querySelector('.section__title').innerHTML = t.agTitle;
+        as.querySelector('.section__subtitle').textContent = t.agSub;
+
+        const cards = qa('.agent-card');
+        [{t:t.c1t,d:t.c1d},{t:t.c2t,d:t.c2d},{t:t.c3t,d:t.c3d},{t:t.c4t,d:t.c4d}].forEach((c,i) => {
+            if(cards[i]){cards[i].querySelector('.agent-card__title').textContent=c.t;cards[i].querySelector('.agent-card__desc').textContent=c.d;}
+        });
+
+        const hs = document.getElementById('how');
+        hs.querySelector('.section__overline').textContent = t.howOvr;
+        hs.querySelector('.section__title').innerHTML = t.howTitle;
+        hs.querySelector('.section__subtitle').textContent = t.howSub;
+        const steps = qa('.how__step');
+        [{t:t.s1t,d:t.s1d},{t:t.s2t,d:t.s2d},{t:t.s3t,d:t.s3d}].forEach((s,i) => {
+            if(steps[i]){steps[i].querySelector('.how__step-title').textContent=s.t;steps[i].querySelector('.how__step-desc').textContent=s.d;}
+        });
+
+        const ms = document.getElementById('methodology');
+        ms.querySelector('.section__overline').textContent = t.methOvr;
+        ms.querySelector('.section__title').innerHTML = t.methTitle;
+        const prins = qa('.why__principle');
+        [{t:t.p1t,d:t.p1d},{t:t.p2t,d:t.p2d},{t:t.p3t,d:t.p3d}].forEach((p,i) => {
+            if(prins[i]){prins[i].querySelector('.why__principle-title').textContent=p.t;prins[i].querySelector('.why__principle-desc').textContent=p.d;}
+        });
+        const ml = qa('.why__metric-label');
+        if(ml[0]) ml[0].textContent=t.mPillars; if(ml[1]) ml[1].textContent=t.mMargin;
+        if(ml[2]) ml[2].textContent=t.mMarkets; if(ml[3]) ml[3].textContent=t.mComply;
+
+        const ps = document.getElementById('pricing');
+        ps.querySelector('.section__overline').textContent = t.prOvr;
+        ps.querySelector('.section__title').textContent = t.prTitle;
+        ps.querySelector('.section__subtitle').textContent = t.prSub;
+        const pc = qa('.pricing-card');
+        [t.t1,t.t2,t.t3].forEach((n,i) => {if(pc[i]){pc[i].querySelector('.pricing-card__name').textContent=n;pc[i].querySelector('.pricing-card__period').textContent=t.billed;}});
+        const badge = q('.pricing-card__badge'); if(badge) badge.textContent=t.popular;
+        const pb = qa('.pricing-card__btn');
+        if(pb[0]) pb[0].textContent=t.getStart; if(pb[1]) pb[1].textContent=t.getStart; if(pb[2]) pb[2].textContent=t.contactSales;
+
+        const cs = document.getElementById('cta');
+        cs.querySelector('.section__overline').textContent = t.ctaOvr;
+        cs.querySelector('.cta__title').innerHTML = t.ctaTitle;
+        cs.querySelector('.cta__desc').textContent = t.ctaDesc;
+        cs.querySelector('.cta__input').placeholder = t.ctaPh;
+        cs.querySelector('.btn-primary').textContent = t.ctaBtn;
+
+        const nl = qa('.nav__links > li > a');
+        if(nl[0]) nl[0].textContent=t.nAg; if(nl[1]) nl[1].textContent=t.nHow;
+        if(nl[2]) nl[2].textContent=t.nMeth; if(nl[3]) nl[3].textContent=t.nPr; if(nl[4]) nl[4].textContent=t.nCta;
+
+        const fp = q('.footer__brand p'); if(fp) fp.textContent=t.fDesc;
+        const ct = qa('.footer__col-title');
+        if(ct[0]) ct[0].textContent=t.fProd; if(ct[1]) ct[1].textContent=t.fComp; if(ct[2]) ct[2].textContent=t.fConn;
+        const fc = q('.footer__copy'); if(fc) fc.textContent=t.copy;
+        const fl = qa('.footer__legal a');
+        if(fl[0]) fl[0].textContent=t.priv; if(fl[1]) fl[1].textContent=t.terms; if(fl[2]) fl[2].textContent=t.disc;
+
+        document.getElementById('lang-select').value = lang;
+        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
+    }
+
+    function changeLanguage(lang) {
+        applyTranslation(lang);
+        try { sessionStorage.setItem('liuv_lang', lang); } catch(e) {}
+    }
+
+    (async function detectLanguage() {
+        try { const s = sessionStorage.getItem('liuv_lang'); if (s && T[s]) { applyTranslation(s); return; } } catch(e) {}
+        const bl = (navigator.language || '').split('-')[0];
+        if (T[bl]) { applyTranslation(bl); return; }
+        try {
+            const r = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
+            const d = await r.json();
+            applyTranslation(countryToLang[d.country_code] || 'en');
+        } catch(e) {}
+    })();
+</script>
+
+</body>
+</html>
