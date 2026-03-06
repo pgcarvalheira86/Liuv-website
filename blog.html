@@ -591,7 +591,23 @@
         }
 
         @media (max-width: 768px) {
-            .nav__links { display: none; }
+            .nav__links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(6, 9, 16, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                padding: 16px 24px 24px;
+                gap: 0;
+                border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+            }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
             .nav__mobile-toggle { display: block; }
 
             .blog-grid__list {
@@ -635,8 +651,9 @@
             <li><a href="/#agents">Agents</a></li>
             <li><a href="/#how">How It Works</a></li>
             <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html">Resources</a></li>
             <li><a href="/blog.html" class="active">Blog</a></li>
-            <li><a href="/#pricing" class="nav__cta">Start Free Trial</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
         </ul>
         <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
     </div>
@@ -720,7 +737,7 @@
                     <ul>
                         <li><a href="/#agents">AI Agents</a></li>
                         <li><a href="/#pricing">Pricing</a></li>
-                        <li><a href="/#methodology">Methodology</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
                         <li><a href="#">API Docs</a></li>
                     </ul>
                 </div>
@@ -729,6 +746,7 @@
                     <ul>
                         <li><a href="/#founder">About</a></li>
                         <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
                         <li><a href="mailto:pedro@liuv.io">Contact</a></li>
                     </ul>
                 </div>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Compliance &amp; Regulatory — LIUV | AI Wealth Agent</title>
+    <meta name="description" content="LIUV's regulatory compliance framework. MiFID II, SEC, CVM, and AI transparency standards. Built with regulation from day one across all jurisdictions.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+            --agent-spending: #3B82F6;
+            --agent-strategy: #A78BFA;
+            --agent-crossborder: #F59E0B;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        img { max-width: 100%; display: block; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Background */
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        /* Hero */
+        .compliance-hero { padding: 160px 0 80px; position: relative; z-index: 1; }
+        .compliance-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .compliance-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .compliance-hero__title { font-family: var(--font-display); font-size: clamp(36px, 5vw, 56px); font-weight: 400; line-height: 1.15; margin-bottom: 20px; }
+        .compliance-hero__subtitle { font-size: 18px; color: var(--text-muted); max-width: 700px; line-height: 1.7; }
+
+        /* Content Sections */
+        .compliance-content { position: relative; z-index: 1; padding-bottom: 80px; }
+
+        .reg-section { margin-bottom: 64px; }
+        .reg-section__header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .reg-section__icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+        .reg-section__icon--teal { background: var(--accent-teal-dim); }
+        .reg-section__icon--blue { background: rgba(59, 130, 246, 0.15); }
+        .reg-section__icon--purple { background: rgba(167, 139, 250, 0.15); }
+        .reg-section__icon--amber { background: rgba(245, 158, 11, 0.15); }
+        .reg-section__icon--green { background: rgba(34, 197, 94, 0.15); }
+
+        .reg-section__title { font-family: var(--font-display); font-size: 28px; font-weight: 400; }
+        .reg-section__badge { font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; border-radius: 4px; margin-left: 12px; }
+        .reg-section__badge--eu { color: var(--accent-teal); border: 1px solid var(--accent-teal-dim); }
+        .reg-section__badge--us { color: var(--agent-spending); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .reg-section__badge--br { color: var(--agent-crossborder); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .reg-section__badge--ai { color: var(--agent-strategy); border: 1px solid rgba(167, 139, 250, 0.2); }
+        .reg-section__badge--global { color: #22C55E; border: 1px solid rgba(34, 197, 94, 0.2); }
+
+        .reg-section__desc { font-size: 16px; color: var(--text-muted); line-height: 1.8; margin-bottom: 28px; max-width: 800px; }
+
+        .reg-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .reg-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 28px 28px; transition: all 0.3s ease; }
+        .reg-card:hover { border-color: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+        .reg-card__title { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
+        .reg-card__text { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+        .reg-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .reg-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+        .reg-list li::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-teal); margin-top: 8px; flex-shrink: 0; }
+
+        /* Divider */
+        .reg-divider { height: 1px; background: rgba(255, 255, 255, 0.04); margin: 64px 0; }
+
+        /* Disclaimer Box */
+        .disclaimer-box { background: var(--bg-card); border: 1px solid rgba(245, 158, 11, 0.15); border-radius: 12px; padding: 32px 36px; margin-top: 48px; }
+        .disclaimer-box__label { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--agent-crossborder); margin-bottom: 16px; }
+        .disclaimer-box__text { font-size: 14px; color: var(--text-muted); line-height: 1.8; }
+        .disclaimer-box__text strong { color: var(--text-primary); font-weight: 600; }
+
+        /* Contact Card */
+        .compliance-contact { background: var(--bg-card); border: 1px solid rgba(20, 184, 156, 0.1); border-radius: 12px; padding: 40px; margin-top: 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+        .compliance-contact__text { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+        .compliance-contact__text strong { color: var(--text-primary); font-weight: 600; display: block; font-size: 17px; margin-bottom: 6px; }
+        .compliance-contact__btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-teal); color: var(--bg-primary) !important; padding: 12px 28px; border-radius: 6px; font-weight: 600; font-size: 14px; white-space: nowrap; transition: all 0.2s; }
+        .compliance-contact__btn:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        /* Summary Grid */
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 64px; }
+        .summary-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 28px 24px; text-align: center; transition: all 0.3s ease; }
+        .summary-card:hover { border-color: rgba(255, 255, 255, 0.08); transform: translateY(-2px); }
+        .summary-card__icon { font-size: 28px; margin-bottom: 12px; }
+        .summary-card__label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 6px; }
+        .summary-card__value { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+
+        /* Footer */
+        .footer { padding: 60px 0 40px; border-top: 1px solid rgba(255, 255, 255, 0.04); position: relative; z-index: 1; }
+        .footer__inner { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; max-width: 300px; margin-top: 16px; line-height: 1.6; }
+        .footer__links { display: flex; gap: 64px; }
+        .footer__col-title { font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--text-primary); margin-bottom: 20px; }
+        .footer__col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { font-size: 13px; color: var(--text-dim); }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { font-size: 13px; color: var(--text-dim); }
+
+        /* Animations */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { opacity: 0; transform: translateY(24px); animation: fadeUp 0.8s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+        .fade-in--d4 { animation-delay: 0.4s; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal--visible { opacity: 1; transform: translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .reg-card-grid { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav__links {
+                display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column;
+                background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+            }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+            .compliance-contact { flex-direction: column; text-align: center; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#how">How It Works</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="compliance-hero container">
+    <div class="compliance-hero__overline fade-in fade-in--d1">Compliance &amp; Regulatory</div>
+    <h1 class="compliance-hero__title fade-in fade-in--d2">Built with regulation<br><em style="font-style:italic;color:var(--accent-teal);">from day one.</em></h1>
+    <p class="compliance-hero__subtitle fade-in fade-in--d3">LIUV takes regulatory compliance seriously. Our AI agents are designed with guardrails that respect financial regulations across every jurisdiction we operate in.</p>
+</section>
+
+<!-- ========== COMPLIANCE CONTENT ========== -->
+<section class="compliance-content container">
+
+    <!-- Summary Cards -->
+    <div class="summary-grid fade-in fade-in--d4">
+        <div class="summary-card">
+            <div class="summary-card__icon">&#127466;&#127482;</div>
+            <div class="summary-card__label">MiFID II</div>
+            <div class="summary-card__value">European Union</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-card__icon">&#127482;&#127480;</div>
+            <div class="summary-card__label">SEC Guidelines</div>
+            <div class="summary-card__value">United States</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-card__icon">&#127463;&#127479;</div>
+            <div class="summary-card__label">CVM Regulations</div>
+            <div class="summary-card__value">Brazil</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-card__icon">&#129302;</div>
+            <div class="summary-card__label">AI Transparency</div>
+            <div class="summary-card__value">Global Standard</div>
+        </div>
+    </div>
+
+    <!-- ========== MiFID II ========== -->
+    <div class="reg-section reveal">
+        <div class="reg-section__header">
+            <div class="reg-section__icon reg-section__icon--teal">&#127466;&#127482;</div>
+            <div>
+                <h2 class="reg-section__title">MiFID II <span class="reg-section__badge reg-section__badge--eu">European Union</span></h2>
+            </div>
+        </div>
+        <p class="reg-section__desc">LIUV is designed to comply with the Markets in Financial Instruments Directive II (2014/65/EU), the cornerstone of European financial market regulation. MiFID II sets the framework for transparency, investor protection, and market integrity across the EU.</p>
+        <div class="reg-card-grid">
+            <div class="reg-card">
+                <div class="reg-card__title">Transparent Cost Disclosures</div>
+                <div class="reg-card__text">All costs and charges associated with LIUV's services are disclosed upfront. Users see exactly what they pay, with no hidden fees. This aligns with MiFID II Article 24 requirements on cost transparency and the obligation to provide fair, clear information.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Suitability Assessments</div>
+                <div class="reg-card__text">LIUV's AI agents assess user profiles — including investment objectives, financial situation, risk tolerance, and knowledge level — before generating any analysis. This mirrors the MiFID II suitability requirements under Article 25(2).</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Best Execution Standards</div>
+                <div class="reg-card__text">When LIUV provides trade analysis or suggestions, the methodology follows best execution principles: evaluating price, cost, speed, likelihood of execution, and order size as prescribed under MiFID II Article 27.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Product Governance &amp; Reporting</div>
+                <div class="reg-card__text">LIUV classifies its AI-generated outputs with clear target market definitions and distributes information consistent with MiFID II product governance rules (Article 16(3), 24(2)), including regular review of product suitability.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reg-divider"></div>
+
+    <!-- ========== SEC ========== -->
+    <div class="reg-section reveal">
+        <div class="reg-section__header">
+            <div class="reg-section__icon reg-section__icon--blue">&#127482;&#127480;</div>
+            <div>
+                <h2 class="reg-section__title">SEC Guidelines <span class="reg-section__badge reg-section__badge--us">United States</span></h2>
+            </div>
+        </div>
+        <p class="reg-section__desc">LIUV aligns with SEC regulatory guidance concerning the use of artificial intelligence in investment-related services. We maintain clear boundaries between educational analysis and regulated financial advice.</p>
+        <div class="reg-card-grid">
+            <div class="reg-card">
+                <div class="reg-card__title">Informational vs. Personalized Advice</div>
+                <div class="reg-card__text">LIUV explicitly distinguishes between informational analysis (market data, stock screening, educational content) and personalized investment advice as defined by the Investment Advisers Act of 1940. LIUV provides the former, not the latter.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">AI-Generated Content Disclosure</div>
+                <div class="reg-card__text">All analysis and recommendations generated by LIUV are clearly labeled as AI-generated. This complies with SEC guidance on digital engagement practices and predictive analytics (Reg BI alignment), ensuring users understand the nature of the output.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Anti-Fraud Provisions</div>
+                <div class="reg-card__text">LIUV does not use misleading performance metrics or guarantee future returns. All historical data references include proper disclaimers consistent with SEC Rule 206(4)-1 (the Marketing Rule) and the anti-fraud provisions of the Securities Act.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Data Privacy &amp; Record-Keeping</div>
+                <div class="reg-card__text">User data handling follows SEC cybersecurity risk management guidelines. LIUV maintains appropriate logs of AI recommendations and user interactions for audit purposes, consistent with SEC Rule 204-2 record-keeping requirements.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reg-divider"></div>
+
+    <!-- ========== CVM ========== -->
+    <div class="reg-section reveal">
+        <div class="reg-section__header">
+            <div class="reg-section__icon reg-section__icon--amber">&#127463;&#127479;</div>
+            <div>
+                <h2 class="reg-section__title">CVM Regulations <span class="reg-section__badge reg-section__badge--br">Brazil</span></h2>
+            </div>
+        </div>
+        <p class="reg-section__desc">LIUV is designed with compliance for the Brazilian Securities and Exchange Commission (Comiss&atilde;o de Valores Mobili&aacute;rios). The CVM regulates the securities market in Brazil and enforces investor protection standards.</p>
+        <div class="reg-card-grid">
+            <div class="reg-card">
+                <div class="reg-card__title">Risk Disclosures (CVM Instruction 539)</div>
+                <div class="reg-card__text">LIUV embeds comprehensive risk disclosures in all analysis outputs for the Brazilian market. Users are informed about market risk, liquidity risk, and credit risk in compliance with CVM suitability rules.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Investor Protection Measures</div>
+                <div class="reg-card__text">The platform enforces proper disclaimers and safeguards for retail investors as required by CVM regulations. This includes clear language that past performance does not guarantee future results, and that AI analysis is educational in nature.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Market Conduct Standards</div>
+                <div class="reg-card__text">LIUV does not engage in or facilitate market manipulation, insider trading, or any practice prohibited under CVM Instruction 8/1979. AI agents are designed to analyze only publicly available data and filings.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Cross-Border Considerations</div>
+                <div class="reg-card__text">For users operating across Brazilian and international markets, LIUV's Cross-Border Intel agent accounts for CVM foreign investment regulations and provides analysis that respects both local and international regulatory frameworks.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reg-divider"></div>
+
+    <!-- ========== AI TRANSPARENCY ========== -->
+    <div class="reg-section reveal">
+        <div class="reg-section__header">
+            <div class="reg-section__icon reg-section__icon--purple">&#129302;</div>
+            <div>
+                <h2 class="reg-section__title">Transparent AI Reasoning <span class="reg-section__badge reg-section__badge--ai">AI Ethics</span></h2>
+            </div>
+        </div>
+        <p class="reg-section__desc">Every LIUV recommendation includes full explainable AI rationale. No black boxes. We believe that trust in AI-powered financial tools must be built on transparency, auditability, and clear methodology disclosure.</p>
+        <div class="reg-card-grid">
+            <div class="reg-card">
+                <div class="reg-card__title">Explainable AI (XAI) Framework</div>
+                <div class="reg-card__text">Every stock analysis, portfolio recommendation, and risk assessment includes a detailed breakdown of the data sources, valuation models (DCF, Graham Number, margin-of-safety calculations), and logic chain behind each conclusion.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">No Black-Box Decisions</div>
+                <div class="reg-card__text">LIUV rejects opaque ML models for financial decisions. Our AI agents use rule-based reasoning grounded in the Buffett/Graham methodology, combined with transparent scoring systems that users can inspect and understand.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">EU AI Act Alignment</div>
+                <div class="reg-card__text">LIUV proactively aligns with the EU Artificial Intelligence Act (2024), which classifies AI systems used in financial services as high-risk. We implement risk management, data governance, transparency, and human oversight measures as prescribed.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Bias Monitoring &amp; Model Auditing</div>
+                <div class="reg-card__text">LIUV conducts regular audits of AI model outputs to detect and mitigate potential biases — including sector bias, geographic bias, and recency bias — ensuring that analysis remains objective and methodology-driven.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reg-divider"></div>
+
+    <!-- ========== DATA PROTECTION ========== -->
+    <div class="reg-section reveal">
+        <div class="reg-section__header">
+            <div class="reg-section__icon reg-section__icon--green">&#128274;</div>
+            <div>
+                <h2 class="reg-section__title">Data Protection &amp; Privacy <span class="reg-section__badge reg-section__badge--global">Global</span></h2>
+            </div>
+        </div>
+        <p class="reg-section__desc">LIUV handles user data with the highest standards of privacy and security. We comply with global data protection regulations to ensure your financial information remains confidential and secure.</p>
+        <div class="reg-card-grid">
+            <div class="reg-card">
+                <div class="reg-card__title">GDPR Compliance (EU)</div>
+                <div class="reg-card__text">As a Rotterdam-based company, LIUV fully complies with the General Data Protection Regulation. Users have full rights to access, rectify, port, and delete their data. We process only the minimum data necessary for the service.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">LGPD Compliance (Brazil)</div>
+                <div class="reg-card__text">LIUV adheres to Brazil's Lei Geral de Prote&ccedil;&atilde;o de Dados, ensuring lawful processing, purpose limitation, and user consent for Brazilian users. Our data handling meets LGPD requirements under Articles 7 and 11.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Encryption &amp; Security</div>
+                <div class="reg-card__text">All data transmitted through LIUV is encrypted in transit (TLS 1.3) and at rest (AES-256). We implement strict access controls, regular security audits, and follow industry best practices for financial data handling.</div>
+            </div>
+            <div class="reg-card">
+                <div class="reg-card__title">Third-Party Data Sources</div>
+                <div class="reg-card__text">LIUV sources market data exclusively from licensed, reputable third-party providers and public SEC/CVM filings. We do not scrape data, and all data provider relationships are disclosed to users.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="reg-divider"></div>
+
+    <!-- ========== OUR COMMITMENTS ========== -->
+    <div class="reg-section reveal">
+        <div class="reg-section__header">
+            <div class="reg-section__icon reg-section__icon--teal">&#9989;</div>
+            <div>
+                <h2 class="reg-section__title">Our Compliance Commitments</h2>
+            </div>
+        </div>
+        <p class="reg-section__desc">LIUV is committed to maintaining the highest standards of regulatory compliance as we scale across jurisdictions. These principles guide every product decision.</p>
+        <ul class="reg-list">
+            <li><strong style="color:var(--text-primary);">Regulation-First Design:</strong> Compliance is not an afterthought. Every AI agent feature is reviewed against applicable regulations before deployment.</li>
+            <li><strong style="color:var(--text-primary);">No Personalized Financial Advice:</strong> LIUV provides informational and educational analysis only. We never cross the line into regulated financial advice without proper licensing.</li>
+            <li><strong style="color:var(--text-primary);">Continuous Monitoring:</strong> We actively track regulatory developments across the EU, US, and Brazil. As regulations evolve (particularly around AI in finance), LIUV adapts proactively.</li>
+            <li><strong style="color:var(--text-primary);">User Empowerment:</strong> Users always retain full decision-making authority. LIUV equips investors with intelligence; it never makes decisions on their behalf.</li>
+            <li><strong style="color:var(--text-primary);">Transparent Operations:</strong> Our methodology, data sources, pricing, and limitations are fully documented and available to every user.</li>
+            <li><strong style="color:var(--text-primary);">Independent Audits:</strong> As LIUV grows, we are committed to third-party audits of our AI systems, compliance framework, and data practices.</li>
+        </ul>
+    </div>
+
+    <!-- ========== DISCLAIMER ========== -->
+    <div class="disclaimer-box reveal">
+        <div class="disclaimer-box__label">Important Legal Disclaimer</div>
+        <p class="disclaimer-box__text">
+            <strong>LIUV AI Wealth Agent provides informational and educational analysis only.</strong> It does not constitute financial, investment, tax, or legal advice. Past performance does not guarantee future results. All data is sourced from public filings and third-party providers. AI-generated content may contain errors or inaccuracies.
+            <br><br>
+            Always conduct your own research or consult a qualified financial advisor before making investment decisions. LIUV does not provide personalized financial advice, does not manage client funds, and does not execute trades on behalf of users.
+            <br><br>
+            LIUV Ventures is not a registered investment advisor, broker-dealer, or financial planner in any jurisdiction. The information provided through the platform should not be construed as a solicitation or offer to buy or sell any securities or financial instruments.
+            <br><br>
+            By using LIUV, you acknowledge and accept these terms. For regulatory inquiries, please contact our compliance team.
+        </p>
+    </div>
+
+    <!-- ========== CONTACT ========== -->
+    <div class="compliance-contact reveal">
+        <div class="compliance-contact__text">
+            <strong>Questions about compliance?</strong>
+            Our team is available to discuss regulatory matters, data handling practices, or any compliance-related concerns. LIUV Ventures is headquartered in Rotterdam, Netherlands.
+        </div>
+        <a href="mailto:pedro@liuv.io" class="compliance-contact__btn">
+            Contact Compliance &#8594;
+        </a>
+    </div>
+
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/#founder">About</a></li>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal--visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

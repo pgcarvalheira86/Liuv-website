@@ -727,6 +727,28 @@
             margin-bottom: 32px;
         }
 
+        .pricing-card__trial {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            background: rgba(20, 184, 156, 0.08);
+            border: 1px solid rgba(20, 184, 156, 0.15);
+            padding: 6px 14px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .pricing__trial-note {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 32px;
+            line-height: 1.6;
+        }
+
         .pricing-card__features {
             list-style: none;
             display: flex;
@@ -1045,12 +1067,34 @@
             .hero__visual { display: none; }
             .agents__grid { grid-template-columns: 1fr; }
             .why__layout { grid-template-columns: 1fr; gap: 48px; }
+            .nav__links { gap: 20px; }
+            .nav__links a { font-size: 13px; }
         }
 
         @media (max-width: 768px) {
             .section { padding: 80px 0; }
 
-            .nav__links { display: none; }
+            .nav__links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(6, 9, 16, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                padding: 16px 24px 24px;
+                gap: 0;
+                border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+            }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta {
+                display: inline-block;
+                margin-top: 8px;
+                text-align: center;
+            }
             .nav__mobile-toggle { display: block; }
 
             .proof__grid { grid-template-columns: repeat(2, 1fr); }
@@ -1133,12 +1177,10 @@
         <ul class="nav__links">
             <li><a href="#agents">Agents</a></li>
             <li><a href="#how">How It Works</a></li>
-            <li><a href="#methodology">Methodology</a></li>
             <li><a href="#pricing">Pricing</a></li>
-            <li><a href="#founder">Team</a></li>
-            <li><a href="#compliance">Compliance</a></li>
+            <li><a href="/resources.html">Resources</a></li>
             <li><a href="/blog.html">Blog</a></li>
-            <li><a href="#pricing" class="nav__cta">Start Free Trial</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
         </ul>
         <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">☰</button>
     </div>
@@ -1152,7 +1194,7 @@
         <p class="hero__subtitle">Autonomous AI agents that analyze stocks using the Buffett/Graham methodology, build DCF models, and optimize your portfolio — 24/7.</p>
         <div class="hero__actions">
             <a href="#pricing" class="btn-primary">
-                Start Your Free Trial
+                Start Your 7-Day Free Trial
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
             <a href="#agents" class="btn-secondary">
@@ -1292,15 +1334,8 @@
             <p class="how__step-desc">Receive clear, explainable recommendations with full reasoning. Every insight shows you the "why" behind the decision.</p>
         </div>
     </div>
-</section>
 
-<!-- ========== METHODOLOGY ========== -->
-<section class="section container" id="methodology">
-    <div class="reveal">
-        <div class="section__overline">Methodology</div>
-        <h2 class="section__title">Built on Buffett & Graham.<br>Powered by AI.</h2>
-    </div>
-    <div class="why__layout">
+    <div class="why__layout" style="margin-top: 80px;">
         <div class="why__principles">
             <div class="why__principle reveal">
                 <div class="why__principle-num">01</div>
@@ -1362,6 +1397,7 @@
             <div class="pricing-card__name">Explorer</div>
             <div class="pricing-card__price"><span>$</span>29<span>/mo</span></div>
             <div class="pricing-card__period">Billed monthly</div>
+            <div class="pricing-card__trial">7-day free trial</div>
             <ul class="pricing-card__features">
                 <li>Basic stock screening</li>
                 <li>Portfolio tracking dashboard</li>
@@ -1369,13 +1405,14 @@
                 <li>Single portfolio</li>
                 <li>Email support</li>
             </ul>
-            <a href="https://buy.stripe.com/4gMeV5duV9Iqcj8123cjS09" target="_blank" class="pricing-card__btn">Subscribe — $29/mo</a>
+            <a href="https://buy.stripe.com/4gMeV5duV9Iqcj8123cjS09" target="_blank" class="pricing-card__btn">Start Free Trial</a>
         </div>
         <div class="pricing-card pricing-card--featured reveal">
             <div class="pricing-card__badge">Most Popular</div>
             <div class="pricing-card__name">Investor</div>
             <div class="pricing-card__price"><span>$</span>99<span>/mo</span></div>
             <div class="pricing-card__period">Billed monthly</div>
+            <div class="pricing-card__trial">7-day free trial</div>
             <ul class="pricing-card__features">
                 <li>Unlimited AI analyses</li>
                 <li>Full DCF modeling engine</li>
@@ -1384,12 +1421,13 @@
                 <li>Cross-market intelligence</li>
                 <li>Priority support</li>
             </ul>
-            <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="pricing-card__btn">Subscribe — $99/mo</a>
+            <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="pricing-card__btn">Start Free Trial</a>
         </div>
         <div class="pricing-card reveal">
             <div class="pricing-card__name">Professional</div>
             <div class="pricing-card__price"><span>$</span>299<span>/mo</span></div>
             <div class="pricing-card__period">Billed monthly</div>
+            <div class="pricing-card__trial">7-day free trial</div>
             <ul class="pricing-card__features">
                 <li>Everything in Investor</li>
                 <li>API access</li>
@@ -1398,9 +1436,10 @@
                 <li>Custom agent configurations</li>
                 <li>Dedicated account manager</li>
             </ul>
-            <a href="https://buy.stripe.com/00wbIT0I9dYG4QG123cjS0b" target="_blank" class="pricing-card__btn">Subscribe — $299/mo</a>
+            <a href="https://buy.stripe.com/00wbIT0I9dYG4QG123cjS0b" target="_blank" class="pricing-card__btn">Start Free Trial</a>
         </div>
     </div>
+    <p class="pricing__trial-note reveal">All plans include a 7-day free trial. No charge until your trial ends. Cancel anytime.</p>
 </section>
 
 <!-- ========== FOUNDER ========== -->
@@ -1464,6 +1503,9 @@
             <p class="agent-card__desc">Designed with CVM compliance for the Brazilian market. Proper disclaimers, risk disclosures, and investor protection measures embedded in the platform.</p>
         </div>
     </div>
+    <div class="reveal" style="text-align:center;margin-top:36px;">
+        <a href="/compliance.html" style="display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--accent-teal);">Read our full Compliance & Regulatory framework &#8594;</a>
+    </div>
     <div class="reveal" style="margin-top:40px;padding:28px 32px;background:var(--bg-card);border:1px solid rgba(255,255,255,0.04);border-radius:12px;">
         <p style="font-size:13px;color:var(--text-muted);line-height:1.8;text-align:center;">
             <strong style="color:var(--accent-teal);">Important Disclaimer:</strong> LIUV AI Wealth Agent provides informational and educational analysis only. It does not constitute financial, investment, tax, or legal advice. Past performance does not guarantee future results. All data is sourced from public filings and third-party providers. AI-generated content may contain errors. Always conduct your own research or consult a qualified financial advisor before making investment decisions. LIUV does not provide personalized financial advice.
@@ -1478,13 +1520,13 @@
     <div class="cta__box reveal">
         <div class="section__overline" style="text-align:center;">Start Today</div>
         <h2 class="cta__title" style="text-align:center;">Start investing with<br>an unfair advantage</h2>
-        <p class="cta__desc">Choose your plan and get instant access to AI-powered value investing. Cancel anytime.</p>
+        <p class="cta__desc">Start your 7-day free trial today. Full access, no credit card commitment. Cancel anytime.</p>
         <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
             <a href="https://buy.stripe.com/4gMeV5duV9Iqcj8123cjS09" target="_blank" class="btn-primary" style="background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--text-primary);padding:16px 28px;border-radius:6px;font-weight:600;font-size:14px;">Explorer — $29/mo</a>
             <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="btn-primary" style="padding:16px 32px;border-radius:6px;font-weight:600;font-size:15px;">Investor — $99/mo ★</a>
             <a href="https://buy.stripe.com/00wbIT0I9dYG4QG123cjS0b" target="_blank" class="btn-primary" style="background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--text-primary);padding:16px 28px;border-radius:6px;font-weight:600;font-size:14px;">Professional — $299/mo</a>
         </div>
-        <p style="text-align:center;margin-top:20px;font-size:13px;color:var(--text-dim);">Secure payment via Stripe. Cancel anytime. No long-term commitment.</p>
+        <p style="text-align:center;margin-top:20px;font-size:13px;color:var(--text-dim);">Secure payment via Stripe. 7-day free trial on all plans. Cancel anytime.</p>
     </div>
 </section>
 
@@ -1529,8 +1571,8 @@
                     <div class="footer__col-title">Product</div>
                     <ul>
                         <li><a href="#agents">AI Agents</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
                         <li><a href="#pricing">Pricing</a></li>
-                        <li><a href="#methodology">Methodology</a></li>
                         <li><a href="#">API Docs</a></li>
                     </ul>
                 </div>
@@ -1539,6 +1581,7 @@
                     <ul>
                         <li><a href="#founder">About</a></li>
                         <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
                         <li><a href="#" onclick="alert('We are hiring! Email pedro@liuv.io');return false;">Careers</a></li>
                         <li><a href="mailto:pedro@liuv.io">Contact</a></li>
                     </ul>
@@ -1588,24 +1631,7 @@
         }
     });
 
-    // Waitlist handler
-    function handleWaitlist() {
-        const input = document.querySelector('.cta__input');
-        const email = input.value.trim();
-        if (email && email.includes('@')) {
-            input.value = '';
-            input.placeholder = 'Thank you! We\'ll be in touch.';
-            input.style.borderColor = 'var(--accent-teal)';
-        } else {
-            input.style.borderColor = '#ef4444';
-            setTimeout(() => { input.style.borderColor = 'rgba(255, 255, 255, 0.1)'; }, 2000);
-        }
-    }
-
-    // Enter key for waitlist
-    document.querySelector('.cta__input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleWaitlist();
-    });
+    // Waitlist handler (no longer used — CTA now links to Stripe)
 
     // ========== TRANSLATION ENGINE ==========
     const T = {
@@ -1630,8 +1656,8 @@
             p3t: "Transparent Reasoning", p3d: "Every recommendation comes with full explainable AI rationale. You see the data, the model, and the logic \u2014 never a black box.",
             mPillars: "Value analysis pillars", mMargin: "Target gross margin", mMarkets: "Markets at launch", mComply: "EU compliance built-in",
             prOvr: "Pricing", prTitle: "Invest in your edge", prSub: "Institutional-grade intelligence at a fraction of the cost. Choose the tier that matches your ambition.",
-            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Most Popular", billed: "Billed monthly", getStart: "Get Started", contactSales: "Contact Sales",
-            ctaOvr: "Early Access", ctaTitle: "Start investing with<br>an unfair advantage", ctaDesc: "Join the waitlist for early access. Be among the first to experience AI-powered value investing.",
+            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Most Popular", billed: "Billed monthly", getStart: "Start Free Trial", contactSales: "Start Free Trial", freeTrial: "7-day free trial", trialNote: "All plans include a 7-day free trial. No charge until your trial ends. Cancel anytime.",
+            ctaOvr: "Start Today", ctaTitle: "Start investing with<br>an unfair advantage", ctaDesc: "Start your 7-day free trial today. Full access, no credit card commitment. Cancel anytime.",
             ctaPh: "Enter your email address", ctaBtn: "Join Waitlist", ctaOk: "Thank you! We'll be in touch.",
             fDesc: "Democratizing institutional-grade investment intelligence through autonomous AI agents.",
             fProd: "Product", fComp: "Company", fConn: "Connect",
@@ -1659,8 +1685,8 @@
             p3t: "Transparente Begr\u00fcndung", p3d: "Jede Empfehlung enth\u00e4lt die vollst\u00e4ndige KI-Erkl\u00e4rung. Sie sehen Daten, Modell und Logik.",
             mPillars: "Wertanalyse-S\u00e4ulen", mMargin: "Ziel-Bruttomarge", mMarkets: "M\u00e4rkte zum Start", mComply: "EU-Konformit\u00e4t integriert",
             prOvr: "Preise", prTitle: "Investieren Sie in Ihren Vorteil", prSub: "Institutionelle Intelligenz zu einem Bruchteil der Kosten.",
-            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Am Beliebtesten", billed: "Monatliche Abrechnung", getStart: "Loslegen", contactSales: "Vertrieb kontaktieren",
-            ctaOvr: "Fr\u00fchzugang", ctaTitle: "Investieren Sie mit<br>einem unfairen Vorteil", ctaDesc: "Melden Sie sich f\u00fcr die Warteliste an. Geh\u00f6ren Sie zu den Ersten mit KI-Value-Investing.",
+            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Am Beliebtesten", billed: "Monatliche Abrechnung", getStart: "Kostenlos testen", contactSales: "Kostenlos testen", freeTrial: "7 Tage kostenlos", trialNote: "Alle Pl\u00e4ne mit 7-t\u00e4giger kostenloser Testphase. Keine Geb\u00fchren bis Testende. Jederzeit k\u00fcndbar.",
+            ctaOvr: "Jetzt Starten", ctaTitle: "Investieren Sie mit<br>einem unfairen Vorteil", ctaDesc: "Starten Sie Ihre 7-t\u00e4gige kostenlose Testphase. Voller Zugang. Jederzeit k\u00fcndbar.",
             ctaPh: "Ihre E-Mail-Adresse", ctaBtn: "Anmelden", ctaOk: "Danke! Wir melden uns bei Ihnen.",
             fDesc: "Demokratisierung institutioneller Anlage-Intelligenz durch autonome KI-Agenten.",
             fProd: "Produkt", fComp: "Unternehmen", fConn: "Kontakt",
@@ -1688,8 +1714,8 @@
             p3t: "Transparante Onderbouwing", p3d: "Elke aanbeveling bevat volledige AI-uitleg. U ziet de data, het model en de logica.",
             mPillars: "Waardeanalyse-pijlers", mMargin: "Doelbrutowinst", mMarkets: "Markten bij lancering", mComply: "EU-compliance ingebouwd",
             prOvr: "Prijzen", prTitle: "Investeer in uw voorsprong", prSub: "Institutionele intelligentie voor een fractie van de kosten.",
-            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Meest Populair", billed: "Maandelijks gefactureerd", getStart: "Aan de Slag", contactSales: "Contact Verkoop",
-            ctaOvr: "Vroege Toegang", ctaTitle: "Begin met investeren met<br>een oneerlijk voordeel", ctaDesc: "Schrijf u in voor de wachtlijst. Wees een van de eersten die AI-gestuurd value investing ervaart.",
+            t1: "Explorer", t2: "Investor", t3: "Professional", popular: "Meest Populair", billed: "Maandelijks gefactureerd", getStart: "Gratis proberen", contactSales: "Gratis proberen", freeTrial: "7 dagen gratis", trialNote: "Alle abonnementen met 7 dagen gratis proefperiode. Geen kosten tot het einde van de proefperiode. Altijd opzegbaar.",
+            ctaOvr: "Begin Vandaag", ctaTitle: "Begin met investeren met<br>een oneerlijk voordeel", ctaDesc: "Start uw 7-daagse gratis proefperiode. Volledige toegang. Altijd opzegbaar.",
             ctaPh: "Voer uw e-mailadres in", ctaBtn: "Inschrijven", ctaOk: "Bedankt! We nemen contact op.",
             fDesc: "Democratisering van institutionele investeringsintelligentie door autonome AI-agenten.",
             fProd: "Product", fComp: "Bedrijf", fConn: "Contact",
@@ -1717,8 +1743,8 @@
             p3t: "Racioc\u00ednio Transparente", p3d: "Cada recomenda\u00e7\u00e3o vem com explica\u00e7\u00e3o completa da IA. Voc\u00ea v\u00ea dados, modelo e l\u00f3gica.",
             mPillars: "Pilares de an\u00e1lise de valor", mMargin: "Margem bruta alvo", mMarkets: "Mercados no lan\u00e7amento", mComply: "Conformidade UE integrada",
             prOvr: "Pre\u00e7os", prTitle: "Invista na sua vantagem", prSub: "Intelig\u00eancia institucional por uma fra\u00e7\u00e3o do custo.",
-            t1: "Explorador", t2: "Investidor", t3: "Profissional", popular: "Mais Popular", billed: "Cobrado mensalmente", getStart: "Come\u00e7ar", contactSales: "Falar com Vendas",
-            ctaOvr: "Acesso Antecipado", ctaTitle: "Comece a investir com<br>uma vantagem injusta", ctaDesc: "Entre na lista de espera. Seja um dos primeiros a experimentar investimento em valor com IA.",
+            t1: "Explorador", t2: "Investidor", t3: "Profissional", popular: "Mais Popular", billed: "Cobrado mensalmente", getStart: "Teste gr\u00e1tis", contactSales: "Teste gr\u00e1tis", freeTrial: "7 dias gr\u00e1tis", trialNote: "Todos os planos incluem 7 dias de teste gr\u00e1tis. Sem cobran\u00e7a at\u00e9 o fim do per\u00edodo. Cancele quando quiser.",
+            ctaOvr: "Comece Hoje", ctaTitle: "Comece a investir com<br>uma vantagem injusta", ctaDesc: "Inicie seu teste gr\u00e1tis de 7 dias. Acesso completo. Cancele quando quiser.",
             ctaPh: "Digite seu e-mail", ctaBtn: "Entrar na Lista", ctaOk: "Obrigado! Entraremos em contato.",
             fDesc: "Democratizando intelig\u00eancia de investimento institucional atrav\u00e9s de agentes aut\u00f4nomos de IA.",
             fProd: "Produto", fComp: "Empresa", fConn: "Conectar",
@@ -1746,8 +1772,8 @@
             p3t: "\u900f\u660e\u63a8\u7406", p3d: "\u6bcf\u6761\u5efa\u8bae\u90fd\u9644\u6709\u5b8c\u6574\u7684AI\u89e3\u91ca\u3002\u60a8\u770b\u5230\u6570\u636e\u3001\u6a21\u578b\u548c\u903b\u8f91 \u2014 \u7edd\u975e\u9ed1\u7bb1\u3002",
             mPillars: "\u4ef7\u503c\u5206\u6790\u652f\u67f1", mMargin: "\u76ee\u6807\u6bdb\u5229\u7387", mMarkets: "\u542f\u52a8\u5e02\u573a", mComply: "\u5185\u7f6e\u6b27\u76df\u5408\u89c4",
             prOvr: "\u5b9a\u4ef7", prTitle: "\u6295\u8d44\u60a8\u7684\u4f18\u52bf", prSub: "\u4ee5\u6781\u4f4e\u7684\u6210\u672c\u83b7\u5f97\u673a\u6784\u7ea7\u667a\u80fd\u3002\u9009\u62e9\u5339\u914d\u60a8\u96c4\u5fc3\u7684\u65b9\u6848\u3002",
-            t1: "\u63a2\u7d22\u8005", t2: "\u6295\u8d44\u8005", t3: "\u4e13\u4e1a\u7248", popular: "\u6700\u53d7\u6b22\u8fce", billed: "\u6309\u6708\u8ba1\u8d39", getStart: "\u7acb\u5373\u5f00\u59cb", contactSales: "\u8054\u7cfb\u9500\u552e",
-            ctaOvr: "\u62a2\u5148\u4f53\u9a8c", ctaTitle: "\u4ee5\u4e0d\u516c\u5e73\u7684\u4f18\u52bf<br>\u5f00\u59cb\u6295\u8d44", ctaDesc: "\u52a0\u5165\u7b49\u5019\u540d\u5355\u3002\u6210\u4e3a\u9996\u6279\u4f53\u9a8cAI\u9a71\u52a8\u4ef7\u503c\u6295\u8d44\u7684\u4eba\u3002",
+            t1: "\u63a2\u7d22\u8005", t2: "\u6295\u8d44\u8005", t3: "\u4e13\u4e1a\u7248", popular: "\u6700\u53d7\u6b22\u8fce", billed: "\u6309\u6708\u8ba1\u8d39", getStart: "\u514d\u8d39\u8bd5\u7528", contactSales: "\u514d\u8d39\u8bd5\u7528", freeTrial: "7\u5929\u514d\u8d39\u8bd5\u7528", trialNote: "\u6240\u6709\u65b9\u6848\u5747\u542b7\u5929\u514d\u8d39\u8bd5\u7528\u3002\u8bd5\u7528\u671f\u5185\u4e0d\u6536\u8d39\u3002\u968f\u65f6\u53d6\u6d88\u3002",
+            ctaOvr: "\u7acb\u5373\u5f00\u59cb", ctaTitle: "\u4ee5\u4e0d\u516c\u5e73\u7684\u4f18\u52bf<br>\u5f00\u59cb\u6295\u8d44", ctaDesc: "\u5f00\u59cb7\u5929\u514d\u8d39\u8bd5\u7528\u3002\u5b8c\u6574\u8bbf\u95ee\u6743\u9650\u3002\u968f\u65f6\u53d6\u6d88\u3002",
             ctaPh: "\u8f93\u5165\u60a8\u7684\u7535\u5b50\u90ae\u7bb1", ctaBtn: "\u7acb\u5373\u52a0\u5165", ctaOk: "\u8c22\u8c22\uff01\u6211\u4eec\u4f1a\u5c3d\u5feb\u8054\u7cfb\u60a8\u3002",
             fDesc: "\u901a\u8fc7\u81ea\u4e3bAI\u4ee3\u7406\uff0c\u8ba9\u673a\u6784\u7ea7\u6295\u8d44\u667a\u80fd\u89e6\u624b\u53ef\u53ca\u3002",
             fProd: "\u4ea7\u54c1", fComp: "\u516c\u53f8", fConn: "\u8054\u7cfb",
@@ -1775,8 +1801,8 @@
             p3t: "\u092a\u093e\u0930\u0926\u0930\u094d\u0936\u0940 \u0924\u0930\u094d\u0915", p3d: "\u092a\u094d\u0930\u0924\u094d\u092f\u0947\u0915 \u0938\u093f\u092b\u093e\u0930\u093f\u0936 \u092e\u0947\u0902 \u092a\u0942\u0930\u094d\u0923 AI \u0935\u094d\u092f\u093e\u0916\u094d\u092f\u093e \u0936\u093e\u092e\u093f\u0932\u0964 \u0906\u092a \u0921\u0947\u091f\u093e, \u092e\u0949\u0921\u0932 \u0914\u0930 \u0924\u0930\u094d\u0915 \u0926\u0947\u0916\u0924\u0947 \u0939\u0948\u0902\u0964",
             mPillars: "\u092e\u0942\u0932\u094d\u092f \u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0938\u094d\u0924\u0902\u092d", mMargin: "\u0932\u0915\u094d\u0937\u094d\u092f \u0938\u0915\u0932 \u092e\u093e\u0930\u094d\u091c\u093f\u0928", mMarkets: "\u0932\u0949\u0928\u094d\u091a \u092c\u093e\u091c\u093c\u093e\u0930", mComply: "\u092f\u0942\u0930\u094b\u092a\u0940\u092f \u0938\u0902\u0918 \u0905\u0928\u0941\u092a\u093e\u0932\u0928 \u0905\u0902\u0924\u0930\u094d\u0928\u093f\u0939\u093f\u0924",
             prOvr: "\u092e\u0942\u0932\u094d\u092f \u0928\u093f\u0930\u094d\u0927\u093e\u0930\u0923", prTitle: "\u0905\u092a\u0928\u0947 \u0932\u093e\u092d \u092e\u0947\u0902 \u0928\u093f\u0935\u0947\u0936 \u0915\u0930\u0947\u0902", prSub: "\u0938\u0902\u0938\u094d\u0925\u093e\u0917\u0924 \u0938\u094d\u0924\u0930 \u0915\u0940 \u092c\u0941\u0926\u094d\u0927\u093f\u092e\u0924\u094d\u0924\u093e \u0915\u092e \u0932\u093e\u0917\u0924 \u092a\u0930\u0964",
-            t1: "\u090f\u0915\u094d\u0938\u092a\u094d\u0932\u094b\u0930\u0930", t2: "\u0928\u093f\u0935\u0947\u0936\u0915", t3: "\u092a\u094d\u0930\u094b\u092b\u0947\u0936\u0928\u0932", popular: "\u0938\u092c\u0938\u0947 \u0932\u094b\u0915\u092a\u094d\u0930\u093f\u092f", billed: "\u092e\u093e\u0938\u093f\u0915 \u092c\u093f\u0932\u093f\u0902\u0917", getStart: "\u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", contactSales: "\u092c\u093f\u0915\u094d\u0930\u0940 \u0938\u0947 \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0947\u0902",
-            ctaOvr: "\u0905\u0930\u094d\u0932\u0940 \u090f\u0915\u094d\u0938\u0947\u0938", ctaTitle: "\u090f\u0915 \u0905\u0928\u0941\u091a\u093f\u0924 \u0932\u093e\u092d \u0915\u0947 \u0938\u093e\u0925<br>\u0928\u093f\u0935\u0947\u0936 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", ctaDesc: "\u092a\u094d\u0930\u0924\u0940\u0915\u094d\u0937\u093e \u0938\u0942\u091a\u0940 \u092e\u0947\u0902 \u0936\u093e\u092e\u093f\u0932 \u0939\u094b\u0902\u0964 AI-\u0938\u0902\u091a\u093e\u0932\u093f\u0924 \u0935\u0948\u0932\u094d\u092f\u0942 \u0928\u093f\u0935\u0947\u0936 \u0905\u0928\u0941\u092d\u0935 \u0915\u0930\u0928\u0947 \u0935\u093e\u0932\u0947 \u092a\u0939\u0932\u0947 \u0932\u094b\u0917\u094b\u0902 \u092e\u0947\u0902 \u0938\u0947 \u092c\u0928\u0947\u0902\u0964",
+            t1: "\u090f\u0915\u094d\u0938\u092a\u094d\u0932\u094b\u0930\u0930", t2: "\u0928\u093f\u0935\u0947\u0936\u0915", t3: "\u092a\u094d\u0930\u094b\u092b\u0947\u0936\u0928\u0932", popular: "\u0938\u092c\u0938\u0947 \u0932\u094b\u0915\u092a\u094d\u0930\u093f\u092f", billed: "\u092e\u093e\u0938\u093f\u0915 \u092c\u093f\u0932\u093f\u0902\u0917", getStart: "\u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915 \u0906\u091c\u093c\u092e\u093e\u090f\u0902", contactSales: "\u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915 \u0906\u091c\u093c\u092e\u093e\u090f\u0902", freeTrial: "7 \u0926\u093f\u0928 \u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915", trialNote: "\u0938\u092d\u0940 \u092f\u094b\u091c\u0928\u093e\u0913\u0902 \u092e\u0947\u0902 7 \u0926\u093f\u0928 \u0915\u093e \u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915 \u092a\u0930\u0940\u0915\u094d\u0937\u0923\u0964 \u092a\u0930\u0940\u0915\u094d\u0937\u0923 \u0938\u092e\u093e\u092a\u094d\u0924 \u0939\u094b\u0928\u0947 \u0924\u0915 \u0915\u094b\u0908 \u0936\u0941\u0932\u094d\u0915 \u0928\u0939\u0940\u0902\u0964 \u0915\u092d\u0940 \u092d\u0940 \u0930\u0926\u094d\u0926 \u0915\u0930\u0947\u0902\u0964",
+            ctaOvr: "\u0906\u091c \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", ctaTitle: "\u090f\u0915 \u0905\u0928\u0941\u091a\u093f\u0924 \u0932\u093e\u092d \u0915\u0947 \u0938\u093e\u0925<br>\u0928\u093f\u0935\u0947\u0936 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", ctaDesc: "\u0906\u091c \u0939\u0940 7 \u0926\u093f\u0928 \u0915\u093e \u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915 \u092a\u0930\u0940\u0915\u094d\u0937\u0923 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902\u0964 \u092a\u0942\u0930\u094d\u0923 \u092a\u0939\u0941\u0901\u091a\u0964 \u0915\u092d\u0940 \u092d\u0940 \u0930\u0926\u094d\u0926 \u0915\u0930\u0947\u0902\u0964",
             ctaPh: "\u0905\u092a\u0928\u093e \u0908\u092e\u0947\u0932 \u0926\u0930\u094d\u091c \u0915\u0930\u0947\u0902", ctaBtn: "\u0936\u093e\u092e\u093f\u0932 \u0939\u094b\u0902", ctaOk: "\u0927\u0928\u094d\u092f\u0935\u093e\u0926! \u0939\u092e \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0947\u0902\u0917\u0947\u0964",
             fDesc: "\u0938\u094d\u0935\u093e\u092f\u0924\u094d\u0924 AI \u090f\u091c\u0947\u0902\u091f\u094b\u0902 \u0915\u0947 \u092e\u093e\u0927\u094d\u092f\u092e \u0938\u0947 \u0938\u0902\u0938\u094d\u0925\u093e\u0917\u0924 \u0928\u093f\u0935\u0947\u0936 \u092c\u0941\u0926\u094d\u0927\u093f\u092e\u0924\u094d\u0924\u093e \u0915\u093e \u0932\u094b\u0915\u0924\u093e\u0902\u0924\u094d\u0930\u0940\u0915\u0930\u0923\u0964",
             fProd: "\u0909\u0924\u094d\u092a\u093e\u0926", fComp: "\u0915\u0902\u092a\u0928\u0940", fConn: "\u0938\u0902\u092a\u0930\u094d\u0915",
@@ -1804,8 +1830,8 @@
             p3t: "\u015eeffaf Mant\u0131k", p3d: "Her \u00f6neri tam AI a\u00e7\u0131klamas\u0131 ile gelir. Veriyi, modeli ve mant\u0131\u011f\u0131 g\u00f6r\u00fcrs\u00fcn\u00fcz.",
             mPillars: "De\u011fer analizi s\u00fctunlar\u0131", mMargin: "Hedef br\u00fct marj", mMarkets: "Lansman pazarlar\u0131", mComply: "AB uyumlulu\u011fu dahili",
             prOvr: "Fiyatland\u0131rma", prTitle: "Avantaj\u0131n\u0131za yat\u0131r\u0131m yap\u0131n", prSub: "Kurumsal d\u00fczeyde zeka, maliyetin bir k\u0131sm\u0131na.",
-            t1: "Explorer", t2: "Yat\u0131r\u0131mc\u0131", t3: "Profesyonel", popular: "En Pop\u00fcler", billed: "Ayl\u0131k faturaland\u0131rma", getStart: "Ba\u015fla", contactSales: "Sat\u0131\u015fa Ba\u015fvur",
-            ctaOvr: "Erken Eri\u015fim", ctaTitle: "Haks\u0131z bir avantajla<br>yat\u0131r\u0131ma ba\u015flay\u0131n", ctaDesc: "Bekleme listesine kat\u0131l\u0131n. AI destekli de\u011fer yat\u0131r\u0131m\u0131n\u0131 ilk deneyenlerden olun.",
+            t1: "Explorer", t2: "Yat\u0131r\u0131mc\u0131", t3: "Profesyonel", popular: "En Pop\u00fcler", billed: "Ayl\u0131k faturaland\u0131rma", getStart: "\u00dccretsiz deneyin", contactSales: "\u00dccretsiz deneyin", freeTrial: "7 g\u00fcn \u00fccretsiz", trialNote: "T\u00fcm planlar 7 g\u00fcnl\u00fck \u00fccretsiz deneme i\u00e7erir. Deneme s\u00fcresi bitene kadar \u00fccret yok. \u0130stedi\u011finiz zaman iptal edin.",
+            ctaOvr: "Bug\u00fcn Ba\u015flay\u0131n", ctaTitle: "Haks\u0131z bir avantajla<br>yat\u0131r\u0131ma ba\u015flay\u0131n", ctaDesc: "7 g\u00fcnl\u00fck \u00fccretsiz denemenizi ba\u015flat\u0131n. Tam eri\u015fim. \u0130stedi\u011finiz zaman iptal edin.",
             ctaPh: "E-posta adresinizi girin", ctaBtn: "Kat\u0131l", ctaOk: "Te\u015fekk\u00fcrler! Sizinle ileti\u015fime ge\u00e7ece\u011fiz.",
             fDesc: "Otonom AI ajanlar\u0131 arac\u0131l\u0131\u011f\u0131yla kurumsal yat\u0131r\u0131m zekas\u0131n\u0131 demokratikle\u015ftiriyoruz.",
             fProd: "\u00dcr\u00fcn", fComp: "\u015eirket", fConn: "\u0130leti\u015fim",
@@ -1833,8 +1859,8 @@
             p3t: "\u0394\u03b9\u03b1\u03c6\u03b1\u03bd\u03ae\u03c2 \u039b\u03bf\u03b3\u03b9\u03ba\u03ae", p3d: "\u039a\u03ac\u03b8\u03b5 \u03c3\u03cd\u03c3\u03c4\u03b1\u03c3\u03b7 \u03c0\u03b5\u03c1\u03b9\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03b5\u03b9 \u03c0\u03bb\u03ae\u03c1\u03b7 \u03b5\u03be\u03ae\u03b3\u03b7\u03c3\u03b7 AI. \u0392\u03bb\u03ad\u03c0\u03b5\u03c4\u03b5 \u03b4\u03b5\u03b4\u03bf\u03bc\u03ad\u03bd\u03b1, \u03bc\u03bf\u03bd\u03c4\u03ad\u03bb\u03bf \u03ba\u03b1\u03b9 \u03bb\u03bf\u03b3\u03b9\u03ba\u03ae.",
             mPillars: "\u03a0\u03c5\u03bb\u03ce\u03bd\u03b5\u03c2 \u03b1\u03bd\u03ac\u03bb\u03c5\u03c3\u03b7\u03c2 \u03b1\u03be\u03af\u03b1\u03c2", mMargin: "\u03a3\u03c4\u03cc\u03c7\u03bf\u03c2 \u03bc\u03b9\u03ba\u03c4\u03bf\u03cd \u03c0\u03b5\u03c1\u03b9\u03b8\u03c9\u03c1\u03af\u03bf\u03c5", mMarkets: "\u0391\u03b3\u03bf\u03c1\u03ad\u03c2 \u03ba\u03b1\u03c4\u03ac \u03c4\u03b7\u03bd \u03ad\u03bd\u03b1\u03c1\u03be\u03b7", mComply: "\u0395\u03bd\u03c3\u03c9\u03bc\u03b1\u03c4\u03c9\u03bc\u03ad\u03bd\u03b7 \u03c3\u03c5\u03bc\u03bc\u03cc\u03c1\u03c6\u03c9\u03c3\u03b7 \u0395\u0395",
             prOvr: "\u03a4\u03b9\u03bc\u03bf\u03bb\u03cc\u03b3\u03b7\u03c3\u03b7", prTitle: "\u0395\u03c0\u03b5\u03bd\u03b4\u03cd\u03c3\u03c4\u03b5 \u03c3\u03c4\u03bf \u03c0\u03bb\u03b5\u03bf\u03bd\u03ad\u03ba\u03c4\u03b7\u03bc\u03ac \u03c3\u03b1\u03c2", prSub: "\u0398\u03b5\u03c3\u03bc\u03b9\u03ba\u03bf\u03cd \u03b5\u03c0\u03b9\u03c0\u03ad\u03b4\u03bf\u03c5 \u03b5\u03c5\u03c6\u03c5\u0390\u03b1 \u03c3\u03b5 \u03ba\u03bb\u03ac\u03c3\u03bc\u03b1 \u03c4\u03bf\u03c5 \u03ba\u03cc\u03c3\u03c4\u03bf\u03c5\u03c2.",
-            t1: "Explorer", t2: "\u0395\u03c0\u03b5\u03bd\u03b4\u03c5\u03c4\u03ae\u03c2", t3: "Professional", popular: "\u0394\u03b7\u03bc\u03bf\u03c6\u03b9\u03bb\u03ad\u03c3\u03c4\u03b5\u03c1\u03bf", billed: "\u039c\u03b7\u03bd\u03b9\u03b1\u03af\u03b1 \u03c7\u03c1\u03ad\u03c9\u03c3\u03b7", getStart: "\u039e\u03b5\u03ba\u03b9\u03bd\u03ae\u03c3\u03c4\u03b5", contactSales: "\u0395\u03c0\u03b9\u03ba\u03bf\u03b9\u03bd\u03c9\u03bd\u03af\u03b1 \u03a0\u03c9\u03bb\u03ae\u03c3\u03b5\u03c9\u03bd",
-            ctaOvr: "\u03a0\u03c1\u03ce\u03b9\u03bc\u03b7 \u03a0\u03c1\u03cc\u03c3\u03b2\u03b1\u03c3\u03b7", ctaTitle: "\u0395\u03c0\u03b5\u03bd\u03b4\u03cd\u03c3\u03c4\u03b5 \u03bc\u03b5<br>\u03ad\u03bd\u03b1 \u03b1\u03b8\u03ad\u03bc\u03b9\u03c4\u03bf \u03c0\u03bb\u03b5\u03bf\u03bd\u03ad\u03ba\u03c4\u03b7\u03bc\u03b1", ctaDesc: "\u0393\u03c1\u03b1\u03c6\u03c4\u03b5\u03af\u03c4\u03b5 \u03c3\u03c4\u03b7 \u03bb\u03af\u03c3\u03c4\u03b1 \u03b1\u03bd\u03b1\u03bc\u03bf\u03bd\u03ae\u03c2. \u0393\u03af\u03bd\u03b5\u03c4\u03b5 \u03b1\u03c0\u03cc \u03c4\u03bf\u03c5\u03c2 \u03c0\u03c1\u03ce\u03c4\u03bf\u03c5\u03c2 \u03c0\u03bf\u03c5 \u03b8\u03b1 \u03b4\u03bf\u03ba\u03b9\u03bc\u03ac\u03c3\u03bf\u03c5\u03bd AI value investing.",
+            t1: "Explorer", t2: "\u0395\u03c0\u03b5\u03bd\u03b4\u03c5\u03c4\u03ae\u03c2", t3: "Professional", popular: "\u0394\u03b7\u03bc\u03bf\u03c6\u03b9\u03bb\u03ad\u03c3\u03c4\u03b5\u03c1\u03bf", billed: "\u039c\u03b7\u03bd\u03b9\u03b1\u03af\u03b1 \u03c7\u03c1\u03ad\u03c9\u03c3\u03b7", getStart: "\u0394\u03c9\u03c1\u03b5\u03ac\u03bd \u03b4\u03bf\u03ba\u03b9\u03bc\u03ae", contactSales: "\u0394\u03c9\u03c1\u03b5\u03ac\u03bd \u03b4\u03bf\u03ba\u03b9\u03bc\u03ae", freeTrial: "7 \u03b7\u03bc\u03ad\u03c1\u03b5\u03c2 \u03b4\u03c9\u03c1\u03b5\u03ac\u03bd", trialNote: "\u038c\u03bb\u03b1 \u03c4\u03b1 \u03c0\u03bb\u03ac\u03bd\u03b1 \u03c0\u03b5\u03c1\u03b9\u03bb\u03b1\u03bc\u03b2\u03ac\u03bd\u03bf\u03c5\u03bd 7 \u03b7\u03bc\u03ad\u03c1\u03b5\u03c2 \u03b4\u03c9\u03c1\u03b5\u03ac\u03bd \u03b4\u03bf\u03ba\u03b9\u03bc\u03ae\u03c2. \u039a\u03b1\u03bc\u03af\u03b1 \u03c7\u03c1\u03ad\u03c9\u03c3\u03b7 \u03bc\u03ad\u03c7\u03c1\u03b9 \u03c4\u03bf \u03c4\u03ad\u03bb\u03bf\u03c2 \u03c4\u03b7\u03c2 \u03b4\u03bf\u03ba\u03b9\u03bc\u03ae\u03c2. \u0391\u03ba\u03cd\u03c1\u03c9\u03c3\u03b7 \u03b1\u03bd\u03ac \u03c0\u03ac\u03c3\u03b1 \u03c3\u03c4\u03b9\u03b3\u03bc\u03ae.",
+            ctaOvr: "\u039e\u03b5\u03ba\u03b9\u03bd\u03ae\u03c3\u03c4\u03b5 \u03a3\u03ae\u03bc\u03b5\u03c1\u03b1", ctaTitle: "\u0395\u03c0\u03b5\u03bd\u03b4\u03cd\u03c3\u03c4\u03b5 \u03bc\u03b5<br>\u03ad\u03bd\u03b1 \u03b1\u03b8\u03ad\u03bc\u03b9\u03c4\u03bf \u03c0\u03bb\u03b5\u03bf\u03bd\u03ad\u03ba\u03c4\u03b7\u03bc\u03b1", ctaDesc: "\u039e\u03b5\u03ba\u03b9\u03bd\u03ae\u03c3\u03c4\u03b5 \u03c4\u03b7 \u03b4\u03c9\u03c1\u03b5\u03ac\u03bd \u03b4\u03bf\u03ba\u03b9\u03bc\u03ae 7 \u03b7\u03bc\u03b5\u03c1\u03ce\u03bd. \u03a0\u03bb\u03ae\u03c1\u03b7\u03c2 \u03c0\u03c1\u03cc\u03c3\u03b2\u03b1\u03c3\u03b7. \u0391\u03ba\u03cd\u03c1\u03c9\u03c3\u03b7 \u03b1\u03bd\u03ac \u03c0\u03ac\u03c3\u03b1 \u03c3\u03c4\u03b9\u03b3\u03bc\u03ae.",
             ctaPh: "\u0395\u03b9\u03c3\u03ac\u03b3\u03b5\u03c4\u03b5 \u03c4\u03bf email \u03c3\u03b1\u03c2", ctaBtn: "\u0395\u03b3\u03b3\u03c1\u03b1\u03c6\u03ae", ctaOk: "\u0395\u03c5\u03c7\u03b1\u03c1\u03b9\u03c3\u03c4\u03bf\u03cd\u03bc\u03b5! \u0398\u03b1 \u03b5\u03c0\u03b9\u03ba\u03bf\u03b9\u03bd\u03c9\u03bd\u03ae\u03c3\u03bf\u03c5\u03bc\u03b5.",
             fDesc: "\u0394\u03b7\u03bc\u03bf\u03ba\u03c1\u03b1\u03c4\u03b9\u03ba\u03bf\u03c0\u03bf\u03af\u03b7\u03c3\u03b7 \u03c4\u03b7\u03c2 \u03b8\u03b5\u03c3\u03bc\u03b9\u03ba\u03ae\u03c2 \u03b5\u03c0\u03b5\u03bd\u03b4\u03c5\u03c4\u03b9\u03ba\u03ae\u03c2 \u03b5\u03c5\u03c6\u03c5\u0390\u03b1\u03c2 \u03bc\u03ad\u03c3\u03c9 \u03b1\u03c5\u03c4\u03cc\u03bd\u03bf\u03bc\u03c9\u03bd AI \u03c0\u03c1\u03b1\u03ba\u03c4\u03cc\u03c1\u03c9\u03bd.",
             fProd: "\u03a0\u03c1\u03bf\u03ca\u03cc\u03bd", fComp: "\u0395\u03c4\u03b1\u03b9\u03c1\u03b5\u03af\u03b1", fConn: "\u0395\u03c0\u03b9\u03ba\u03bf\u03b9\u03bd\u03c9\u03bd\u03af\u03b1",
@@ -1890,9 +1916,7 @@
             if(steps[i]){steps[i].querySelector('.how__step-title').textContent=s.t;steps[i].querySelector('.how__step-desc').textContent=s.d;}
         });
 
-        const ms = document.getElementById('methodology');
-        ms.querySelector('.section__overline').textContent = t.methOvr;
-        ms.querySelector('.section__title').innerHTML = t.methTitle;
+        const ms = document.getElementById('how');
         const prins = qa('.why__principle');
         [{t:t.p1t,d:t.p1d},{t:t.p2t,d:t.p2d},{t:t.p3t,d:t.p3d}].forEach((p,i) => {
             if(prins[i]){prins[i].querySelector('.why__principle-title').textContent=p.t;prins[i].querySelector('.why__principle-desc').textContent=p.d;}
@@ -1906,21 +1930,20 @@
         ps.querySelector('.section__title').textContent = t.prTitle;
         ps.querySelector('.section__subtitle').textContent = t.prSub;
         const pc = qa('.pricing-card');
-        [t.t1,t.t2,t.t3].forEach((n,i) => {if(pc[i]){pc[i].querySelector('.pricing-card__name').textContent=n;pc[i].querySelector('.pricing-card__period').textContent=t.billed;}});
+        [t.t1,t.t2,t.t3].forEach((n,i) => {if(pc[i]){pc[i].querySelector('.pricing-card__name').textContent=n;pc[i].querySelector('.pricing-card__period').textContent=t.billed;const tb=pc[i].querySelector('.pricing-card__trial');if(tb)tb.textContent=t.freeTrial;}});
         const badge = q('.pricing-card__badge'); if(badge) badge.textContent=t.popular;
         const pb = qa('.pricing-card__btn');
         if(pb[0]) pb[0].textContent=t.getStart; if(pb[1]) pb[1].textContent=t.getStart; if(pb[2]) pb[2].textContent=t.contactSales;
+        const tn = q('.pricing__trial-note'); if(tn) tn.textContent=t.trialNote;
 
         const cs = document.getElementById('cta');
         cs.querySelector('.section__overline').textContent = t.ctaOvr;
         cs.querySelector('.cta__title').innerHTML = t.ctaTitle;
         cs.querySelector('.cta__desc').textContent = t.ctaDesc;
-        cs.querySelector('.cta__input').placeholder = t.ctaPh;
-        cs.querySelector('.btn-primary').textContent = t.ctaBtn;
 
         const nl = qa('.nav__links > li > a');
         if(nl[0]) nl[0].textContent=t.nAg; if(nl[1]) nl[1].textContent=t.nHow;
-        if(nl[2]) nl[2].textContent=t.nMeth; if(nl[3]) nl[3].textContent=t.nPr; if(nl[4]) nl[4].textContent=t.nCta;
+        if(nl[2]) nl[2].textContent=t.nPr;
 
         const fp = q('.footer__brand p'); if(fp) fp.textContent=t.fDesc;
         const ct = qa('.footer__col-title');
