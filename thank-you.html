@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Welcome to LIUV — Your AI Wealth Agent Awaits</title>
+    <meta name="description" content="Thank you for subscribing to LIUV AI Wealth Agent. Your institutional-grade investment intelligence journey starts now.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --agent-portfolio: #14B89C;
+            --agent-spending: #3B82F6;
+            --agent-strategy: #A78BFA;
+            --agent-crossborder: #F59E0B;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+
+        .bg-grid {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none; z-index: 0;
+        }
+        .bg-glow {
+            position: fixed; width: 600px; height: 600px; border-radius: 50%;
+            filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0;
+        }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: var(--agent-strategy); bottom: 20%; left: -200px; }
+
+        /* Nav */
+        .nav {
+            position: relative; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 20px 0; background: rgba(6, 9, 16, 0.6);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+        .nav__inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+        }
+        .nav__logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span {
+            display: block; width: 5px; border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+
+        /* Main content */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .thank-you { flex: 1; display: flex; align-items: center; justify-content: center; padding: 80px 24px; position: relative; z-index: 1; }
+        .thank-you__card {
+            max-width: 640px; width: 100%; text-align: center;
+            background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 60px 48px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Success checkmark */
+        .success-icon {
+            width: 80px; height: 80px; margin: 0 auto 32px;
+            border-radius: 50%; background: var(--accent-teal-dim);
+            display: flex; align-items: center; justify-content: center;
+            animation: scaleIn 0.5s ease-out 0.2s both;
+        }
+        .success-icon svg { width: 40px; height: 40px; }
+        .success-icon .checkmark {
+            stroke: var(--accent-teal); stroke-width: 3; fill: none;
+            stroke-linecap: round; stroke-linejoin: round;
+            stroke-dasharray: 50; stroke-dashoffset: 50;
+            animation: drawCheck 0.6s ease-out 0.5s forwards;
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .thank-you__overline {
+            font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px;
+        }
+        .thank-you__title {
+            font-family: var(--font-display); font-size: 36px; font-weight: 700;
+            line-height: 1.2; margin-bottom: 16px;
+        }
+        .thank-you__title em { font-style: italic; color: var(--accent-teal); }
+        .thank-you__subtitle {
+            font-size: 16px; color: var(--text-muted); line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        /* Plan badge */
+        .plan-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            padding: 12px 24px; background: rgba(20, 184, 156, 0.08);
+            border: 1px solid rgba(20, 184, 156, 0.2); border-radius: 8px;
+            margin-bottom: 32px;
+        }
+        .plan-badge__name {
+            font-family: var(--font-mono); font-size: 14px; font-weight: 500;
+            color: var(--accent-teal); letter-spacing: 1px; text-transform: uppercase;
+        }
+        .plan-badge__price { font-size: 14px; color: var(--text-muted); }
+
+        /* Trial info */
+        .trial-info {
+            display: flex; align-items: center; gap: 12px; justify-content: center;
+            padding: 16px 24px; background: rgba(59, 130, 246, 0.06);
+            border: 1px solid rgba(59, 130, 246, 0.12); border-radius: 8px;
+            margin-bottom: 36px;
+        }
+        .trial-info svg { flex-shrink: 0; }
+        .trial-info__text { font-size: 14px; color: var(--text-muted); text-align: left; }
+        .trial-info__text strong { color: var(--text-primary); }
+
+        /* What happens next */
+        .next-steps { margin-bottom: 36px; text-align: left; }
+        .next-steps__title {
+            font-size: 14px; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 16px; text-align: center;
+        }
+        .next-steps__list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .next-steps__item {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 14px 18px; background: rgba(255,255,255,0.02);
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.04);
+        }
+        .next-steps__num {
+            font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+            color: var(--accent-teal); background: var(--accent-teal-dim);
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .next-steps__text { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+        .next-steps__text strong { color: var(--text-primary); }
+
+        /* CTA button */
+        .thank-you__cta {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--accent-teal); color: var(--bg-primary); padding: 16px 36px;
+            border-radius: 8px; font-weight: 600; font-size: 15px;
+            transition: all 0.2s; text-decoration: none;
+        }
+        .thank-you__cta:hover { opacity: 0.9; transform: translateY(-1px); }
+        .thank-you__cta svg { transition: transform 0.2s; }
+        .thank-you__cta:hover svg { transform: translateX(3px); }
+
+        .thank-you__secondary {
+            display: block; margin-top: 16px; font-size: 13px; color: var(--text-dim);
+        }
+        .thank-you__secondary a { color: var(--text-muted); }
+
+        /* Footer */
+        .footer-minimal {
+            text-align: center; padding: 24px; border-top: 1px solid rgba(255,255,255,0.04);
+            position: relative; z-index: 1;
+        }
+        .footer-minimal p { font-size: 12px; color: var(--text-dim); }
+
+        @media (max-width: 640px) {
+            .thank-you__card { padding: 40px 24px; }
+            .thank-you__title { font-size: 28px; }
+            .trial-info { flex-direction: column; text-align: center; }
+            .trial-info__text { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--teal"></div>
+    <div class="bg-glow bg-glow--purple"></div>
+
+    <nav class="nav">
+        <div class="nav__inner">
+            <a href="/" class="nav__logo">
+                <div class="nav__logomark">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <div>
+                    <div class="nav__wordmark">LIUV</div>
+                    <div class="nav__tagline">AI Wealth Agent</div>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <main class="thank-you">
+        <div class="thank-you__card">
+            <div class="success-icon">
+                <svg viewBox="0 0 40 40">
+                    <polyline class="checkmark" points="12,20 18,27 28,14"/>
+                </svg>
+            </div>
+
+            <div class="thank-you__overline">Payment Confirmed</div>
+            <h1 class="thank-you__title">Welcome to <em>LIUV</em></h1>
+            <p class="thank-you__subtitle" id="subtitle">
+                Your subscription is active. Institutional-grade investment intelligence is now at your fingertips.
+            </p>
+
+            <div class="plan-badge" id="plan-badge">
+                <span class="plan-badge__name" id="plan-name">Explorer</span>
+                <span class="plan-badge__price" id="plan-price">$29/mo</span>
+            </div>
+
+            <div class="trial-info">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="9" stroke="#3B82F6" stroke-width="1.5"/>
+                    <path d="M10 6v4l2.5 2.5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <div class="trial-info__text">
+                    <strong>Your 7-day free trial has started.</strong><br>
+                    You won't be charged until the trial ends. Cancel anytime from your Stripe billing portal.
+                </div>
+            </div>
+
+            <div class="next-steps">
+                <div class="next-steps__title">What happens next</div>
+                <ul class="next-steps__list" id="next-steps-list">
+                    <li class="next-steps__item">
+                        <div class="next-steps__num">1</div>
+                        <div class="next-steps__text"><strong>Confirmation email</strong> — Check your inbox for your subscription details and billing portal link.</div>
+                    </li>
+                    <li class="next-steps__item">
+                        <div class="next-steps__num">2</div>
+                        <div class="next-steps__text"><strong>Complete onboarding</strong> — Set up your investment profile and preferences in under 2 minutes.</div>
+                    </li>
+                    <li class="next-steps__item">
+                        <div class="next-steps__num">3</div>
+                        <div class="next-steps__text"><strong>AI agents activate</strong> — Your personalized agents begin analyzing markets and building your intelligence dashboard.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <a href="/login.html" class="thank-you__cta" id="cta-link">
+                Create Your Account
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            <div class="thank-you__secondary">
+                Need help? <a href="mailto:pedro@liuv.io">Contact us at pedro@liuv.io</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-minimal">
+        <p>&copy; 2026 LIUV Ventures. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Detect plan from URL parameter
+        const params = new URLSearchParams(window.location.search);
+        const plan = (params.get('plan') || 'explorer').toLowerCase();
+
+        const plans = {
+            explorer: {
+                name: 'Explorer',
+                price: '$29/mo',
+                subtitle: 'Your Explorer subscription is active. Start screening stocks and tracking your first portfolio with AI-powered analysis.',
+                cta: '/login.html',
+                ctaText: 'Create Your Account',
+                steps: [
+                    { title: 'Create your account', desc: 'Sign up or log in to link your subscription and access your personalized dashboard.' },
+                    { title: 'Set up your portfolio', desc: 'Complete a quick onboarding to define your investment goals and risk tolerance.' },
+                    { title: 'Run your first analysis', desc: 'Use your 3 daily AI analyses to screen stocks using the Buffett/Graham methodology.' }
+                ]
+            },
+            investor: {
+                name: 'Investor',
+                price: '$99/mo',
+                subtitle: 'Your Investor subscription is active. Unlock unlimited AI analyses, full DCF modeling, and cross-market intelligence.',
+                cta: '/login.html',
+                ctaText: 'Create Your Account',
+                steps: [
+                    { title: 'Create your account', desc: 'Sign up or log in to link your subscription and unlock your full investment suite.' },
+                    { title: 'Configure your intelligence', desc: 'Set up portfolio optimization, real-time alerts, and cross-market preferences.' },
+                    { title: 'Agents go to work', desc: 'Your full suite of AI agents begins 24/7 analysis across global markets.' }
+                ]
+            },
+            professional: {
+                name: 'Professional',
+                price: '$299/mo',
+                subtitle: 'Your Professional subscription is active. Full platform access with API, white-label capabilities, and a dedicated account manager.',
+                cta: '/login.html',
+                ctaText: 'Create Your Account',
+                steps: [
+                    { title: 'Create your account', desc: 'Sign up or log in to access your Professional dashboard and dedicated account manager.' },
+                    { title: 'Platform configuration', desc: 'Set up API access, white-label settings, and multi-portfolio management.' },
+                    { title: 'Custom agent deployment', desc: 'Configure custom agent parameters and deploy your personalized intelligence stack.' }
+                ]
+            }
+        };
+
+        const config = plans[plan] || plans.explorer;
+
+        document.getElementById('plan-name').textContent = config.name;
+        document.getElementById('plan-price').textContent = config.price;
+        document.getElementById('subtitle').textContent = config.subtitle;
+        document.getElementById('cta-link').href = config.cta;
+        document.getElementById('cta-link').childNodes[0].textContent = config.ctaText + ' ';
+
+        const stepsList = document.getElementById('next-steps-list');
+        stepsList.innerHTML = config.steps.map((step, i) =>
+            `<li class="next-steps__item">
+                <div class="next-steps__num">${i + 1}</div>
+                <div class="next-steps__text"><strong>${step.title}</strong> — ${step.desc}</div>
+            </li>`
+        ).join('');
+
+        // Track conversion in GA
+        gtag('event', 'purchase', {
+            transaction_id: params.get('session_id') || 'unknown',
+            items: [{ item_name: config.name + ' Plan', price: config.price }]
+        });
+
+        // Send conversion email notification to pedro@liuv.io
+        fetch('/api/send-notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                eventType: 'Payment Page Visit — ' + config.name + ' Plan',
+                userEmail: 'Stripe redirect visitor',
+                plan: config.name + ' (' + config.price + ')',
+                details: 'User landed on thank-you page for ' + config.name + ' plan. Session: ' + (params.get('session_id') || 'direct visit'),
+            }),
+        }).catch(() => {});
+    </script>
+</body>
+</html>

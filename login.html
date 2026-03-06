@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Sign In — LIUV AI Wealth Agent</title>
+    <meta name="description" content="Sign in to your LIUV account. Access institutional-grade AI investment intelligence powered by the Buffett/Graham methodology.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --agent-portfolio: #14B89C;
+            --agent-spending: #3B82F6;
+            --agent-strategy: #A78BFA;
+            --agent-crossborder: #F59E0B;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+
+        .bg-grid {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none; z-index: 0;
+        }
+        .bg-glow {
+            position: fixed; width: 600px; height: 600px; border-radius: 50%;
+            filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0;
+        }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: var(--agent-strategy); bottom: 20%; left: -200px; }
+
+        /* Nav */
+        .nav {
+            position: relative; z-index: 100; padding: 20px 0;
+            background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+        .nav__inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+        }
+        .nav__logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span {
+            display: block; width: 5px; border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+
+        /* Login container */
+        .login-wrapper {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 60px 24px; position: relative; z-index: 1;
+        }
+        .login-card {
+            max-width: 460px; width: 100%;
+            background: var(--bg-card); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 48px 40px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-card__overline {
+            font-family: var(--font-mono); font-size: 11px; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--accent-teal); margin-bottom: 8px;
+            text-align: center;
+        }
+        .login-card__title {
+            font-family: var(--font-display); font-size: 30px; font-weight: 700;
+            line-height: 1.2; margin-bottom: 8px; text-align: center;
+        }
+        .login-card__title em { font-style: italic; color: var(--accent-teal); }
+        .login-card__subtitle {
+            font-size: 14px; color: var(--text-muted); text-align: center;
+            margin-bottom: 32px; line-height: 1.6;
+        }
+
+        /* SSO Buttons */
+        .sso-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            margin-bottom: 28px;
+        }
+        .sso-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 12px 16px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+            color: var(--text-primary); font-size: 13px; font-weight: 500;
+            font-family: var(--font-body); cursor: pointer; transition: all 0.2s;
+            text-decoration: none;
+        }
+        .sso-btn:hover {
+            background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15);
+            color: var(--text-primary); opacity: 1; transform: translateY(-1px);
+        }
+        .sso-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        /* Full-width for first button (Google) */
+        .sso-btn--google {
+            grid-column: 1 / -1;
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+            padding: 14px 16px;
+            font-size: 14px;
+        }
+        .sso-btn--google:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex; align-items: center; gap: 16px;
+            margin-bottom: 24px;
+        }
+        .divider__line {
+            flex: 1; height: 1px; background: rgba(255,255,255,0.06);
+        }
+        .divider__text {
+            font-size: 12px; color: var(--text-dim); text-transform: uppercase;
+            letter-spacing: 1px; white-space: nowrap;
+        }
+
+        /* Form */
+        .form-group { margin-bottom: 16px; }
+        .form-label {
+            display: block; font-size: 13px; font-weight: 500;
+            color: var(--text-muted); margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+            color: var(--text-primary); font-size: 14px; font-family: var(--font-body);
+            transition: border-color 0.2s; outline: none;
+        }
+        .form-input:focus { border-color: var(--accent-teal); }
+        .form-input::placeholder { color: var(--text-dim); }
+
+        .form-group--name { display: none; }
+        .form-group--name.visible { display: block; }
+
+        .form-row {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .form-link {
+            font-size: 13px; color: var(--accent-teal); cursor: pointer;
+            background: none; border: none; font-family: var(--font-body);
+        }
+
+        .btn-submit {
+            width: 100%; padding: 14px 24px; background: var(--accent-teal);
+            color: var(--bg-primary); border: none; border-radius: 8px;
+            font-weight: 600; font-size: 15px; font-family: var(--font-body);
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Error/Success messages */
+        .message {
+            padding: 12px 16px; border-radius: 8px; font-size: 13px;
+            margin-bottom: 16px; display: none; line-height: 1.5;
+        }
+        .message--error {
+            background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #FCA5A5; display: block;
+        }
+        .message--success {
+            background: rgba(20, 184, 156, 0.1); border: 1px solid rgba(20, 184, 156, 0.2);
+            color: var(--accent-teal); display: block;
+        }
+
+        /* Toggle */
+        .toggle-text {
+            text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-muted);
+        }
+        .toggle-text a { font-weight: 600; }
+
+        /* Security note */
+        .security-note {
+            display: flex; align-items: center; gap: 8px; justify-content: center;
+            margin-top: 20px; padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .security-note svg { flex-shrink: 0; }
+        .security-note span { font-size: 11px; color: var(--text-dim); }
+
+        /* Footer */
+        .footer-minimal {
+            text-align: center; padding: 24px; border-top: 1px solid rgba(255,255,255,0.04);
+            position: relative; z-index: 1;
+        }
+        .footer-minimal p { font-size: 12px; color: var(--text-dim); }
+
+        @media (max-width: 520px) {
+            .login-card { padding: 36px 24px; }
+            .login-card__title { font-size: 26px; }
+            .sso-grid { grid-template-columns: 1fr; }
+            .sso-btn--google { grid-column: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--teal"></div>
+    <div class="bg-glow bg-glow--purple"></div>
+
+    <nav class="nav">
+        <div class="nav__inner">
+            <a href="/" class="nav__logo">
+                <div class="nav__logomark">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <div>
+                    <div class="nav__wordmark">LIUV</div>
+                    <div class="nav__tagline">AI Wealth Agent</div>
+                </div>
+            </a>
+        </div>
+    </nav>
+
+    <main class="login-wrapper">
+        <div class="login-card">
+            <div class="login-card__overline" id="overline">Welcome Back</div>
+            <h1 class="login-card__title">Sign in to <em>LIUV</em></h1>
+            <p class="login-card__subtitle" id="subtitle">
+                Access your AI-powered investment intelligence dashboard.
+            </p>
+
+            <div id="message" class="message"></div>
+
+            <!-- SSO Buttons -->
+            <div class="sso-grid">
+                <a href="/api/auth/oauth/google" class="sso-btn sso-btn--google">
+                    <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    Continue with Google
+                </a>
+                <a href="/api/auth/oauth/microsoft" class="sso-btn">
+                    <svg viewBox="0 0 24 24"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="13" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="13" width="10" height="10" fill="#00A4EF"/><rect x="13" y="13" width="10" height="10" fill="#FFB900"/></svg>
+                    Microsoft
+                </a>
+                <a href="/api/auth/oauth/apple" class="sso-btn">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                    Apple
+                </a>
+                <a href="/api/auth/oauth/facebook" class="sso-btn">
+                    <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Facebook
+                </a>
+                <a href="/api/auth/oauth/linkedin" class="sso-btn">
+                    <svg viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                    LinkedIn
+                </a>
+                <a href="/api/auth/oauth/amazon" class="sso-btn">
+                    <svg viewBox="0 0 24 24" fill="#FF9900"><path d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.313-.136.618-.09.842.177.136.16.09.313-.046.452-.262.27-.58.49-.938.673-2.184 1.103-4.58 1.74-7.152 2.025-2.57.283-5.063.07-7.478-.643C4.01 21.363 1.9 20.09.265 18.426a.348.348 0 0 1-.22-.405zm6.197-2.88c-.244 0-.378-.2-.396-.375-.02-.207.066-.41.244-.533l.173-.108c2.055-1.104 4.29-1.685 6.698-1.752 1.38-.036 2.73.08 4.06.348.39.08.762.174 1.117.286.277.086.444.29.453.59.01.3-.15.536-.418.636-.28.1-.547.02-.8-.162-.44-.32-.93-.51-1.48-.577-1.286-.15-2.568-.13-3.84.065-2.3.354-4.417 1.08-6.33 2.17l-.26.14-.17.08c-.12.06-.22.06-.36.02l.31-.828zm12.47 3.8c-.088 0-.176-.027-.252-.08a.57.57 0 0 1-.167-.208l-.76-1.756c-.03-.063-.005-.147.04-.2.05-.06.11-.057.17-.013l.85.535c.058.037.148.057.25.02.396-.145.67-.465.82-.96.07-.222.06-.45-.022-.63-.094-.197-.256-.323-.493-.376-.26-.06-.527-.005-.82.125-.32.142-.61.378-.88.705-.38.462-.54.998-.47 1.608.04.35.14.66.33.93.13.19.31.35.55.47.27.13.55.16.85.09.27-.06.5-.18.7-.35.1-.09.2-.09.3-.01.07.06.12.13.12.22 0 .04-.01.09-.04.13-.3.38-.7.62-1.17.72-.16.04-.32.05-.49.05-.57 0-1.06-.23-1.44-.67-.44-.5-.67-1.13-.68-1.87-.01-.78.24-1.48.76-2.08.63-.74 1.42-1.1 2.38-1.08.37.01.7.1 1 .27.32.18.54.44.68.78.14.36.12.73-.06 1.1-.21.43-.53.77-.97 1.02l-.75.42z"/></svg>
+                    Amazon
+                </a>
+            </div>
+
+            <div class="divider">
+                <div class="divider__line"></div>
+                <span class="divider__text">or continue with email</span>
+                <div class="divider__line"></div>
+            </div>
+
+            <!-- Email/Password Form -->
+            <form id="authForm" onsubmit="handleSubmit(event)">
+                <div class="form-group form-group--name" id="nameGroup">
+                    <label class="form-label" for="name">Full name</label>
+                    <input class="form-input" type="text" id="name" name="name" placeholder="Your full name" autocomplete="name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email address</label>
+                    <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-input" type="password" id="password" name="password" placeholder="Min. 8 characters" required minlength="8" autocomplete="current-password">
+                </div>
+
+                <div class="form-row">
+                    <div></div>
+                    <button type="button" class="form-link" id="forgotLink" onclick="showMessage('Please contact pedro@liuv.io for password reset assistance.', 'success')">Forgot password?</button>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">Sign In</button>
+            </form>
+
+            <div class="toggle-text" id="toggleText">
+                Don't have an account? <a href="#" onclick="toggleMode(event)">Create one</a>
+            </div>
+
+            <div class="security-note">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M7 1L2 3.5V6.5C2 9.85 4.1 12.95 7 13.5C9.9 12.95 12 9.85 12 6.5V3.5L7 1Z" stroke="#3a4555" stroke-width="1.2" stroke-linejoin="round"/>
+                    <path d="M5 7L6.5 8.5L9 5.5" stroke="#3a4555" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>256-bit SSL encrypted. Your data is secure.</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-minimal">
+        <p>&copy; 2026 LIUV Ventures. All rights reserved. &nbsp;|&nbsp; <a href="/compliance.html" style="color:var(--text-dim);">Compliance</a></p>
+    </footer>
+
+    <script>
+        let isSignUp = false;
+
+        function toggleMode(e) {
+            e.preventDefault();
+            isSignUp = !isSignUp;
+
+            const overline = document.getElementById('overline');
+            const subtitle = document.getElementById('subtitle');
+            const nameGroup = document.getElementById('nameGroup');
+            const submitBtn = document.getElementById('submitBtn');
+            const toggleText = document.getElementById('toggleText');
+            const forgotLink = document.getElementById('forgotLink');
+            const title = document.querySelector('.login-card__title');
+            const passwordInput = document.getElementById('password');
+
+            if (isSignUp) {
+                overline.textContent = 'Get Started';
+                title.innerHTML = 'Create your <em>LIUV</em> account';
+                subtitle.textContent = 'Start your journey to institutional-grade AI investment intelligence.';
+                nameGroup.classList.add('visible');
+                submitBtn.textContent = 'Create Account';
+                toggleText.innerHTML = 'Already have an account? <a href="#" onclick="toggleMode(event)">Sign in</a>';
+                forgotLink.style.display = 'none';
+                passwordInput.autocomplete = 'new-password';
+            } else {
+                overline.textContent = 'Welcome Back';
+                title.innerHTML = 'Sign in to <em>LIUV</em>';
+                subtitle.textContent = 'Access your AI-powered investment intelligence dashboard.';
+                nameGroup.classList.remove('visible');
+                submitBtn.textContent = 'Sign In';
+                toggleText.innerHTML = 'Don\'t have an account? <a href="#" onclick="toggleMode(event)">Create one</a>';
+                forgotLink.style.display = 'block';
+                passwordInput.autocomplete = 'current-password';
+            }
+
+            clearMessage();
+        }
+
+        async function handleSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const name = document.getElementById('name').value.trim();
+
+            if (!email || !password) {
+                showMessage('Please fill in all required fields.', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showMessage('Password must be at least 8 characters.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = isSignUp ? 'Creating account...' : 'Signing in...';
+            clearMessage();
+
+            try {
+                const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/login';
+                const body = isSignUp
+                    ? JSON.stringify({ email, password, name })
+                    : JSON.stringify({ email, password });
+
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body,
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    // Track event
+                    gtag('event', isSignUp ? 'sign_up' : 'login', {
+                        method: 'email',
+                    });
+
+                    // Send conversion notification for signups
+                    if (isSignUp) {
+                        fetch('/api/send-notification', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                eventType: 'New Account Signup',
+                                userEmail: email,
+                                userName: name,
+                                details: 'Signed up via login page (email/password)',
+                            }),
+                        }).catch(() => {});
+                    }
+
+                    showMessage(isSignUp ? 'Account created! Redirecting...' : 'Welcome back! Redirecting...', 'success');
+
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 800);
+                } else {
+                    showMessage(data.error || 'Something went wrong. Please try again.', 'error');
+                }
+            } catch (err) {
+                showMessage('Network error. Please check your connection and try again.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = isSignUp ? 'Create Account' : 'Sign In';
+            }
+        }
+
+        function showMessage(text, type) {
+            const el = document.getElementById('message');
+            el.textContent = text;
+            el.className = `message message--${type}`;
+        }
+
+        function clearMessage() {
+            const el = document.getElementById('message');
+            el.className = 'message';
+            el.textContent = '';
+        }
+
+        // Check for OAuth errors in URL
+        const params = new URLSearchParams(window.location.search);
+        const error = params.get('error');
+        if (error) {
+            const errorMessages = {
+                oauth_denied: 'Authentication was cancelled. Please try again.',
+                missing_params: 'Authentication failed. Missing parameters.',
+                invalid_state: 'Authentication failed. Invalid state.',
+                no_email: 'Could not retrieve email from provider. Please try a different sign-in method.',
+                auth_failed: 'Authentication failed. Please try again or use a different method.',
+            };
+            showMessage(errorMessages[error] || 'Authentication error. Please try again.', 'error');
+        }
+
+        // If already logged in, redirect to dashboard
+        fetch('/api/auth/check')
+            .then(res => res.json())
+            .then(data => {
+                if (data.authenticated) {
+                    window.location.href = '/dashboard.html';
+                }
+            })
+            .catch(() => {});
+    </script>
+</body>
+</html>
