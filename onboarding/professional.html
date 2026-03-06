@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Get Started — LIUV Professional</title>
+    <meta name="description" content="Set up your LIUV Professional account. Configure API access, white-label capabilities, and deploy custom AI agent configurations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --agent-portfolio: #14B89C;
+            --agent-spending: #3B82F6;
+            --agent-strategy: #A78BFA;
+            --agent-crossborder: #F59E0B;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+
+        .bg-grid {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none; z-index: 0;
+        }
+        .bg-glow {
+            position: fixed; width: 600px; height: 600px; border-radius: 50%;
+            filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0;
+        }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: var(--agent-strategy); bottom: 20%; left: -200px; }
+
+        .nav {
+            position: relative; z-index: 100; padding: 20px 0;
+            background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+        .nav__inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+        }
+        .nav__logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span {
+            display: block; width: 5px; border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__plan-badge {
+            font-family: var(--font-mono); font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--bg-primary);
+            padding: 6px 16px; border-radius: 4px;
+            background: linear-gradient(135deg, var(--accent-teal), var(--agent-spending));
+            font-weight: 600;
+        }
+
+        .stepper {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; padding: 32px 24px 0; position: relative; z-index: 1;
+        }
+        .stepper__dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid var(--text-dim); background: transparent;
+            transition: all 0.3s ease;
+        }
+        .stepper__dot--active {
+            border-color: var(--accent-teal); background: var(--accent-teal);
+            box-shadow: 0 0 12px var(--accent-teal-glow);
+        }
+        .stepper__dot--completed { border-color: var(--accent-teal); background: var(--accent-teal); }
+        .stepper__line {
+            width: 120px; height: 2px; background: var(--text-dim);
+            transition: background 0.3s ease;
+        }
+        .stepper__line--active { background: var(--accent-teal); }
+
+        .onboarding {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 40px 24px 80px; position: relative; z-index: 1;
+        }
+        .onboarding__container { max-width: 720px; width: 100%; }
+
+        .step-panel {
+            display: none; text-align: center;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .step-panel--active { display: block; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-panel__overline {
+            font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--accent-teal); margin-bottom: 12px;
+        }
+        .step-panel__title {
+            font-family: var(--font-display); font-size: 32px; font-weight: 700;
+            line-height: 1.25; margin-bottom: 16px;
+        }
+        .step-panel__title em { font-style: italic; color: var(--accent-teal); }
+        .step-panel__subtitle {
+            font-size: 16px; color: var(--text-muted); line-height: 1.7;
+            margin-bottom: 40px; max-width: 560px; margin-left: auto; margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+            margin-bottom: 40px; text-align: left;
+        }
+        .feature-card {
+            padding: 20px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+            transition: border-color 0.2s;
+        }
+        .feature-card:hover { border-color: rgba(20, 184, 156, 0.2); }
+        .feature-card__icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 12px;
+        }
+        .feature-card__icon svg { width: 18px; height: 18px; }
+        .feature-card__title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .feature-card__desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .feature-card__badge {
+            display: inline-block; font-family: var(--font-mono); font-size: 10px;
+            letter-spacing: 1px; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 3px; margin-bottom: 8px;
+        }
+        .feature-card__badge--pro {
+            color: var(--agent-strategy); background: rgba(167, 139, 250, 0.1);
+        }
+        .feature-card__badge--exclusive {
+            color: var(--agent-crossborder); background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* Configuration panels */
+        .config-section { margin-bottom: 32px; text-align: left; }
+        .config-section__title {
+            font-size: 14px; font-weight: 600; margin-bottom: 16px; color: var(--text-muted);
+        }
+
+        .config-card {
+            padding: 20px 24px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .config-card__header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .config-card__title { font-size: 15px; font-weight: 600; }
+        .config-card__status {
+            font-family: var(--font-mono); font-size: 11px; letter-spacing: 1px;
+            text-transform: uppercase; padding: 4px 10px; border-radius: 4px;
+        }
+        .config-card__status--ready {
+            color: var(--accent-teal); background: var(--accent-teal-dim);
+        }
+        .config-card__status--pending {
+            color: var(--agent-crossborder); background: rgba(245, 158, 11, 0.1);
+        }
+        .config-card__desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        /* Code block for API */
+        .api-preview {
+            margin-top: 12px; padding: 16px; background: var(--bg-primary);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;
+            font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);
+            overflow-x: auto; line-height: 1.8;
+        }
+        .api-preview .keyword { color: var(--agent-strategy); }
+        .api-preview .string { color: var(--accent-teal); }
+        .api-preview .comment { color: var(--text-dim); }
+
+        .preference-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            margin-bottom: 32px;
+        }
+        .preference-option {
+            padding: 18px 20px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+            cursor: pointer; transition: all 0.2s; text-align: left;
+        }
+        .preference-option:hover { border-color: rgba(20, 184, 156, 0.3); }
+        .preference-option--selected {
+            border-color: var(--accent-teal); background: rgba(20, 184, 156, 0.06);
+        }
+        .preference-option__label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .preference-option__desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+        .action-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
+        .action-card {
+            display: flex; align-items: center; gap: 16px;
+            padding: 20px 24px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+            text-align: left; transition: border-color 0.2s;
+        }
+        .action-card:hover { border-color: rgba(20, 184, 156, 0.2); }
+        .action-card__num {
+            font-family: var(--font-mono); font-size: 18px; font-weight: 500;
+            color: var(--accent-teal); min-width: 36px;
+        }
+        .action-card__content { flex: 1; }
+        .action-card__title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+        .action-card__desc { font-size: 13px; color: var(--text-muted); }
+        .action-card__arrow { color: var(--text-dim); }
+
+        /* Account manager card */
+        .am-card {
+            display: flex; align-items: center; gap: 20px;
+            padding: 24px; background: linear-gradient(135deg, rgba(20,184,156,0.06), rgba(59,130,246,0.06));
+            border: 1px solid rgba(20,184,156,0.15); border-radius: 12px;
+            margin-bottom: 36px; text-align: left;
+        }
+        .am-card__avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-teal), var(--agent-spending));
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 20px; font-weight: 700; color: var(--bg-primary);
+        }
+        .am-card__info { flex: 1; }
+        .am-card__title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+        .am-card__desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .am-card__link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 600; color: var(--accent-teal);
+            margin-top: 8px;
+        }
+
+        .step-nav {
+            display: flex; align-items: center; justify-content: center; gap: 16px;
+        }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--accent-teal); color: var(--bg-primary); padding: 14px 32px;
+            border-radius: 8px; font-weight: 600; font-size: 15px; border: none;
+            cursor: pointer; transition: all 0.2s; font-family: var(--font-body);
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); color: var(--bg-primary); }
+        .btn-primary svg { transition: transform 0.2s; }
+        .btn-primary:hover svg { transform: translateX(3px); }
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: transparent; color: var(--text-muted); padding: 14px 24px;
+            border-radius: 8px; font-weight: 500; font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
+            transition: all 0.2s; font-family: var(--font-body);
+        }
+        .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text-primary); }
+        .btn-skip {
+            background: none; border: none; color: var(--text-dim); font-size: 13px;
+            cursor: pointer; font-family: var(--font-body); padding: 8px;
+            transition: color 0.2s;
+        }
+        .btn-skip:hover { color: var(--text-muted); }
+
+        .footer-minimal {
+            text-align: center; padding: 24px; border-top: 1px solid rgba(255,255,255,0.04);
+            position: relative; z-index: 1;
+        }
+        .footer-minimal p { font-size: 12px; color: var(--text-dim); }
+
+        @media (max-width: 768px) {
+            .features-grid { grid-template-columns: 1fr; }
+            .preference-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+            .stepper__line { width: 60px; }
+            .step-panel__title { font-size: 26px; }
+            .step-nav { flex-direction: column; }
+            .am-card { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--teal"></div>
+    <div class="bg-glow bg-glow--purple"></div>
+
+    <nav class="nav">
+        <div class="nav__inner">
+            <a href="/" class="nav__logo">
+                <div class="nav__logomark">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <div>
+                    <div class="nav__wordmark">LIUV</div>
+                    <div class="nav__tagline">AI Wealth Agent</div>
+                </div>
+            </a>
+            <div class="nav__plan-badge">Professional</div>
+        </div>
+    </nav>
+
+    <div class="stepper">
+        <div class="stepper__dot stepper__dot--active" id="dot-1"></div>
+        <div class="stepper__line" id="line-1"></div>
+        <div class="stepper__dot" id="dot-2"></div>
+        <div class="stepper__line" id="line-2"></div>
+        <div class="stepper__dot" id="dot-3"></div>
+    </div>
+
+    <main class="onboarding">
+        <div class="onboarding__container">
+
+            <!-- STEP 1: Welcome -->
+            <div class="step-panel step-panel--active" id="step-1">
+                <div class="step-panel__overline">Step 1 of 3</div>
+                <h1 class="step-panel__title">Welcome to <em>Professional</em></h1>
+                <p class="step-panel__subtitle">
+                    You have the full LIUV platform at your disposal. Enterprise-grade tools, API access, white-label capabilities, and a dedicated account manager.
+                </p>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background:var(--accent-teal-dim);">
+                            <svg viewBox="0 0 18 18" fill="none"><path d="M2 14l4-5 3 3 7-8" stroke="#14B89C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="feature-card__title">Everything in Investor</div>
+                        <div class="feature-card__desc">Unlimited analyses, DCF, optimization, alerts, cross-market.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background:rgba(167,139,250,0.1);">
+                            <svg viewBox="0 0 18 18" fill="none"><path d="M4 4h10v10H4z" stroke="#A78BFA" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 8h4M7 11h2" stroke="#A78BFA" stroke-width="1" stroke-linecap="round"/></svg>
+                        </div>
+                        <div class="feature-card__badge feature-card__badge--pro">Pro Only</div>
+                        <div class="feature-card__title">API Access</div>
+                        <div class="feature-card__desc">RESTful API for programmatic access to all LIUV intelligence.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background:rgba(245,158,11,0.1);">
+                            <svg viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="3" stroke="#F59E0B" stroke-width="1.5"/><path d="M7 7h4v4H7z" fill="#F59E0B" opacity="0.3"/></svg>
+                        </div>
+                        <div class="feature-card__badge feature-card__badge--exclusive">Exclusive</div>
+                        <div class="feature-card__title">White-Label</div>
+                        <div class="feature-card__desc">Brand the intelligence under your own name and identity.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background:rgba(59,130,246,0.1);">
+                            <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="6" height="5" rx="1" stroke="#3B82F6" stroke-width="1.2"/><rect x="10" y="4" width="6" height="5" rx="1" stroke="#3B82F6" stroke-width="1.2"/><rect x="6" y="10" width="6" height="5" rx="1" stroke="#3B82F6" stroke-width="1.2"/></svg>
+                        </div>
+                        <div class="feature-card__badge feature-card__badge--pro">Pro Only</div>
+                        <div class="feature-card__title">Multi-Portfolio</div>
+                        <div class="feature-card__desc">Manage unlimited portfolios for clients or strategies.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background:rgba(167,139,250,0.1);">
+                            <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#A78BFA" stroke-width="1.5"/><path d="M9 6v3h3" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="feature-card__badge feature-card__badge--exclusive">Exclusive</div>
+                        <div class="feature-card__title">Custom Agents</div>
+                        <div class="feature-card__desc">Configure AI agent parameters tailored to your strategies.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon" style="background:var(--accent-teal-dim);">
+                            <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3" stroke="#14B89C" stroke-width="1.5"/><path d="M3 16c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#14B89C" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                        <div class="feature-card__badge feature-card__badge--exclusive">Exclusive</div>
+                        <div class="feature-card__title">Account Manager</div>
+                        <div class="feature-card__desc">Dedicated contact for onboarding, support, and strategy.</div>
+                    </div>
+                </div>
+
+                <div class="step-nav">
+                    <button class="btn-primary" onclick="goToStep(2)">
+                        Configure Platform
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Platform Configuration -->
+            <div class="step-panel" id="step-2">
+                <div class="step-panel__overline">Step 2 of 3</div>
+                <h1 class="step-panel__title">Configure your <em>platform</em></h1>
+                <p class="step-panel__subtitle">
+                    Set up your Professional environment. API credentials, white-label settings, and multi-portfolio structure.
+                </p>
+
+                <div class="config-section">
+                    <div class="config-section__title">Platform setup</div>
+
+                    <div class="config-card">
+                        <div class="config-card__header">
+                            <div class="config-card__title">API Access</div>
+                            <div class="config-card__status config-card__status--ready">Ready</div>
+                        </div>
+                        <div class="config-card__desc">Your API credentials will be delivered via your dedicated account manager within 24 hours. Access all LIUV intelligence programmatically.</div>
+                        <div class="api-preview">
+                            <span class="comment">// Example: Fetch intrinsic value for a stock</span><br>
+                            <span class="keyword">GET</span> <span class="string">/api/v1/analysis/{ticker}</span><br>
+                            <span class="keyword">Authorization:</span> Bearer your_api_key<br>
+                            <br>
+                            <span class="comment">// Response includes DCF model, 10-pillar score,</span><br>
+                            <span class="comment">// margin of safety, and full AI reasoning</span>
+                        </div>
+                    </div>
+
+                    <div class="config-card">
+                        <div class="config-card__header">
+                            <div class="config-card__title">White-Label Configuration</div>
+                            <div class="config-card__status config-card__status--pending">Setup Required</div>
+                        </div>
+                        <div class="config-card__desc">Your account manager will guide you through white-label setup: custom branding, domain configuration, and client-facing report templates.</div>
+                    </div>
+
+                    <div class="config-card">
+                        <div class="config-card__header">
+                            <div class="config-card__title">Multi-Portfolio Management</div>
+                            <div class="config-card__status config-card__status--ready">Ready</div>
+                        </div>
+                        <div class="config-card__desc">Create and manage unlimited portfolios. Ideal for managing multiple client accounts, testing strategies, or separating asset classes.</div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <div class="config-section__title">Primary use case</div>
+                    <div class="preference-grid" data-group="usecase">
+                        <div class="preference-option" onclick="selectOption(this, 'usecase')">
+                            <div class="preference-option__label">Wealth Management</div>
+                            <div class="preference-option__desc">Managing portfolios for HNW clients with institutional-grade analysis.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'usecase')">
+                            <div class="preference-option__label">Family Office</div>
+                            <div class="preference-option__desc">Multi-generational wealth preservation and growth strategies.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'usecase')">
+                            <div class="preference-option__label">Fund Management</div>
+                            <div class="preference-option__desc">Research augmentation for active fund management and stock picking.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'usecase')">
+                            <div class="preference-option__label">Fintech Integration</div>
+                            <div class="preference-option__desc">Embedding LIUV intelligence into your own platform via API.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <div class="config-section__title">Portfolio structure</div>
+                    <div class="preference-grid" data-group="structure">
+                        <div class="preference-option" onclick="selectOption(this, 'structure')">
+                            <div class="preference-option__label">Single Investor</div>
+                            <div class="preference-option__desc">One person, multiple strategy portfolios.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'structure')">
+                            <div class="preference-option__label">Multi-Client</div>
+                            <div class="preference-option__desc">Managing separate portfolios for multiple clients.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'structure')">
+                            <div class="preference-option__label">Team/Fund</div>
+                            <div class="preference-option__desc">Collaborative portfolio management with team access.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'structure')">
+                            <div class="preference-option__label">Hybrid</div>
+                            <div class="preference-option__desc">Mix of personal and client portfolios under one account.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-nav">
+                    <button class="btn-secondary" onclick="goToStep(1)">Back</button>
+                    <button class="btn-primary" onclick="goToStep(3)">
+                        Continue
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+                <div style="text-align:center;margin-top:12px;">
+                    <button class="btn-skip" onclick="goToStep(3)">Skip for now</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Deploy -->
+            <div class="step-panel" id="step-3">
+                <div class="step-panel__overline">Step 3 of 3</div>
+                <h1 class="step-panel__title">Your platform is <em>live</em></h1>
+                <p class="step-panel__subtitle">
+                    Everything is configured. Here's your launch checklist and immediate next steps with your dedicated account manager.
+                </p>
+
+                <div class="am-card">
+                    <div class="am-card__avatar">PC</div>
+                    <div class="am-card__info">
+                        <div class="am-card__title">Your Dedicated Account Manager</div>
+                        <div class="am-card__desc">You'll receive a personal introduction email within 24 hours. Your account manager will schedule a 30-minute onboarding call to walk through your platform configuration and answer any questions.</div>
+                        <a href="mailto:pedro@liuv.io" class="am-card__link">
+                            Contact directly: pedro@liuv.io
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="action-cards">
+                    <div class="action-card">
+                        <div class="action-card__num">01</div>
+                        <div class="action-card__content">
+                            <div class="action-card__title">Onboarding call with your account manager</div>
+                            <div class="action-card__desc">30-minute session to walk through your specific use case, configure custom agent parameters, and set up API credentials.</div>
+                        </div>
+                        <div class="action-card__arrow">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-card__num">02</div>
+                        <div class="action-card__content">
+                            <div class="action-card__title">Set up your first portfolios</div>
+                            <div class="action-card__desc">Create your portfolio structure — whether single-investor multi-strategy or multi-client setup. Import existing holdings.</div>
+                        </div>
+                        <div class="action-card__arrow">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-card__num">03</div>
+                        <div class="action-card__content">
+                            <div class="action-card__title">Configure custom AI agent parameters</div>
+                            <div class="action-card__desc">Tailor agent behavior to your investment philosophy — adjust valuation models, risk thresholds, sector focus, and reporting frequency.</div>
+                        </div>
+                        <div class="action-card__arrow">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-card__num">04</div>
+                        <div class="action-card__content">
+                            <div class="action-card__title">Integrate via API (optional)</div>
+                            <div class="action-card__desc">Use your API credentials to embed LIUV intelligence into your existing tools, platforms, or client portals.</div>
+                        </div>
+                        <div class="action-card__arrow">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-card__num">05</div>
+                        <div class="action-card__content">
+                            <div class="action-card__title">White-label setup (optional)</div>
+                            <div class="action-card__desc">Work with your account manager to configure branded reports, custom domain, and client-facing intelligence deliverables.</div>
+                        </div>
+                        <div class="action-card__arrow">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding:20px 24px;background:rgba(167,139,250,0.05);border:1px solid rgba(167,139,250,0.15);border-radius:10px;margin-bottom:36px;text-align:left;">
+                    <p style="font-size:14px;color:var(--text-muted);line-height:1.6;">
+                        <strong style="color:var(--agent-strategy);">Professional tip:</strong> Start with a focused pilot — import one portfolio and run the full analysis suite. Once you see the output quality, scale to your full portfolio structure.
+                    </p>
+                </div>
+
+                <div class="step-nav">
+                    <button class="btn-secondary" onclick="goToStep(2)">Back</button>
+                    <a href="/dashboard.html" class="btn-primary" style="text-decoration:none;">
+                        Go to Dashboard
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer-minimal">
+        <p>&copy; 2026 LIUV Ventures. All rights reserved. &nbsp;|&nbsp; <a href="mailto:pedro@liuv.io" style="color:var(--text-dim);">Dedicated support: pedro@liuv.io</a></p>
+    </footer>
+
+    <script>
+        let currentStep = 1;
+
+        function goToStep(step) {
+            document.getElementById('step-' + currentStep).classList.remove('step-panel--active');
+            document.getElementById('step-' + step).classList.add('step-panel--active');
+
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById('dot-' + i);
+                dot.classList.remove('stepper__dot--active', 'stepper__dot--completed');
+                if (i === step) dot.classList.add('stepper__dot--active');
+                else if (i < step) dot.classList.add('stepper__dot--completed');
+            }
+            for (let i = 1; i <= 2; i++) {
+                const line = document.getElementById('line-' + i);
+                if (i < step) line.classList.add('stepper__line--active');
+                else line.classList.remove('stepper__line--active');
+            }
+
+            currentStep = step;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            gtag('event', 'onboarding_step', { step: step, plan: 'professional' });
+        }
+
+        function selectOption(el, group) {
+            const options = el.parentElement.querySelectorAll('.preference-option');
+            options.forEach(opt => opt.classList.remove('preference-option--selected'));
+            el.classList.add('preference-option--selected');
+            gtag('event', 'onboarding_preference', { group: group, value: el.querySelector('.preference-option__label').textContent, plan: 'professional' });
+        }
+    </script>
+</body>
+</html>

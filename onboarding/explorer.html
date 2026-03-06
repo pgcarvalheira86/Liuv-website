@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Get Started — LIUV Explorer</title>
+    <meta name="description" content="Set up your LIUV Explorer account. Configure your investment profile and run your first AI-powered stock analysis.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --agent-portfolio: #14B89C;
+            --agent-spending: #3B82F6;
+            --agent-strategy: #A78BFA;
+            --agent-crossborder: #F59E0B;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+
+        .bg-grid {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none; z-index: 0;
+        }
+        .bg-glow {
+            position: fixed; width: 600px; height: 600px; border-radius: 50%;
+            filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0;
+        }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: var(--agent-strategy); bottom: 20%; left: -200px; }
+
+        /* Nav */
+        .nav {
+            position: relative; z-index: 100; padding: 20px 0;
+            background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+        .nav__inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+        }
+        .nav__logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span {
+            display: block; width: 5px; border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__plan-badge {
+            font-family: var(--font-mono); font-size: 12px; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--accent-teal);
+            padding: 6px 16px; border: 1px solid rgba(20, 184, 156, 0.3);
+            border-radius: 4px;
+        }
+
+        /* Progress stepper */
+        .stepper {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; padding: 32px 24px 0; position: relative; z-index: 1;
+        }
+        .stepper__step {
+            display: flex; align-items: center; gap: 0;
+        }
+        .stepper__dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid var(--text-dim); background: transparent;
+            transition: all 0.3s ease; position: relative;
+        }
+        .stepper__dot--active {
+            border-color: var(--accent-teal); background: var(--accent-teal);
+            box-shadow: 0 0 12px var(--accent-teal-glow);
+        }
+        .stepper__dot--completed {
+            border-color: var(--accent-teal); background: var(--accent-teal);
+        }
+        .stepper__line {
+            width: 120px; height: 2px; background: var(--text-dim);
+            transition: background 0.3s ease;
+        }
+        .stepper__line--active { background: var(--accent-teal); }
+
+        /* Main content area */
+        .onboarding {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 40px 24px 80px; position: relative; z-index: 1;
+        }
+        .onboarding__container { max-width: 680px; width: 100%; }
+
+        /* Step panels */
+        .step-panel {
+            display: none; text-align: center;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .step-panel--active { display: block; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-panel__overline {
+            font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--accent-teal); margin-bottom: 12px;
+        }
+        .step-panel__title {
+            font-family: var(--font-display); font-size: 32px; font-weight: 700;
+            line-height: 1.25; margin-bottom: 16px;
+        }
+        .step-panel__title em { font-style: italic; color: var(--accent-teal); }
+        .step-panel__subtitle {
+            font-size: 16px; color: var(--text-muted); line-height: 1.7;
+            margin-bottom: 40px; max-width: 520px; margin-left: auto; margin-right: auto;
+        }
+
+        /* Feature cards in step panels */
+        .features-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+            margin-bottom: 40px; text-align: left;
+        }
+        .feature-card {
+            padding: 20px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+            transition: border-color 0.2s;
+        }
+        .feature-card:hover { border-color: rgba(20, 184, 156, 0.2); }
+        .feature-card__icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 12px; background: var(--accent-teal-dim);
+        }
+        .feature-card__icon svg { width: 18px; height: 18px; }
+        .feature-card__title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .feature-card__desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        /* Form elements for preferences */
+        .preference-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            margin-bottom: 32px;
+        }
+        .preference-option {
+            padding: 18px 20px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+            cursor: pointer; transition: all 0.2s; text-align: left;
+        }
+        .preference-option:hover { border-color: rgba(20, 184, 156, 0.3); }
+        .preference-option--selected {
+            border-color: var(--accent-teal); background: rgba(20, 184, 156, 0.06);
+        }
+        .preference-option__label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .preference-option__desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+        .preference-section { margin-bottom: 28px; }
+        .preference-section__title {
+            font-size: 14px; font-weight: 600; margin-bottom: 12px;
+            text-align: left; color: var(--text-muted);
+        }
+
+        /* Action cards for step 3 */
+        .action-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
+        .action-card {
+            display: flex; align-items: center; gap: 16px;
+            padding: 20px 24px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
+            text-align: left; transition: border-color 0.2s;
+        }
+        .action-card:hover { border-color: rgba(20, 184, 156, 0.2); }
+        .action-card__num {
+            font-family: var(--font-mono); font-size: 18px; font-weight: 500;
+            color: var(--accent-teal); min-width: 36px;
+        }
+        .action-card__content { flex: 1; }
+        .action-card__title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+        .action-card__desc { font-size: 13px; color: var(--text-muted); }
+        .action-card__arrow { color: var(--text-dim); }
+
+        /* Navigation buttons */
+        .step-nav {
+            display: flex; align-items: center; justify-content: center; gap: 16px;
+        }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--accent-teal); color: var(--bg-primary); padding: 14px 32px;
+            border-radius: 8px; font-weight: 600; font-size: 15px; border: none;
+            cursor: pointer; transition: all 0.2s; font-family: var(--font-body);
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); color: var(--bg-primary); }
+        .btn-primary svg { transition: transform 0.2s; }
+        .btn-primary:hover svg { transform: translateX(3px); }
+
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: transparent; color: var(--text-muted); padding: 14px 24px;
+            border-radius: 8px; font-weight: 500; font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
+            transition: all 0.2s; font-family: var(--font-body);
+        }
+        .btn-secondary:hover { border-color: rgba(255,255,255,0.2); color: var(--text-primary); }
+
+        .btn-skip {
+            background: none; border: none; color: var(--text-dim); font-size: 13px;
+            cursor: pointer; font-family: var(--font-body); padding: 8px;
+            transition: color 0.2s;
+        }
+        .btn-skip:hover { color: var(--text-muted); }
+
+        /* Footer */
+        .footer-minimal {
+            text-align: center; padding: 24px; border-top: 1px solid rgba(255,255,255,0.04);
+            position: relative; z-index: 1;
+        }
+        .footer-minimal p { font-size: 12px; color: var(--text-dim); }
+
+        @media (max-width: 640px) {
+            .stepper__line { width: 60px; }
+            .step-panel__title { font-size: 26px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .preference-grid { grid-template-columns: 1fr; }
+            .step-nav { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--teal"></div>
+    <div class="bg-glow bg-glow--purple"></div>
+
+    <nav class="nav">
+        <div class="nav__inner">
+            <a href="/" class="nav__logo">
+                <div class="nav__logomark">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+                <div>
+                    <div class="nav__wordmark">LIUV</div>
+                    <div class="nav__tagline">AI Wealth Agent</div>
+                </div>
+            </a>
+            <div class="nav__plan-badge">Explorer Plan</div>
+        </div>
+    </nav>
+
+    <!-- Progress Stepper -->
+    <div class="stepper">
+        <div class="stepper__step">
+            <div class="stepper__dot stepper__dot--active" id="dot-1"></div>
+        </div>
+        <div class="stepper__line" id="line-1"></div>
+        <div class="stepper__step">
+            <div class="stepper__dot" id="dot-2"></div>
+        </div>
+        <div class="stepper__line" id="line-2"></div>
+        <div class="stepper__step">
+            <div class="stepper__dot" id="dot-3"></div>
+        </div>
+    </div>
+
+    <main class="onboarding">
+        <div class="onboarding__container">
+
+            <!-- STEP 1: Welcome -->
+            <div class="step-panel step-panel--active" id="step-1">
+                <div class="step-panel__overline">Step 1 of 3</div>
+                <h1 class="step-panel__title">Welcome to <em>Explorer</em></h1>
+                <p class="step-panel__subtitle">
+                    Your journey to smarter investing starts here. The Explorer plan gives you the foundational tools to analyze stocks using proven value investing principles.
+                </p>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-card__icon">
+                            <svg viewBox="0 0 18 18" fill="none"><path d="M3 13l4-4 3 3 5-6" stroke="#14B89C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="feature-card__title">Stock Screening</div>
+                        <div class="feature-card__desc">AI-powered screening using the Buffett/Graham 10-pillar framework to find undervalued stocks.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">
+                            <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="8" width="3" height="7" rx="1" fill="#14B89C" opacity="0.4"/><rect x="7.5" y="5" width="3" height="10" rx="1" fill="#14B89C" opacity="0.6"/><rect x="13" y="3" width="3" height="12" rx="1" fill="#14B89C"/></svg>
+                        </div>
+                        <div class="feature-card__title">Portfolio Tracking</div>
+                        <div class="feature-card__desc">Monitor your holdings in real-time with a clean, data-rich dashboard.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">
+                            <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="#14B89C" stroke-width="1.5"/><path d="M9 6v3l2 2" stroke="#14B89C" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                        <div class="feature-card__title">3 AI Analyses/Day</div>
+                        <div class="feature-card__desc">Deep-dive into up to 3 stocks daily with full intrinsic value calculations.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card__icon">
+                            <svg viewBox="0 0 18 18" fill="none"><path d="M9 2l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4z" fill="#14B89C" opacity="0.3" stroke="#14B89C" stroke-width="1" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="feature-card__title">Email Support</div>
+                        <div class="feature-card__desc">Get help when you need it from the LIUV team via email.</div>
+                    </div>
+                </div>
+
+                <div class="step-nav">
+                    <button class="btn-primary" onclick="goToStep(2)">
+                        Get Started
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Investment Profile -->
+            <div class="step-panel" id="step-2">
+                <div class="step-panel__overline">Step 2 of 3</div>
+                <h1 class="step-panel__title">Set up your <em>profile</em></h1>
+                <p class="step-panel__subtitle">
+                    Tell us about your investment style so your AI agents can deliver the most relevant analysis from day one.
+                </p>
+
+                <div class="preference-section">
+                    <div class="preference-section__title">Investment experience</div>
+                    <div class="preference-grid" data-group="experience">
+                        <div class="preference-option" onclick="selectOption(this, 'experience')">
+                            <div class="preference-option__label">Beginner</div>
+                            <div class="preference-option__desc">New to investing. Learning the fundamentals of value investing.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'experience')">
+                            <div class="preference-option__label">Intermediate</div>
+                            <div class="preference-option__desc">Some experience with stocks. Familiar with basic valuation concepts.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'experience')">
+                            <div class="preference-option__label">Advanced</div>
+                            <div class="preference-option__desc">Experienced investor. Comfortable with DCF models and financial analysis.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'experience')">
+                            <div class="preference-option__label">Professional</div>
+                            <div class="preference-option__desc">Finance professional or full-time investor with deep market knowledge.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preference-section">
+                    <div class="preference-section__title">Risk tolerance</div>
+                    <div class="preference-grid" data-group="risk">
+                        <div class="preference-option" onclick="selectOption(this, 'risk')">
+                            <div class="preference-option__label">Conservative</div>
+                            <div class="preference-option__desc">Preserve capital. High margin of safety required.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'risk')">
+                            <div class="preference-option__label">Moderate</div>
+                            <div class="preference-option__desc">Balanced approach. Growth with downside protection.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'risk')">
+                            <div class="preference-option__label">Growth-focused</div>
+                            <div class="preference-option__desc">Higher returns accepted with reasonable risk.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'risk')">
+                            <div class="preference-option__label">Aggressive</div>
+                            <div class="preference-option__desc">Maximum growth potential. Comfortable with volatility.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preference-section">
+                    <div class="preference-section__title">Primary market interest</div>
+                    <div class="preference-grid" data-group="market">
+                        <div class="preference-option" onclick="selectOption(this, 'market')">
+                            <div class="preference-option__label">US Markets</div>
+                            <div class="preference-option__desc">NYSE, NASDAQ — US-listed equities.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'market')">
+                            <div class="preference-option__label">European Markets</div>
+                            <div class="preference-option__desc">Euronext, LSE, XETRA — EU-listed equities.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'market')">
+                            <div class="preference-option__label">Brazilian Market</div>
+                            <div class="preference-option__desc">B3 — Brazilian equities and ADRs.</div>
+                        </div>
+                        <div class="preference-option" onclick="selectOption(this, 'market')">
+                            <div class="preference-option__label">Global</div>
+                            <div class="preference-option__desc">Multi-market analysis across all available exchanges.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step-nav">
+                    <button class="btn-secondary" onclick="goToStep(1)">Back</button>
+                    <button class="btn-primary" onclick="goToStep(3)">
+                        Continue
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+                <div style="text-align:center;margin-top:12px;">
+                    <button class="btn-skip" onclick="goToStep(3)">Skip for now</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Get Started -->
+            <div class="step-panel" id="step-3">
+                <div class="step-panel__overline">Step 3 of 3</div>
+                <h1 class="step-panel__title">You're ready to <em>explore</em></h1>
+                <p class="step-panel__subtitle">
+                    Your AI agents are configured and ready. Here's how to make the most of your Explorer plan in the first week.
+                </p>
+
+                <div class="action-cards">
+                    <div class="action-card">
+                        <div class="action-card__num">01</div>
+                        <div class="action-card__content">
+                            <div class="action-card__title">Run your first stock analysis</div>
+                            <div class="action-card__desc">Pick a stock you own or are interested in. The Portfolio Advisor will run a full 10-pillar value analysis with DCF valuation.</div>
+                        </div>
+                        <div class="action-card__arrow">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-card__num">02</div>
+                        <div class="action-card__content">
+                            <div class="action-card__title">Set up your portfolio</div>
+                            <div class="action-card__desc">Add your current holdings so the AI can track performance and identify optimization opportunities within your single portfolio.</div>
+                        </div>
+                        <div class="action-card__arrow">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                    </div>
+                    <div class="action-card">
+                        <div class="action-card__num">03</div>
+                        <div class="action-card__content">
+                            <div class="action-card__title">Explore the stock screener</div>
+                            <div class="action-card__desc">Use the AI-powered screener to discover undervalued stocks that meet the Buffett/Graham criteria for margin of safety.</div>
+                        </div>
+                        <div class="action-card__arrow">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding:20px 24px;background:rgba(20,184,156,0.05);border:1px solid rgba(20,184,156,0.15);border-radius:10px;margin-bottom:36px;text-align:left;">
+                    <p style="font-size:14px;color:var(--text-muted);line-height:1.6;">
+                        <strong style="color:var(--accent-teal);">Pro tip:</strong> Use all 3 of your daily AI analyses during the trial period to explore different stocks. This helps you and the AI learn your investment preferences faster.
+                    </p>
+                </div>
+
+                <div style="padding:20px 24px;background:var(--bg-card);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:36px;text-align:left;">
+                    <p style="font-size:13px;color:var(--text-muted);line-height:1.6;">
+                        <strong style="color:var(--text-primary);">Want more power?</strong> Upgrade to <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a">Investor ($99/mo)</a> for unlimited analyses, full DCF modeling, and real-time alerts. Or go <a href="https://buy.stripe.com/00wbIT0I9dYG4QG123cjS0b">Professional ($299/mo)</a> for API access and white-label capabilities.
+                    </p>
+                </div>
+
+                <div class="step-nav">
+                    <button class="btn-secondary" onclick="goToStep(2)">Back</button>
+                    <a href="/dashboard.html" class="btn-primary" style="text-decoration:none;">
+                        Go to Dashboard
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer-minimal">
+        <p>&copy; 2026 LIUV Ventures. All rights reserved. &nbsp;|&nbsp; <a href="mailto:pedro@liuv.io" style="color:var(--text-dim);">Need help? pedro@liuv.io</a></p>
+    </footer>
+
+    <script>
+        let currentStep = 1;
+
+        function goToStep(step) {
+            document.getElementById('step-' + currentStep).classList.remove('step-panel--active');
+            document.getElementById('step-' + step).classList.add('step-panel--active');
+
+            // Update stepper dots
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById('dot-' + i);
+                dot.classList.remove('stepper__dot--active', 'stepper__dot--completed');
+                if (i === step) dot.classList.add('stepper__dot--active');
+                else if (i < step) dot.classList.add('stepper__dot--completed');
+            }
+
+            // Update stepper lines
+            for (let i = 1; i <= 2; i++) {
+                const line = document.getElementById('line-' + i);
+                if (i < step) line.classList.add('stepper__line--active');
+                else line.classList.remove('stepper__line--active');
+            }
+
+            currentStep = step;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            gtag('event', 'onboarding_step', { step: step, plan: 'explorer' });
+        }
+
+        function selectOption(el, group) {
+            const options = el.parentElement.querySelectorAll('.preference-option');
+            options.forEach(opt => opt.classList.remove('preference-option--selected'));
+            el.classList.add('preference-option--selected');
+
+            gtag('event', 'onboarding_preference', {
+                group: group,
+                value: el.querySelector('.preference-option__label').textContent,
+                plan: 'explorer'
+            });
+        }
+    </script>
+</body>
+</html>
