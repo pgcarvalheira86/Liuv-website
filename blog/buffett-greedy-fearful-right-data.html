@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why Buffett's "Be Greedy When Others Are Fearful" Still Works — LIUV Blog</title>
+    <meta name="description" content="Warren Buffett's most famous advice requires more than intuition — it demands real-time data and disciplined models. Learn how AI is redefining data-driven value investing.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           CSS VARIABLES — LIUV Brand Palette
+           ======================================== */
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        /* ========================================
+           RESET & BASE
+           ======================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        a:hover { opacity: 0.8; }
+
+        img { max-width: 100%; display: block; }
+
+        /* ========================================
+           LAYOUT
+           ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ========================================
+           ANIMATED BACKGROUND
+           ======================================== */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow--teal {
+            background: var(--accent-teal);
+            top: -200px;
+            right: -100px;
+        }
+
+        .bg-glow--purple {
+            background: #A78BFA;
+            bottom: 20%;
+            left: -200px;
+        }
+
+        /* ========================================
+           NAVIGATION
+           ======================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            background: rgba(6, 9, 16, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+
+        .nav__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .nav__logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav__logomark {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 28px;
+        }
+
+        .nav__logomark span {
+            display: block;
+            width: 5px;
+            border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+
+        .nav__wordmark {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .nav__tagline {
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: -2px;
+        }
+
+        .nav__links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            list-style: none;
+        }
+
+        .nav__links a {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+
+        .nav__cta {
+            background: var(--accent-teal);
+            color: var(--bg-primary) !important;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .nav__cta:hover {
+            opacity: 1 !important;
+            box-shadow: 0 0 30px var(--accent-teal-glow);
+            transform: translateY(-1px);
+        }
+
+        .nav__mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* ========================================
+           ARTICLE LAYOUT
+           ======================================== */
+        .article {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 160px 24px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .article__back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            transition: color 0.2s;
+        }
+        .article__back:hover { color: var(--accent-teal); opacity: 1; }
+
+        .article__category {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 16px;
+        }
+
+        .article__title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .article__meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .article__meta .separator {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--text-dim);
+        }
+
+        /* ========================================
+           ARTICLE CONTENT
+           ======================================== */
+        .article__body h2 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1.3;
+            margin-top: 56px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .article__body h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .article__body p {
+            font-size: 17px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .article__body strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .article__body em {
+            color: var(--accent-teal);
+            font-style: italic;
+        }
+
+        .article__body blockquote {
+            margin: 40px 0;
+            padding: 32px 36px;
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent-teal);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .article__body blockquote p {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .article__body blockquote p:last-child {
+            margin-bottom: 0;
+        }
+
+        .article__body blockquote cite {
+            font-family: var(--font-body);
+            font-style: normal;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .article__body ul, .article__body ol {
+            margin: 0 0 24px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .article__body li {
+            font-size: 17px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            padding-left: 24px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .article__body li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-teal);
+        }
+
+        .article__callout {
+            margin: 48px 0;
+            padding: 36px;
+            background: linear-gradient(135deg, rgba(20, 184, 156, 0.06), rgba(167, 139, 250, 0.03));
+            border: 1px solid rgba(20, 184, 156, 0.12);
+            border-radius: 12px;
+        }
+
+        .article__callout-title {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 12px;
+        }
+
+        .article__callout p {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .article__divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent-teal-dim);
+            margin: 56px 0;
+        }
+
+        /* CTA at end of article */
+        .article__cta {
+            margin-top: 64px;
+            padding: 48px 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(20, 184, 156, 0.12);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .article__cta h3 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 16px;
+        }
+
+        .article__cta p {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto 28px;
+            line-height: 1.7;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-teal);
+            color: var(--bg-primary);
+            padding: 16px 36px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-primary:hover {
+            color: var(--bg-primary);
+            box-shadow: 0 0 40px var(--accent-teal-glow);
+            transform: translateY(-2px);
+            opacity: 1;
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        .footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer__inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+        }
+
+        .footer__brand p {
+            color: var(--text-muted);
+            font-size: 14px;
+            max-width: 300px;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        .footer__links {
+            display: flex;
+            gap: 64px;
+        }
+
+        .footer__col-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .footer__col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer__col a {
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+
+        .footer__bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .footer__copy {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .footer__legal {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer__legal a {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* ========================================
+           ANIMATIONS
+           ======================================== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .nav__links { display: none; }
+            .nav__mobile-toggle { display: block; }
+
+            .article { padding-top: 120px; }
+
+            .article__body h2 { font-size: 24px; }
+
+            .article__body blockquote {
+                padding: 24px;
+            }
+
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#how">How It Works</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/blog.html" class="active">Blog</a></li>
+            <li><a href="/#pricing" class="nav__cta">Start Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- ========== ARTICLE ========== -->
+<article class="article">
+
+    <a href="/blog.html" class="article__back fade-in fade-in--d1">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to Blog
+    </a>
+
+    <div class="article__category fade-in fade-in--d1">Investment Philosophy</div>
+
+    <h1 class="article__title fade-in fade-in--d2">Why Buffett's "Be Greedy When Others Are Fearful" Still Works&nbsp;&mdash; But Only If You Have the Right Data</h1>
+
+    <div class="article__meta fade-in fade-in--d3">
+        <span>March 6, 2026</span>
+        <span class="separator"></span>
+        <span>8 min read</span>
+        <span class="separator"></span>
+        <span>LIUV Research</span>
+    </div>
+
+    <div class="article__body fade-in fade-in--d3">
+
+        <p>Warren Buffett's most famous piece of investment advice &mdash; <strong>"be fearful when others are greedy and greedy when others are fearful"</strong> &mdash; has been quoted so many times it risks becoming wallpaper. Something investors nod along to without ever really acting on.</p>
+
+        <p>But here's the thing: the principle is as sound today as it was when Buffett first articulated it. Markets still overreact. Fear still creates discounts. Greed still inflates prices beyond what fundamentals support. The behavioral patterns that create opportunities for disciplined value investors haven't changed in a century.</p>
+
+        <p>What <em>has</em> changed is what it takes to act on those opportunities with conviction.</p>
+
+        <h2>The Gap Between Principle and Practice</h2>
+
+        <p>In theory, buying when others are fearful sounds straightforward. The market drops 20%, headlines are apocalyptic, and you step in with cash. But anyone who's lived through a real downturn knows the reality is far more complex:</p>
+
+        <ul>
+            <li><strong>Which stocks do you buy?</strong> Not everything on sale is a bargain. Some companies are cheap for very good reasons.</li>
+            <li><strong>How fearful is too fearful?</strong> A 20% drop could become a 40% drop. Timing the bottom is impossible.</li>
+            <li><strong>What's the intrinsic value?</strong> Without a rigorous discounted cash flow model, you're guessing whether a stock is actually undervalued.</li>
+            <li><strong>Is the moat intact?</strong> A company's competitive advantage might be eroding precisely because of the conditions causing the sell-off.</li>
+        </ul>
+
+        <p>These aren't theoretical questions. They're the exact questions that separate investors who profit from fear from those who catch falling knives. And historically, answering them required either an army of analysts or decades of pattern recognition that only a handful of investors &mdash; Buffett, Munger, Graham &mdash; ever truly mastered.</p>
+
+        <blockquote>
+            <p>"Price is what you pay. Value is what you get."</p>
+            <cite>&mdash; Warren Buffett</cite>
+        </blockquote>
+
+        <h2>The Data Problem Retail Investors Face</h2>
+
+        <p>Institutional investors have always had an information advantage. Not insider information &mdash; but the <strong>capacity to process</strong> information at scale. A hedge fund can run DCF models on every company in the S&amp;P 500 simultaneously, monitor management commentary across thousands of earnings calls, and flag statistical anomalies in real time.</p>
+
+        <p>Retail investors, no matter how diligent, are constrained by time and cognitive bandwidth. You can deeply analyze maybe 15&ndash;20 companies per quarter. You'll inevitably miss signals in the data. And when fear grips the market, the emotional pressure to sell alongside everyone else becomes nearly irresistible &mdash; precisely because you lack the comprehensive data to anchor your conviction.</p>
+
+        <p>This is the gap that has made Buffett's advice so difficult to follow in practice: <strong>the principle requires data-driven conviction, but most investors don't have access to institutional-grade data analysis.</strong></p>
+
+        <h2>How AI Changes the Equation</h2>
+
+        <p>This is where the landscape is genuinely shifting. Autonomous AI agents can now perform the kind of analysis that was once the exclusive domain of institutional trading desks:</p>
+
+        <ul>
+            <li><strong>Real-time DCF modeling</strong> across hundreds of companies, updating as new financial data is filed</li>
+            <li><strong>Margin-of-safety calculations</strong> that flag when a stock's market price diverges significantly from intrinsic value</li>
+            <li><strong>Sentiment analysis</strong> that quantifies market fear and greed using natural language processing across news, social media, and earnings transcripts</li>
+            <li><strong>Historical pattern matching</strong> that identifies which types of market sell-offs have historically created the best buying opportunities for value investors</li>
+        </ul>
+
+        <p>None of this replaces the underlying philosophy. Buffett's principles remain the foundation. What AI provides is the <strong>execution layer</strong> &mdash; the ability to apply those principles consistently, without emotion, across the entire market simultaneously.</p>
+
+        <div class="article__callout">
+            <div class="article__callout-title">The LIUV Approach</div>
+            <p>LIUV's Portfolio Agent continuously monitors over 8,000 publicly traded securities, running Buffett/Graham-style valuation models in real time. When market fear creates a divergence between price and intrinsic value, the agent flags opportunities ranked by margin of safety &mdash; giving you the data to be greedy with confidence.</p>
+        </div>
+
+        <h2>Conviction Comes from Models, Not Feelings</h2>
+
+        <p>The investors who successfully bought during the 2008 financial crisis, the 2020 pandemic crash, or any number of sector-specific sell-offs share a common trait: they had <strong>pre-existing models</strong> that told them what something was worth, independent of what the market was saying.</p>
+
+        <p>When your analysis says a company's intrinsic value is $120 and the market is offering it at $75, you don't need courage to buy &mdash; you need <strong>data you trust</strong>. That's a fundamentally different kind of conviction than simply believing the market will recover.</p>
+
+        <p>This is what Graham meant by "margin of safety" &mdash; not just a theoretical concept, but a quantitative framework that tells you exactly how much room you have for error. The wider the margin, the more confident you can be. And calculating that margin with precision, across your entire watchlist, in real time &mdash; that's precisely what AI makes possible for the first time.</p>
+
+        <h2>What This Means Going Forward</h2>
+
+        <p>We are entering a period where the tools of institutional investing are becoming available to everyone. This doesn't mean markets will become perfectly efficient &mdash; behavioral biases are too deeply ingrained in human psychology for that. Fear and greed will continue to create mispricings.</p>
+
+        <p>But it does mean that the <strong>information asymmetry</strong> between institutional and retail investors is shrinking. And for disciplined value investors &mdash; those who follow the Buffett/Graham playbook &mdash; this is enormously positive. The philosophy works. It has always worked. The constraint was never the ideas; it was the data infrastructure to apply them at scale.</p>
+
+        <p>Buffett's advice to be greedy when others are fearful isn't just a maxim. It's an investment strategy with one critical dependency: you need to know what things are actually worth. AI doesn't change the principle. It makes the principle <em>actionable</em>.</p>
+
+        <div class="article__divider"></div>
+
+        <p><strong>The question isn't whether value investing still works.</strong> It's whether you have the right tools to practice it. The data advantage that once belonged only to the largest institutions is now accessible to individual investors. The opportunity is the same as it ever was &mdash; but for the first time, the playing field is leveling.</p>
+
+    </div>
+
+    <!-- Article CTA -->
+    <div class="article__cta">
+        <h3>Ready to invest with <em style="font-style:italic;color:var(--accent-teal);">conviction?</em></h3>
+        <p>LIUV's AI agents apply Buffett/Graham methodology to every stock in the market &mdash; so you can be greedy when it counts.</p>
+        <a href="/#pricing" class="btn-primary">
+            Start Your Free Trial
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+    </div>
+
+</article>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/#methodology">Methodology</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/#founder">About</a></li>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
