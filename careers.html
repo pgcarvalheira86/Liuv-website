@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Careers — LIUV | AI Wealth Agent</title>
+    <meta name="description" content="Join LIUV and help democratize institutional-grade investment intelligence. Explore open positions in AI, engineering, compliance, marketing, and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+            --agent-spending: #3B82F6;
+            --agent-strategy: #A78BFA;
+            --agent-crossborder: #F59E0B;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        img { max-width: 100%; display: block; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Background */
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        /* Hero */
+        .careers-hero { padding: 160px 0 80px; position: relative; z-index: 1; text-align: center; }
+        .careers-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: inline-flex; align-items: center; gap: 12px; }
+        .careers-hero__overline::before, .careers-hero__overline::after { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .careers-hero__title { font-family: var(--font-display); font-size: clamp(36px, 5vw, 64px); font-weight: 400; line-height: 1.15; margin-bottom: 24px; }
+        .careers-hero__title em { font-style: italic; color: var(--accent-teal); }
+        .careers-hero__subtitle { font-size: 18px; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.7; }
+
+        /* Commitments Section */
+        .commitments { position: relative; z-index: 1; padding: 80px 0; }
+        .commitments__grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-top: 48px; }
+        .commitment-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px 24px; text-align: center; transition: all 0.3s ease; }
+        .commitment-card:hover { border-color: rgba(20, 184, 156, 0.15); transform: translateY(-4px); }
+        .commitment-card__icon { font-size: 32px; margin-bottom: 16px; }
+        .commitment-card__title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .commitment-card__desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+        /* Section Headers */
+        .section-header { text-align: center; margin-bottom: 48px; }
+        .section-header__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 12px; }
+        .section-header__title { font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px); font-weight: 400; line-height: 1.2; margin-bottom: 16px; }
+        .section-header__subtitle { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+        /* Open Positions */
+        .positions { position: relative; z-index: 1; padding: 80px 0 120px; }
+        .positions__grid { display: flex; flex-direction: column; gap: 16px; }
+        .position-card { display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 28px 32px; transition: all 0.3s ease; cursor: pointer; text-decoration: none; color: inherit; }
+        .position-card:hover { border-color: rgba(20, 184, 156, 0.2); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); opacity: 1; }
+        .position-card__info { flex: 1; }
+        .position-card__title { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; }
+        .position-card__meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .position-card__tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
+        .position-card__tag--critical { color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.08); }
+        .position-card__tag--high { color: var(--agent-crossborder); border: 1px solid rgba(245, 158, 11, 0.25); background: rgba(245, 158, 11, 0.08); }
+        .position-card__tag--medium { color: var(--agent-spending); border: 1px solid rgba(59, 130, 246, 0.25); background: rgba(59, 130, 246, 0.08); }
+        .position-card__tag--medium-low { color: var(--agent-strategy); border: 1px solid rgba(167, 139, 250, 0.25); background: rgba(167, 139, 250, 0.08); }
+        .position-card__dept { font-size: 13px; color: var(--text-muted); }
+        .position-card__arrow { font-size: 20px; color: var(--accent-teal); margin-left: 24px; transition: transform 0.2s; }
+        .position-card:hover .position-card__arrow { transform: translateX(4px); }
+
+        /* CTA Section */
+        .careers-cta { position: relative; z-index: 1; padding: 0 0 120px; }
+        .careers-cta__box { background: var(--bg-card); border: 1px solid rgba(20, 184, 156, 0.1); border-radius: 16px; padding: 60px; text-align: center; }
+        .careers-cta__title { font-family: var(--font-display); font-size: clamp(24px, 3vw, 36px); font-weight: 400; margin-bottom: 16px; }
+        .careers-cta__desc { font-size: 16px; color: var(--text-muted); max-width: 500px; margin: 0 auto 32px; line-height: 1.7; }
+        .careers-cta__btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-teal); color: var(--bg-primary) !important; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 15px; transition: all 0.2s; }
+        .careers-cta__btn:hover { opacity: 1 !important; box-shadow: 0 0 40px var(--accent-teal-glow); transform: translateY(-2px); }
+
+        /* Footer */
+        .footer { padding: 60px 0 40px; border-top: 1px solid rgba(255, 255, 255, 0.04); position: relative; z-index: 1; }
+        .footer__inner { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; max-width: 300px; margin-top: 16px; line-height: 1.6; }
+        .footer__links { display: flex; gap: 64px; }
+        .footer__col-title { font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--text-primary); margin-bottom: 20px; }
+        .footer__col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { font-size: 13px; color: var(--text-dim); }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { font-size: 13px; color: var(--text-dim); }
+
+        /* Animations */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { opacity: 0; transform: translateY(24px); animation: fadeUp 0.8s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+        .fade-in--d4 { animation-delay: 0.4s; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .reveal--visible { opacity: 1; transform: translateY(0); }
+
+        /* Founder Section */
+        .founder-section { position: relative; z-index: 1; padding: 80px 0; }
+        .founder-section .section-header__title em { font-style: italic; color: var(--accent-teal); }
+        .founder-card { max-width: 800px; margin: 0 auto; }
+        .founder-card__info { margin-bottom: 48px; }
+        .founder-card__name { font-family: var(--font-display); font-size: clamp(28px, 3.5vw, 40px); font-weight: 400; margin-bottom: 4px; }
+        .founder-card__role { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+        .founder-card__bio { font-size: 16px; color: var(--text-muted); line-height: 1.8; max-width: 650px; margin-bottom: 28px; }
+        .founder-card__linkedin { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-weight: 500; transition: all 0.2s; }
+        .founder-card__linkedin:hover { border-color: var(--accent-teal); opacity: 1; }
+        .founder-card__stats { display: flex; flex-direction: column; gap: 32px; }
+        .founder-stat { display: flex; align-items: flex-start; gap: 24px; }
+        .founder-stat__value { font-family: var(--font-mono); font-size: clamp(24px, 3vw, 32px); font-weight: 500; color: var(--accent-teal); min-width: 100px; flex-shrink: 0; }
+        .founder-stat__text { font-size: 15px; color: var(--text-muted); line-height: 1.6; padding-top: 4px; }
+        .founder-stat__text strong { color: var(--text-primary); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .commitments__grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav__links {
+                display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column;
+                background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+            }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .commitments__grid { grid-template-columns: repeat(2, 1fr); }
+            .position-card { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .position-card__arrow { display: none; }
+            .careers-cta__box { padding: 40px 24px; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .commitments__grid { grid-template-columns: 1fr; }
+            .footer__links { flex-direction: column; gap: 32px; }
+            .founder-stat { flex-direction: column; gap: 8px; }
+            .founder-stat__value { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html" class="active">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="careers-hero container">
+    <div class="careers-hero__overline fade-in fade-in--d1">Careers at LIUV</div>
+    <h1 class="careers-hero__title fade-in fade-in--d2">Join us. Build the future<br>of <em>investing.</em></h1>
+    <p class="careers-hero__subtitle fade-in fade-in--d3">LIUV is democratizing institutional-grade investment intelligence through AI. We're looking for exceptional people who believe that every investor deserves access to the same tools used by Wall Street.</p>
+</section>
+
+<!-- ========== COMMITMENTS ========== -->
+<section class="commitments container">
+    <div class="section-header reveal">
+        <div class="section-header__overline">Our Commitments</div>
+        <h2 class="section-header__title">What we stand for</h2>
+        <p class="section-header__subtitle">LIUV is built on principles that guide how we work, grow, and create impact.</p>
+    </div>
+    <div class="commitments__grid">
+        <div class="commitment-card reveal">
+            <div class="commitment-card__icon">&#128218;</div>
+            <div class="commitment-card__title">Career Growth &amp; Learning</div>
+            <div class="commitment-card__desc">AI-powered investment education, 10-pillar value analysis framework, DCF modeling training, and multilingual financial literacy across 6 languages.</div>
+        </div>
+        <div class="commitment-card reveal">
+            <div class="commitment-card__icon">&#127758;</div>
+            <div class="commitment-card__title">Social Impact</div>
+            <div class="commitment-card__desc">Breaking the $250K+ barrier to quality wealth management. Giving every investor access to institutional-grade analysis, regardless of income or geography.</div>
+        </div>
+        <div class="commitment-card reveal">
+            <div class="commitment-card__icon">&#129309;</div>
+            <div class="commitment-card__title">Diversity, Equity &amp; Inclusion</div>
+            <div class="commitment-card__desc">Serving investors in 6 languages across 3 continents. Diverse perspectives lead to better investment decisions and stronger products.</div>
+        </div>
+        <div class="commitment-card reveal">
+            <div class="commitment-card__icon">&#127793;</div>
+            <div class="commitment-card__title">Environmental Sustainability</div>
+            <div class="commitment-card__desc">ESG considerations in our analysis framework. Cloud-native with minimal physical infrastructure. Remote-first operations to reduce our carbon footprint.</div>
+        </div>
+        <div class="commitment-card reveal">
+            <div class="commitment-card__icon">&#9878;&#65039;</div>
+            <div class="commitment-card__title">Work-Life Balance</div>
+            <div class="commitment-card__desc">Flexible schedules, async-first communication, and outcome-based performance. Our AI works 24/7 so you don't have to.</div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FOUNDER / THE TEAM ========== -->
+<section class="founder-section container" id="the-team">
+    <div class="section-header reveal">
+        <div class="section-header__overline">The Team</div>
+        <h2 class="section-header__title">Built by a founder who's<br>done it <em>before.</em></h2>
+    </div>
+    <div class="founder-card reveal">
+        <div class="founder-card__info">
+            <h3 class="founder-card__name">Pedro Griz Carvalheira</h3>
+            <div class="founder-card__role">Founder &amp; CEO</div>
+            <p class="founder-card__bio">15+ years building and scaling technology businesses across three continents. Active value investor applying the Buffett/Graham methodology. Combining deep fintech experience with AI to democratize institutional-grade investment intelligence.</p>
+            <a href="https://www.linkedin.com/in/pedrocarvalheira/" target="_blank" class="founder-card__linkedin">LinkedIn Profile &rarr;</a>
+        </div>
+        <div class="founder-card__stats">
+            <div class="founder-stat">
+                <div class="founder-stat__value">$125M+</div>
+                <div class="founder-stat__text"><strong>Revenue built from zero</strong> as Sr. Director of BD at ThirdEye Gen Inc.</div>
+            </div>
+            <div class="founder-stat">
+                <div class="founder-stat__value">EXIT</div>
+                <div class="founder-stat__text"><strong>Founded &amp; sold LIUV</strong> mobile payments platform to major Brazilian payment gateway (2022)</div>
+            </div>
+            <div class="founder-stat">
+                <div class="founder-stat__value">MSc</div>
+                <div class="founder-stat__text"><strong>International Economics</strong> at Erasmus University Rotterdam (2026)</div>
+            </div>
+            <div class="founder-stat">
+                <div class="founder-stat__value">4</div>
+                <div class="founder-stat__text"><strong>Languages:</strong> Portuguese, English, German, Dutch &mdash; global from day one</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== OPEN POSITIONS ========== -->
+<section class="positions container" id="positions">
+    <div class="section-header reveal">
+        <div class="section-header__overline">Open Positions</div>
+        <h2 class="section-header__title">Find your role</h2>
+        <p class="section-header__subtitle">We're building the core team to ship the AI Wealth Agent and scale globally. Every role is high-impact.</p>
+    </div>
+    <div class="positions__grid">
+
+        <a href="/careers/cto.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">CTO / Technical Co-Founder</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Engineering &amp; Leadership</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/ai-ml-engineer.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Senior AI/ML Engineer</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">AI &amp; Machine Learning</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/full-stack-engineer.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Full-Stack Product Engineer</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Product Engineering</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/head-of-compliance.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Head of Compliance &amp; Regulatory Affairs</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Legal &amp; Compliance</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/head-of-growth.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Head of Growth / Marketing</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Growth &amp; Marketing</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/data-engineer.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Data Engineer</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Data &amp; Infrastructure</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/backend-engineer.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Senior Backend Engineer</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Backend Engineering</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/product-designer.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Product Designer (UX/UI)</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Design</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/community-manager.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Community Manager &amp; Content Creator</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Community &amp; Content</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+        <a href="/careers/business-development.html" class="position-card reveal">
+            <div class="position-card__info">
+                <div class="position-card__title">Business Development Manager (B2B/Partnerships)</div>
+                <div class="position-card__meta">
+                    <span class="position-card__dept">Business Development</span>
+                </div>
+            </div>
+            <div class="position-card__arrow">&#8594;</div>
+        </a>
+
+    </div>
+</section>
+
+<!-- ========== CTA ========== -->
+<section class="careers-cta container">
+    <div class="careers-cta__box reveal">
+        <h2 class="careers-cta__title">Don't see your perfect role?</h2>
+        <p class="careers-cta__desc">We're always looking for exceptional talent. Send us your resume and tell us how you'd contribute to LIUV's mission.</p>
+        <a href="mailto:pedro@liuv.io?subject=LIUV%20Careers%20—%20General%20Application" class="careers-cta__btn">Send General Application &#8594;</a>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal--visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
