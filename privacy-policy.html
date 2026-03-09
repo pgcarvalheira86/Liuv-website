@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script src="/cookie-consent.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Privacy Policy — LIUV | AI Wealth Agent</title>
+    <meta name="description" content="LIUV Privacy Policy. How we collect, use, and protect your personal data in compliance with GDPR, LGPD, and other data protection regulations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Background */
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        /* Hero */
+        .privacy-hero { padding: 160px 0 60px; position: relative; z-index: 1; }
+        .privacy-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .privacy-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .privacy-hero__title { font-family: var(--font-display); font-size: clamp(36px, 5vw, 56px); font-weight: 400; line-height: 1.15; margin-bottom: 20px; }
+        .privacy-hero__subtitle { font-size: 18px; color: var(--text-muted); max-width: 700px; line-height: 1.7; }
+        .privacy-hero__updated { font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); margin-top: 16px; letter-spacing: 1px; }
+
+        /* Content */
+        .privacy-content { position: relative; z-index: 1; padding-bottom: 80px; max-width: 800px; }
+
+        .privacy-section { margin-bottom: 48px; }
+        .privacy-section__title { font-family: var(--font-display); font-size: 24px; font-weight: 400; margin-bottom: 16px; color: var(--text-primary); }
+        .privacy-section__text { font-size: 15px; color: var(--text-muted); line-height: 1.8; margin-bottom: 16px; }
+        .privacy-section__text strong { color: var(--text-primary); font-weight: 600; }
+
+        .privacy-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; padding-left: 0; }
+        .privacy-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+        .privacy-list li::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-teal); margin-top: 9px; flex-shrink: 0; }
+
+        .privacy-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        .privacy-table th, .privacy-table td { padding: 12px 16px; text-align: left; font-size: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .privacy-table th { color: var(--accent-teal); font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; }
+        .privacy-table td { color: var(--text-muted); line-height: 1.6; }
+
+        .privacy-divider { height: 1px; background: rgba(255, 255, 255, 0.04); margin: 48px 0; }
+
+        /* Contact Card */
+        .privacy-contact { background: var(--bg-card); border: 1px solid rgba(20, 184, 156, 0.1); border-radius: 12px; padding: 40px; margin-top: 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+        .privacy-contact__text { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+        .privacy-contact__text strong { color: var(--text-primary); font-weight: 600; display: block; font-size: 17px; margin-bottom: 6px; }
+        .privacy-contact__btn { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-teal); color: var(--bg-primary) !important; padding: 12px 28px; border-radius: 6px; font-weight: 600; font-size: 14px; white-space: nowrap; transition: all 0.2s; }
+        .privacy-contact__btn:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        /* Footer */
+        .footer { padding: 60px 0 40px; border-top: 1px solid rgba(255, 255, 255, 0.04); position: relative; z-index: 1; }
+        .footer__inner { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; max-width: 300px; margin-top: 16px; line-height: 1.6; }
+        .footer__links { display: flex; gap: 64px; }
+        .footer__col-title { font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--text-primary); margin-bottom: 20px; }
+        .footer__col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { font-size: 13px; color: var(--text-dim); }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { font-size: 13px; color: var(--text-dim); }
+
+        /* Animations */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { opacity: 0; transform: translateY(24px); animation: fadeUp 0.8s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav__links {
+                display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column;
+                background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+                padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+            }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .privacy-contact { flex-direction: column; text-align: center; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="privacy-hero container">
+    <div class="privacy-hero__overline fade-in fade-in--d1">Legal</div>
+    <h1 class="privacy-hero__title fade-in fade-in--d2">Privacy Policy</h1>
+    <p class="privacy-hero__subtitle fade-in fade-in--d3">How LIUV Ventures collects, uses, stores, and protects your personal data. We are committed to transparency and compliance with GDPR and global data protection regulations.</p>
+    <div class="privacy-hero__updated fade-in fade-in--d3">Last updated: March 2026</div>
+</section>
+
+<!-- ========== PRIVACY CONTENT ========== -->
+<section class="privacy-content container">
+
+    <!-- 1. Data Controller -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">1. Data Controller</h2>
+        <p class="privacy-section__text">
+            <strong>LIUV Ventures</strong> is the data controller responsible for your personal data.
+        </p>
+        <p class="privacy-section__text">
+            Registered address: Rotterdam, Netherlands<br>
+            Contact email: <a href="mailto:pedro@liuv.io">pedro@liuv.io</a>
+        </p>
+        <p class="privacy-section__text">
+            If you have any questions about how your data is processed, or wish to exercise your rights under GDPR, please contact us at the email address above.
+        </p>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 2. Data We Collect -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">2. Data We Collect</h2>
+        <p class="privacy-section__text">We collect the minimum data necessary to provide and improve our services. The categories of data we process include:</p>
+        <table class="privacy-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Data</th>
+                    <th>Purpose</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Account Data</strong></td>
+                    <td>Email address, name, hashed password</td>
+                    <td>Account creation and authentication</td>
+                </tr>
+                <tr>
+                    <td><strong>Profile Data</strong></td>
+                    <td>Investment preferences, risk tolerance, onboarding selections</td>
+                    <td>Personalizing AI agent analysis</td>
+                </tr>
+                <tr>
+                    <td><strong>Usage Data</strong></td>
+                    <td>Pages visited, features used, session duration</td>
+                    <td>Service improvement (only with consent)</td>
+                </tr>
+                <tr>
+                    <td><strong>Technical Data</strong></td>
+                    <td>IP address, browser type, device information</td>
+                    <td>Security, fraud prevention, analytics (with consent)</td>
+                </tr>
+                <tr>
+                    <td><strong>Payment Data</strong></td>
+                    <td>Subscription plan, payment status (processed by Stripe)</td>
+                    <td>Subscription management</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="privacy-section__text">We do <strong>not</strong> collect or process special categories of personal data (health, biometric, political opinions, etc.).</p>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 3. Legal Basis -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">3. Legal Basis for Processing</h2>
+        <p class="privacy-section__text">Under GDPR Article 6, we process your personal data based on the following legal grounds:</p>
+        <ul class="privacy-list">
+            <li><strong>Contract performance (Art. 6(1)(b)):</strong> Processing necessary to provide you with our services, including account management, AI analysis delivery, and subscription handling.</li>
+            <li><strong>Consent (Art. 6(1)(a)):</strong> Analytics cookies (Google Analytics) are only activated after you provide explicit consent via our cookie banner. You can withdraw consent at any time.</li>
+            <li><strong>Legitimate interest (Art. 6(1)(f)):</strong> Security monitoring, fraud prevention, and service improvement, balanced against your data protection rights.</li>
+            <li><strong>Legal obligation (Art. 6(1)(c)):</strong> Where required by applicable law, such as financial regulatory record-keeping requirements.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 4. Cookies -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">4. Cookies &amp; Tracking Technologies</h2>
+        <p class="privacy-section__text">We use a minimal set of cookies to operate our service:</p>
+        <table class="privacy-table">
+            <thead>
+                <tr>
+                    <th>Cookie</th>
+                    <th>Type</th>
+                    <th>Purpose</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>liuv_session</strong></td>
+                    <td>Essential</td>
+                    <td>Authentication session token (httpOnly, secure)</td>
+                    <td>30 days</td>
+                </tr>
+                <tr>
+                    <td><strong>liuv_cookie_consent</strong></td>
+                    <td>Essential</td>
+                    <td>Stores your cookie preference (localStorage)</td>
+                    <td>Persistent</td>
+                </tr>
+                <tr>
+                    <td><strong>_ga, _gid</strong></td>
+                    <td>Analytics (requires consent)</td>
+                    <td>Google Analytics &mdash; website usage statistics</td>
+                    <td>Up to 2 years</td>
+                </tr>
+            </tbody>
+        </table>
+        <p class="privacy-section__text">
+            <strong>Google Analytics is not loaded unless you explicitly accept analytics cookies</strong> through the cookie consent banner. If you decline, no analytics cookies are set and no usage data is sent to Google. You can change your preference at any time by clearing your browser's local storage for this site.
+        </p>
+        <p class="privacy-section__text">
+            Essential cookies (authentication session) are strictly necessary for the service to function and do not require consent under GDPR Recital 30 and the ePrivacy Directive.
+        </p>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 5. Data Sharing -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">5. Data Sharing &amp; Third Parties</h2>
+        <p class="privacy-section__text">We share personal data only with the following categories of processors, and only to the extent necessary:</p>
+        <ul class="privacy-list">
+            <li><strong>Stripe:</strong> Payment processing. Stripe acts as an independent data controller for payment data. See <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe's Privacy Policy</a>.</li>
+            <li><strong>Google Analytics:</strong> Website analytics (only if you consent). IP anonymization is enabled. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</li>
+            <li><strong>Netlify:</strong> Hosting and serverless infrastructure. Data is processed in accordance with <a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener">Netlify's Privacy Policy</a>.</li>
+        </ul>
+        <p class="privacy-section__text">We do <strong>not</strong> sell, rent, or trade your personal data to any third party. We do not share data with advertisers or data brokers.</p>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 6. International Transfers -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">6. International Data Transfers</h2>
+        <p class="privacy-section__text">
+            LIUV Ventures is headquartered in the Netherlands (EU). Some of our processors (Stripe, Google, Netlify) may transfer data to the United States. These transfers are protected by:
+        </p>
+        <ul class="privacy-list">
+            <li>EU-US Data Privacy Framework (where applicable)</li>
+            <li>Standard Contractual Clauses (SCCs) approved by the European Commission</li>
+            <li>Additional technical and organizational safeguards (encryption, access controls)</li>
+        </ul>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 7. Data Retention -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">7. Data Retention</h2>
+        <p class="privacy-section__text">We retain personal data only as long as necessary for the purposes outlined in this policy:</p>
+        <ul class="privacy-list">
+            <li><strong>Account data:</strong> Retained while your account is active. Deleted within 30 days of account deletion request.</li>
+            <li><strong>Usage/analytics data:</strong> Aggregated data retained for up to 26 months (Google Analytics default). Individual data is anonymized.</li>
+            <li><strong>Payment records:</strong> Retained as required by financial regulations and tax law (typically 7 years).</li>
+            <li><strong>Authentication sessions:</strong> Expire after 30 days and are not retained thereafter.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 8. Your Rights -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">8. Your Rights Under GDPR</h2>
+        <p class="privacy-section__text">As a data subject, you have the following rights under GDPR (and equivalent rights under LGPD for Brazilian users):</p>
+        <ul class="privacy-list">
+            <li><strong>Right of access (Art. 15):</strong> Request a copy of the personal data we hold about you.</li>
+            <li><strong>Right to rectification (Art. 16):</strong> Request correction of inaccurate or incomplete data.</li>
+            <li><strong>Right to erasure (Art. 17):</strong> Request deletion of your personal data ("right to be forgotten").</li>
+            <li><strong>Right to restrict processing (Art. 18):</strong> Request that we limit how we use your data.</li>
+            <li><strong>Right to data portability (Art. 20):</strong> Receive your data in a structured, machine-readable format.</li>
+            <li><strong>Right to object (Art. 21):</strong> Object to processing based on legitimate interest.</li>
+            <li><strong>Right to withdraw consent (Art. 7(3)):</strong> Withdraw consent at any time (e.g., for analytics cookies) without affecting prior processing.</li>
+        </ul>
+        <p class="privacy-section__text">
+            To exercise any of these rights, contact us at <a href="mailto:pedro@liuv.io">pedro@liuv.io</a>. We will respond within 30 days as required by GDPR.
+        </p>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 9. Security -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">9. Data Security</h2>
+        <p class="privacy-section__text">We implement appropriate technical and organizational measures to protect your personal data:</p>
+        <ul class="privacy-list">
+            <li>All data transmitted to and from LIUV is encrypted using TLS 1.3.</li>
+            <li>Passwords are hashed using bcrypt with appropriate salt rounds.</li>
+            <li>Authentication tokens are stored in httpOnly, secure cookies to prevent XSS attacks.</li>
+            <li>Access to personal data is restricted to authorized personnel only.</li>
+            <li>Regular security reviews and dependency audits are conducted.</li>
+        </ul>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 10. Children -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">10. Children's Privacy</h2>
+        <p class="privacy-section__text">
+            LIUV is not intended for use by individuals under the age of 18. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will delete it promptly.
+        </p>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 11. Changes -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">11. Changes to This Policy</h2>
+        <p class="privacy-section__text">
+            We may update this privacy policy from time to time. Material changes will be communicated via email (for registered users) or through a notice on our website. The "Last updated" date at the top of this page indicates the most recent revision.
+        </p>
+    </div>
+
+    <div class="privacy-divider"></div>
+
+    <!-- 12. Supervisory Authority -->
+    <div class="privacy-section">
+        <h2 class="privacy-section__title">12. Supervisory Authority</h2>
+        <p class="privacy-section__text">
+            If you are not satisfied with our response to a data protection concern, you have the right to lodge a complaint with a supervisory authority. For the Netherlands, the relevant authority is:
+        </p>
+        <p class="privacy-section__text">
+            <strong>Autoriteit Persoonsgegevens</strong><br>
+            Website: <a href="https://autoriteitpersoonsgegevens.nl" target="_blank" rel="noopener">autoriteitpersoonsgegevens.nl</a>
+        </p>
+    </div>
+
+    <!-- ========== CONTACT ========== -->
+    <div class="privacy-contact">
+        <div class="privacy-contact__text">
+            <strong>Data protection questions?</strong>
+            Contact us for any privacy-related inquiries, data access requests, or to exercise your rights under GDPR. LIUV Ventures is headquartered in Rotterdam, Netherlands.
+        </div>
+        <a href="mailto:pedro@liuv.io" class="privacy-contact__btn">
+            Contact Us &#8594;
+        </a>
+    </div>
+
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
