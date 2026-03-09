@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZWJSY8PV3S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZWJSY8PV3S');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Full-Stack Product Engineer — Careers | LIUV</title>
+    <meta name="description" content="Join LIUV as Full-Stack Product Engineer. Build the React dashboard and user experience that makes complex AI analysis intuitive and accessible.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+            --agent-spending: #3B82F6;
+            --agent-strategy: #A78BFA;
+            --agent-crossborder: #F59E0B;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        /* Role Page Styles */
+        .role-hero { padding: 160px 0 60px; position: relative; z-index: 1; }
+        .role-hero__back { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted); margin-bottom: 32px; transition: color 0.2s; }
+        .role-hero__back:hover { color: var(--accent-teal); opacity: 1; }
+        .role-hero__meta { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+        .role-hero__tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
+        .role-hero__tag--critical { color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.08); }
+        .role-hero__tag--high { color: var(--agent-crossborder); border: 1px solid rgba(245, 158, 11, 0.25); background: rgba(245, 158, 11, 0.08); }
+        .role-hero__tag--medium { color: var(--agent-spending); border: 1px solid rgba(59, 130, 246, 0.25); background: rgba(59, 130, 246, 0.08); }
+        .role-hero__tag--medium-low { color: var(--agent-strategy); border: 1px solid rgba(167, 139, 250, 0.25); background: rgba(167, 139, 250, 0.08); }
+        .role-hero__dept { font-size: 13px; color: var(--text-muted); }
+        .role-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4.5vw, 52px); font-weight: 400; line-height: 1.15; margin-bottom: 20px; }
+        .role-hero__subtitle { font-size: 17px; color: var(--text-muted); max-width: 750px; line-height: 1.7; }
+
+        /* Content Layout */
+        .role-content { position: relative; z-index: 1; padding-bottom: 80px; }
+        .role-layout { display: grid; grid-template-columns: 1fr 400px; gap: 64px; }
+        .role-main { }
+        .role-sidebar { position: sticky; top: 100px; align-self: start; }
+
+        .role-section { margin-bottom: 48px; }
+        .role-section__title { font-family: var(--font-display); font-size: 24px; font-weight: 400; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .role-section__title::before { content: ''; display: block; width: 24px; height: 2px; background: var(--accent-teal); }
+        .role-section__text { font-size: 15px; color: var(--text-muted); line-height: 1.8; margin-bottom: 16px; }
+
+        .role-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .role-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+        .role-list li::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent-teal); margin-top: 8px; flex-shrink: 0; }
+
+        /* Application Form */
+        .apply-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 36px; }
+        .apply-card__title { font-family: var(--font-display); font-size: 22px; font-weight: 400; margin-bottom: 8px; }
+        .apply-card__subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
+        .apply-card__divider { font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-teal); margin: 24px 0 16px; padding-bottom: 8px; border-bottom: 1px solid rgba(20, 184, 156, 0.15); }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+        .form-group label .required { color: #EF4444; margin-left: 2px; }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="url"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%; padding: 10px 14px; background: var(--bg-primary); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; color: var(--text-primary); font-family: var(--font-body); font-size: 14px; transition: border-color 0.2s; outline: none;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent-teal); }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7A8D' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+        .form-group select option { background: var(--bg-primary); color: var(--text-primary); }
+        .form-group input[type="file"] { padding: 8px 0; border: none; background: none; font-size: 13px; color: var(--text-muted); }
+        .form-group input[type="file"]::file-selector-button { background: var(--accent-teal-dim); color: var(--accent-teal); border: 1px solid rgba(20, 184, 156, 0.3); border-radius: 6px; padding: 6px 14px; font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer; margin-right: 12px; transition: all 0.2s; }
+        .form-group input[type="file"]::file-selector-button:hover { background: rgba(20, 184, 156, 0.25); }
+        .form-group .hint { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+        .form-submit { width: 100%; padding: 14px; background: var(--accent-teal); color: var(--bg-primary); border: none; border-radius: 8px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+        .form-submit:hover { box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .form-success { display: none; text-align: center; padding: 40px 20px; }
+        .form-success__icon { font-size: 48px; margin-bottom: 16px; }
+        .form-success__title { font-family: var(--font-display); font-size: 22px; margin-bottom: 8px; }
+        .form-success__text { font-size: 14px; color: var(--text-muted); }
+
+        /* Footer */
+        .footer { padding: 60px 0 40px; border-top: 1px solid rgba(255, 255, 255, 0.04); position: relative; z-index: 1; }
+        .footer__inner { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; max-width: 300px; margin-top: 16px; line-height: 1.6; }
+        .footer__links { display: flex; gap: 64px; }
+        .footer__col-title { font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--text-primary); margin-bottom: 20px; }
+        .footer__col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { font-size: 13px; color: var(--text-dim); }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { font-size: 13px; color: var(--text-dim); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { opacity: 0; transform: translateY(24px); animation: fadeUp 0.8s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+
+        @media (max-width: 1024px) {
+            .role-layout { grid-template-columns: 1fr; }
+            .role-sidebar { position: static; }
+        }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html" class="active">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- ========== HERO ========== -->
+<section class="role-hero container">
+    <a href="/careers.html" class="role-hero__back fade-in fade-in--d1">&#8592; All Positions</a>
+    <div class="role-hero__meta fade-in fade-in--d1">
+        <span class="role-hero__dept">Product Engineering</span>
+    </div>
+    <h1 class="role-hero__title fade-in fade-in--d2">Full-Stack Product Engineer</h1>
+    <p class="role-hero__subtitle fade-in fade-in--d3">Users interact with LIUV through the dashboard. This person builds the React frontend, the real-time portfolio visualization, and the user experience that makes complex AI analysis feel simple. Without a great frontend, even the best AI is unusable.</p>
+</section>
+
+<!-- ========== CONTENT ========== -->
+<section class="role-content container">
+    <div class="role-layout">
+        <div class="role-main">
+            <div class="role-section reveal">
+                <h2 class="role-section__title">Why This Role Matters</h2>
+                <p class="role-section__text">The dashboard is the window into LIUV's intelligence. This role owns the user experience that converts visitors into paying subscribers and keeps them engaged with actionable insights every day.</p>
+            </div>
+
+            <div class="role-section reveal">
+                <h2 class="role-section__title">Key Responsibilities</h2>
+                <ul class="role-list">
+            <li>Build the React dashboard with real-time data visualization (charts, portfolio views, agent outputs)</li>
+            <li>Implement user authentication and subscription management (Stripe integration)</li>
+            <li>Create the API layer connecting the frontend to the AI agents</li>
+            <li>Build responsive design for web and mobile</li>
+            <li>Implement the B2B2C white-label framework for enterprise clients</li>
+                </ul>
+            </div>
+
+            <div class="role-section reveal">
+                <h2 class="role-section__title">Ideal Candidate Profile</h2>
+                <ul class="role-list">
+            <li>4+ years full-stack development with strong React skills</li>
+            <li>Experience with real-time data visualization (D3.js, Recharts, or similar)</li>
+            <li>Experience with financial dashboards or data-heavy UIs</li>
+            <li>Comfortable with Python backends</li>
+            <li>Bonus: experience with Stripe, subscription billing, and SaaS architectures</li>
+                </ul>
+            </div>
+
+            <div class="role-section reveal">
+                <h2 class="role-section__title">What LIUV Offers</h2>
+                <ul class="role-list">
+                    <li>Equity participation &mdash; details discussed individually with each candidate</li>
+                    <li>Competitive compensation &mdash; discussed during the interview process</li>
+                    <li>Remote-first, async culture with flexible schedules</li>
+                    <li>Ground-floor opportunity at an AI-native venture studio</li>
+                    <li>Direct impact on a product used by investors worldwide</li>
+                    <li>Work alongside a mission-driven team democratizing investment intelligence</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ========== APPLICATION FORM ========== -->
+        <div class="role-sidebar">
+            <div class="apply-card" id="form-container">
+                <h3 class="apply-card__title">Apply for this role</h3>
+                <p class="apply-card__subtitle">All fields marked with * are required.</p>
+
+                <form id="application-form" name="application-full-stack-engineer" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" enctype="multipart/form-data" action="/careers/full-stack-engineer.html#success">
+                    <input type="hidden" name="form-name" value="application-full-stack-engineer">
+                    <p style="display:none"><input name="bot-field"></p>
+
+                    <div class="apply-card__divider">Personal Information</div>
+
+                    <div class="form-group">
+                        <label>Full Name <span class="required">*</span></label>
+                        <input type="text" name="full-name" required placeholder="Your full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address <span class="required">*</span></label>
+                        <input type="email" name="email" required placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" name="phone" placeholder="+31 6 1234 5678">
+                    </div>
+                    <div class="form-group">
+                        <label>LinkedIn Profile</label>
+                        <input type="url" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                    </div>
+                    <div class="form-group">
+                        <label>Location / Country</label>
+                        <input type="text" name="location" placeholder="e.g. Rotterdam, Netherlands">
+                    </div>
+
+                    <div class="apply-card__divider">Engineering Background</div>
+                    <div class="form-group">
+                        <label>Years of Full-Stack Experience</label>
+                        <input type="number" name="years-fullstack" min="0" max="30" placeholder="e.g. 5">
+                    </div>
+                    <div class="form-group">
+                        <label>React Proficiency</label>
+                        <select name="react-proficiency">
+                            <option value="" disabled selected>Select your level</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Visualization Experience</label>
+                        <textarea name="dataviz-experience" rows="2" placeholder="e.g. D3.js, Recharts, Chart.js, custom SVG..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Stripe / SaaS Billing Experience</label>
+                        <select name="stripe-experience">
+                            <option value="" disabled selected>Select</option>
+                            <option value="none">No experience</option>
+                            <option value="basic">Basic integration</option>
+                            <option value="advanced">Advanced (subscriptions, webhooks, metering)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>GitHub / Portfolio URL</label>
+                        <input type="url" name="github-portfolio" placeholder="https://github.com/yourusername">
+                    </div>
+
+                    <div class="apply-card__divider">Additional Information</div>
+                    <div class="form-group">
+                        <label>Resume / CV</label>
+                        <input type="file" name="resume" accept=".pdf,.doc,.docx">
+                        <div class="hint">PDF or Word document, max 10MB</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Cover Letter / Motivation</label>
+                        <textarea name="cover-letter" rows="4" placeholder="Tell us why you want to join LIUV and what excites you about this role..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>How Did You Hear About Us?</label>
+                        <select name="source">
+                            <option value="" disabled selected>Select an option</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="referral">Employee Referral</option>
+                            <option value="website">LIUV Website</option>
+                            <option value="job-board">Job Board</option>
+                            <option value="social-media">Social Media</option>
+                            <option value="event">Conference / Event</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Availability / Notice Period</label>
+                        <input type="text" name="availability" placeholder="e.g. Available immediately, 1 month notice">
+                    </div>
+
+                    <button type="submit" class="form-submit">Submit Application</button>
+                </form>
+            </div>
+
+            <div class="form-success" id="form-success">
+                <div class="form-success__icon">&#9989;</div>
+                <h3 class="form-success__title">Application Submitted</h3>
+                <p class="form-success__text">Thank you for your interest in LIUV. We will review your application and get back to you within 5 business days.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    document.getElementById('application-form').addEventListener('submit', function(e) {
+        var btn = this.querySelector('.form-submit');
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+    });
+
+    // Handle Netlify form success
+    if (window.location.hash === '#success' || document.referrer.includes('thank-you')) {
+        document.getElementById('form-container').style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+    }
+
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal--visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
