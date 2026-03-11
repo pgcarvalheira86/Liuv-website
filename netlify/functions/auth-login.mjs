@@ -1,13 +1,7 @@
-import { connectLambda } from '@netlify/blobs';
 import { findUserByEmail, verifyPassword, createToken, setAuthCookie, jsonResponse } from '../../lib/auth-utils.mjs';
 import { sendLoginNotification } from '../../lib/chat-notify.mjs';
 
 export async function handler(event) {
-  if (event?.blobs) {
-    try {
-      connectLambda(event);
-    } catch (_) {}
-  }
   if (event.httpMethod === 'OPTIONS') {
     return jsonResponse({}, 200);
   }
