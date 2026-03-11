@@ -1,4 +1,4 @@
-import { exchangeCodeForToken, fetchUserInfo } from '../../lib/oauth-providers.mjs';
+import { exchangeCodeForToken, fetchUserInfo, getSiteUrl } from '../../lib/oauth-providers.mjs';
 import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, redirectResponse } from '../../lib/auth-utils.mjs';
 import { sendConversionEmail } from '../../lib/email-utils.mjs';
 
@@ -9,18 +9,19 @@ export async function handler(event) {
     const error = event.queryStringParameters?.error;
     const errorDescription = event.queryStringParameters?.error_description;
 
+    const siteUrl = getSiteUrl();
     if (error) {
       const detail = errorDescription ? `&error_detail=${encodeURIComponent(errorDescription.slice(0, 150))}` : '';
-      return redirectResponse(`/login.html?error=oauth_denied${detail}`);
+      return redirectResponse(`${siteUrl}/login.html?error=oauth_denied${detail}`);
     }
 
     if (!code || !state) {
-      return redirectResponse('/login.html?error=missing_params');
+      return redirectResponse(`${siteUrl}/login.html?error=missing_params`);
     }
 
     const providerName = state.split(':')[0];
     if (!providerName) {
-      return redirectResponse('/login.html?error=invalid_state');
+      return redirectResponse(`${siteUrl}/login.html?error=invalid_state`);
     }
 
     const tokenData = await exchangeCodeForToken(providerName, code);
@@ -28,7 +29,7 @@ export async function handler(event) {
     const userInfo = await fetchUserInfo(providerName, accessToken, tokenData);
 
     if (!userInfo.email) {
-      return redirectResponse('/login.html?error=no_email');
+      return redirectResponse(`${siteUrl}/login.html?error=no_email`);
     }
 
     let user = await findUserByEmail(userInfo.email);
@@ -65,12 +66,12 @@ export async function handler(event) {
       }).catch(err => console.error('[NOTIFICATION] Error:', err.message));
     }
 
-    return redirectResponse('/dashboard.html', {
+    return redirectResponse(`${siteUrl}/dashboard.html`, {
       'Set-Cookie': setAuthCookie(jwtToken),
     });
   } catch (err) {
     console.error('[AUTH-CALLBACK]', err.message);
-    const detail = encodeURIComponent(err.message.slice(0, 200));
-    return redirectResponse(`/login.html?error=auth_failed&error_detail=${detail}`);
+    const detail = encodeURIComponent((err.message || String(err)).slice(0, 200));
+    return redirectResponse(`${getSiteUrl()}/login.html?error=auth_failed&error_detail=${detail}`);
   }
 }
