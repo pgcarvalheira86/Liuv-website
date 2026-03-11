@@ -1,11 +1,12 @@
 import { connectLambda } from '@netlify/blobs';
-import { findUserByEmail, createUser, hashPassword, verifyPassword, createToken, setAuthCookie, jsonResponse } from '../../lib/auth-utils.mjs';
+import { findUserByEmail, createUser, hashPassword, verifyPassword, createToken, setAuthCookie, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.mjs';
 import { sendConversionEmail } from '../../lib/email-utils.mjs';
 
 export async function handler(event) {
   console.log('[AUTH-SIGNUP] invoked', process.env.NETLIFY ? 'production' : 'local');
   try {
     connectLambda(event);
+    setBlobsContextFromEvent(event);
   } catch (_) {}
   if (event.httpMethod === 'OPTIONS') {
     return jsonResponse({}, 200);
