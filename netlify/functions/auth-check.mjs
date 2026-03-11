@@ -10,12 +10,12 @@ export async function handler(event) {
     const token = getTokenFromCookie(cookieHeader);
 
     if (!token) {
-      return jsonResponse({ authenticated: false }, 401);
+      return jsonResponse({ authenticated: false, error: 'No session cookie', code: 'no_token' }, 401);
     }
 
     const payload = verifyToken(token);
     if (!payload) {
-      return jsonResponse({ authenticated: false, error: 'Invalid or expired token' }, 401);
+      return jsonResponse({ authenticated: false, error: 'Invalid or expired token', code: 'invalid_token' }, 401);
     }
 
     let user = await findUserByEmail(payload.email);
@@ -29,7 +29,14 @@ export async function handler(event) {
         });
       } catch (e) {
         console.error('[AUTH-CHECK] Create user recovery failed:', e.message);
-        return jsonResponse({ authenticated: false, error: 'User not found', code: 'user_not_found' }, 401);
+        user = {
+          id: payload.userId || payload.sub || `usr_${payload.email}`,
+          email: payload.email,
+          name: payload.name || '',
+          plan: null,
+          provider: 'email',
+          createdAt: payload.iat ? new Date(payload.iat * 1000).toISOString() : new Date().toISOString(),
+        };
       }
     }
 
