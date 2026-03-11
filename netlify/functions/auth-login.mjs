@@ -3,6 +3,7 @@ import { findUserByEmail, verifyPassword, createToken, setAuthCookie, jsonRespon
 import { sendLoginNotification } from '../../lib/chat-notify.mjs';
 
 export async function handler(event) {
+  console.log('[AUTH-LOGIN] invoked', process.env.NETLIFY ? 'production' : 'local');
   try {
     connectLambda(event);
   } catch (_) {}
@@ -48,6 +49,7 @@ export async function handler(event) {
       provider: 'email',
     }).catch(err => console.error('[CHAT-NOTIFY]', err.message));
 
+    console.log('[AUTH-LOGIN] success', user.email);
     return jsonResponse(
       {
         success: true,
@@ -57,7 +59,7 @@ export async function handler(event) {
       { 'Set-Cookie': setAuthCookie(token) }
     );
   } catch (err) {
-    console.error('[AUTH-LOGIN] Error:', err);
+    console.error('[AUTH-LOGIN] Error:', err.message || err);
     return jsonResponse({ error: 'Internal server error' }, 500);
   }
 }
