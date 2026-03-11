@@ -1,13 +1,38 @@
 import { exchangeCodeForToken, fetchUserInfo, getSiteUrl } from '../../lib/oauth-providers.mjs';
 import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, redirectResponse } from '../../lib/auth-utils.mjs';
 import { sendConversionEmail } from '../../lib/email-utils.mjs';
+import { sendLoginNotification } from '../../lib/chat-notify.mjs';
+
+function getCallbackParams(event) {
+  const q = event.queryStringParameters || {};
+  if (event.httpMethod === 'POST' && event.body) {
+    const contentType = (event.headers && (event.headers['content-type'] || event.headers['Content-Type'])) || '';
+    if (contentType.includes('application/x-www-form-urlencoded')) {
+      const body = new URLSearchParams(event.body);
+      return {
+        code: body.get('code') || q.code,
+        state: body.get('state') || q.state,
+        error: body.get('error') || q.error,
+        error_description: body.get('error_description') || q.error_description,
+      };
+    }
+    if (contentType.includes('application/json')) {
+      try {
+        const b = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
+        return { code: b.code || q.code, state: b.state || q.state, error: b.error || q.error, error_description: b.error_description || q.error_description };
+      } catch (_) {}
+    }
+  }
+  return { code: q.code, state: q.state, error: q.error, error_description: q.error_description };
+}
 
 export async function handler(event) {
   try {
-    const code = event.queryStringParameters?.code;
-    const state = event.queryStringParameters?.state;
-    const error = event.queryStringParameters?.error;
-    const errorDescription = event.queryStringParameters?.error_description;
+    const params = getCallbackParams(event);
+    const code = params.code;
+    const state = params.state;
+    const error = params.error;
+    const errorDescription = params.error_description;
 
     const siteUrl = getSiteUrl();
     if (error) {
@@ -65,6 +90,12 @@ export async function handler(event) {
         details: `Signed up via ${providerName}`,
       }).catch(err => console.error('[NOTIFICATION] Error:', err.message));
     }
+
+    sendLoginNotification({
+      email: user.email,
+      name: user.name,
+      provider: providerName,
+    }).catch(err => console.error('[CHAT-NOTIFY]', err.message));
 
     return redirectResponse(`${siteUrl}/dashboard.html`, {
       'Set-Cookie': setAuthCookie(jwtToken),
