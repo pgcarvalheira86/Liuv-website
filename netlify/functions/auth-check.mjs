@@ -27,10 +27,10 @@ export async function handler(event) {
           provider: 'email',
           providerId: null,
         });
-      } catch (e) {
-        console.error('[AUTH-CHECK] Create user recovery failed:', e.message);
+      } catch (_) {}
+      if (!user) {
         user = {
-          id: payload.userId || payload.sub || `usr_${payload.email}`,
+          id: payload.userId || `usr_${payload.email.replace(/[^a-z0-9]/gi, '_')}`,
           email: payload.email,
           name: payload.name || '',
           plan: null,
