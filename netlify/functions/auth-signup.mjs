@@ -1,6 +1,7 @@
 import { connectLambda } from '@netlify/blobs';
 import { findUserByEmail, createUser, hashPassword, verifyPassword, createToken, setAuthCookie, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.mjs';
 import { sendConversionEmail } from '../../lib/email-utils.mjs';
+import { sendSignupNotification } from '../../lib/chat-notify.mjs';
 
 export async function handler(event) {
   console.log('[AUTH-SIGNUP] invoked', process.env.NETLIFY ? 'production' : 'local');
@@ -50,13 +51,18 @@ export async function handler(event) {
       name: user.name,
     });
 
-    // Send conversion notification
     sendConversionEmail({
       eventType: 'New Account Signup',
       userEmail: user.email,
       userName: user.name,
       details: 'Signed up via email/password',
     }).catch(err => console.error('[NOTIFICATION] Error:', err.message));
+
+    sendSignupNotification({
+      email: user.email,
+      name: user.name,
+      provider: 'email',
+    }).catch(err => console.error('[CHAT-NOTIFY]', err.message));
 
     console.log('[AUTH-SIGNUP] success', user.email);
     return jsonResponse(
