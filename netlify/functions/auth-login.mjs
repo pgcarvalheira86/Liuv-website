@@ -38,7 +38,7 @@ export async function handler(event) {
       name: user.name,
     });
 
-    sendLoginNotification({
+    await sendLoginNotification({
       email: user.email,
       name: user.name,
       provider: 'email',

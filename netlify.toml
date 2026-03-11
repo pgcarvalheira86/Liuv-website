@@ -47,3 +47,8 @@
   from = "/api/send-notification"
   to = "/.netlify/functions/send-notification"
   status = 200
+
+[[redirects]]
+  from = "/api/analysis"
+  to = "/.netlify/functions/analysis"
+  status = 200
