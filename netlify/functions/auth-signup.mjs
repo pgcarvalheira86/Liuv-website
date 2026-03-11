@@ -32,13 +32,15 @@ export async function handler(event) {
       return jsonResponse({ error: 'An account with this email already exists. Please sign in instead.' }, 409);
     }
 
-    // Create user
     const user = await createUser({
       email,
       name: name || '',
       password,
       provider: 'email',
     });
+
+    const readBack = await findUserByEmail(user.email);
+    console.log('[AUTH-SIGNUP] verify read-back:', readBack ? 'ok' : 'missing');
 
     // Create JWT
     const token = createToken({
