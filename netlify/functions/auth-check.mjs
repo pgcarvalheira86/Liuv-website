@@ -1,12 +1,6 @@
-import { connectLambda } from '@netlify/blobs';
 import { getTokenFromCookie, verifyToken, findUserByEmail, createUser, jsonResponse } from '../../lib/auth-utils.mjs';
 
 export async function handler(event) {
-  if (event?.blobs) {
-    try {
-      connectLambda(event);
-    } catch (_) {}
-  }
   if (event.httpMethod === 'OPTIONS') {
     return jsonResponse({}, 200);
   }
