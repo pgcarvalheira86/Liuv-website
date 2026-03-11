@@ -1,4 +1,5 @@
 import { findUserByEmail, verifyPassword, createToken, setAuthCookie, jsonResponse } from '../../lib/auth-utils.mjs';
+import { sendLoginNotification } from '../../lib/chat-notify.mjs';
 
 export async function handler(event) {
   if (event.httpMethod === 'OPTIONS') {
@@ -36,6 +37,12 @@ export async function handler(event) {
       email: user.email,
       name: user.name,
     });
+
+    sendLoginNotification({
+      email: user.email,
+      name: user.name,
+      provider: 'email',
+    }).catch(err => console.error('[CHAT-NOTIFY]', err.message));
 
     return jsonResponse(
       {
