@@ -1,8 +1,12 @@
+import { connectLambda } from '@netlify/blobs';
 import { getTokenFromCookie, verifyToken, findUserByEmail, updateUser, jsonResponse } from '../../lib/auth-utils.mjs';
 
 const ALLOWED_PLANS = ['Explorer', 'Investor', 'Professional'];
 
 export async function handler(event) {
+  try {
+    connectLambda(event);
+  } catch (_) {}
   if (event.httpMethod === 'OPTIONS') {
     return jsonResponse({}, 200);
   }
