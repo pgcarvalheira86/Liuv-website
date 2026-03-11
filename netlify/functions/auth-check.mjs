@@ -10,18 +10,17 @@ export async function handler(event) {
     const token = getTokenFromCookie(cookieHeader);
 
     if (!token) {
-      return jsonResponse({ authenticated: false }, 401);
+      return jsonResponse({ authenticated: false, error: 'No session cookie', code: 'no_token' }, 401);
     }
 
     const payload = verifyToken(token);
     if (!payload) {
-      return jsonResponse({ authenticated: false, error: 'Invalid or expired token' }, 401);
+      return jsonResponse({ authenticated: false, error: 'Invalid or expired token', code: 'invalid_token' }, 401);
     }
 
-    // Get fresh user data
     const user = await findUserByEmail(payload.email);
     if (!user) {
-      return jsonResponse({ authenticated: false, error: 'User not found' }, 401);
+      return jsonResponse({ authenticated: false, error: 'User not found', code: 'user_not_found' }, 401);
     }
 
     return jsonResponse({

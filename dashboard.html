@@ -2,7 +2,16 @@
 <html lang="en">
     <head>
     <script src="/cookie-consent.js"></script>
-
+    <script>
+      (function () {
+        var q = new URLSearchParams(location.search);
+        if (q.has('code') || q.has('state') || q.has('iss')) {
+          ['code','state','iss','scope','authuser','hd','prompt'].forEach(function (k) { q.delete(k); });
+          var clean = location.pathname + (q.toString() ? '?' + q.toString() : '') + location.hash;
+          history.replaceState(null, '', clean);
+        }
+      })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
