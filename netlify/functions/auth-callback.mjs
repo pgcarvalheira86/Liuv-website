@@ -91,7 +91,7 @@ export async function handler(event) {
       }).catch(err => console.error('[NOTIFICATION] Error:', err.message));
     }
 
-    sendLoginNotification({
+    await sendLoginNotification({
       email: user.email,
       name: user.name,
       provider: providerName,
