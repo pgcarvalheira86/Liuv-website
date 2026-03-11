@@ -1,5 +1,5 @@
 import { exchangeCodeForToken, fetchUserInfo } from '../../lib/oauth-providers.mjs';
-import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, redirectResponse, jsonResponse } from '../../lib/auth-utils.mjs';
+import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, redirectResponse } from '../../lib/auth-utils.mjs';
 import { sendConversionEmail } from '../../lib/email-utils.mjs';
 
 export async function handler(event) {
@@ -16,36 +16,29 @@ export async function handler(event) {
       return redirectResponse('/login.html?error=missing_params');
     }
 
-    // Parse provider from state (format: "provider:randomString")
     const providerName = state.split(':')[0];
     if (!providerName) {
       return redirectResponse('/login.html?error=invalid_state');
     }
 
-    // Exchange code for token
     const tokenData = await exchangeCodeForToken(providerName, code);
     const accessToken = tokenData.access_token;
-
-    // Get user info
     const userInfo = await fetchUserInfo(providerName, accessToken, tokenData);
 
     if (!userInfo.email) {
       return redirectResponse('/login.html?error=no_email');
     }
 
-    // Find or create user
     let user = await findUserByEmail(userInfo.email);
     let isNewUser = false;
 
     if (user) {
-      // Update existing user with latest info from provider
       user = await updateUser(userInfo.email, {
         name: userInfo.name || user.name,
         provider: providerName,
         providerId: userInfo.providerId,
       });
     } else {
-      // Create new user
       user = await createUser({
         email: userInfo.email,
         name: userInfo.name || '',
@@ -55,14 +48,12 @@ export async function handler(event) {
       isNewUser = true;
     }
 
-    // Create JWT
     const jwtToken = createToken({
       userId: user.id,
       email: user.email,
       name: user.name,
     });
 
-    // Send conversion notification for new signups
     if (isNewUser) {
       sendConversionEmail({
         eventType: 'New Account Signup',
@@ -76,7 +67,8 @@ export async function handler(event) {
       'Set-Cookie': setAuthCookie(jwtToken),
     });
   } catch (err) {
-    console.error('[AUTH-CALLBACK] Error:', err);
-    return redirectResponse('/login.html?error=auth_failed');
+    console.error('[AUTH-CALLBACK]', err.message);
+    const detail = encodeURIComponent(err.message.slice(0, 200));
+    return redirectResponse(`/login.html?error=auth_failed&error_detail=${detail}`);
   }
 }
