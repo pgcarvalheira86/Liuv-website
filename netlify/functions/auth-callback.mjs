@@ -7,9 +7,11 @@ export async function handler(event) {
     const code = event.queryStringParameters?.code;
     const state = event.queryStringParameters?.state;
     const error = event.queryStringParameters?.error;
+    const errorDescription = event.queryStringParameters?.error_description;
 
     if (error) {
-      return redirectResponse('/login.html?error=oauth_denied');
+      const detail = errorDescription ? `&error_detail=${encodeURIComponent(errorDescription.slice(0, 150))}` : '';
+      return redirectResponse(`/login.html?error=oauth_denied${detail}`);
     }
 
     if (!code || !state) {
