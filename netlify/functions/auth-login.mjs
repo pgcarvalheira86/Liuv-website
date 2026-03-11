@@ -24,16 +24,17 @@ export async function handler(event) {
 
     const user = await findUserByEmail(email);
     if (!user) {
+      console.log('[AUTH-LOGIN] user not found:', email.trim().toLowerCase());
       return jsonResponse({ error: 'Invalid email or password' }, 401);
     }
 
-    // If user signed up via OAuth, they can't login with password
     if (!user.passwordHash) {
       return jsonResponse({ error: `This account uses ${user.provider} sign-in. Please use the "${user.provider}" button to log in.` }, 401);
     }
 
     const valid = await verifyPassword(password, user.passwordHash);
     if (!valid) {
+      console.log('[AUTH-LOGIN] password mismatch:', user.email);
       return jsonResponse({ error: 'Invalid email or password' }, 401);
     }
 
