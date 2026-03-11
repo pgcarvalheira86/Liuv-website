@@ -19,6 +19,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/auth/set-plan"
+  to = "/.netlify/functions/auth-set-plan"
+  status = 200
+
+[[redirects]]
   from = "/api/auth/logout"
   to = "/.netlify/functions/auth-logout"
   status = 200

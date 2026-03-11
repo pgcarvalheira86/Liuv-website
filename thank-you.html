@@ -345,9 +345,8 @@
         document.getElementById('plan-name').textContent = config.name;
         document.getElementById('plan-price').textContent = config.price;
         document.getElementById('subtitle').textContent = config.subtitle;
-        document.getElementById('cta-link').href = config.cta;
-        document.getElementById('cta-link').childNodes[0].textContent = config.ctaText + ' ';
 
+        const ctaLink = document.getElementById('cta-link');
         const stepsList = document.getElementById('next-steps-list');
         stepsList.innerHTML = config.steps.map((step, i) =>
             `<li class="next-steps__item">
@@ -355,6 +354,29 @@
                 <div class="next-steps__text"><strong>${step.title}</strong> — ${step.desc}</div>
             </li>`
         ).join('');
+
+        (async function setCta() {
+            let cta = config.cta;
+            let ctaText = config.ctaText;
+            try {
+                const res = await fetch('/api/auth/check', { credentials: 'include' });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.authenticated) {
+                        cta = '/dashboard.html';
+                        ctaText = 'Go to Dashboard';
+                        fetch('/api/auth/set-plan', {
+                            method: 'POST',
+                            credentials: 'include',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ plan: plan }),
+                        }).catch(() => {});
+                    }
+                }
+            } catch (_) {}
+            ctaLink.href = cta;
+            ctaLink.childNodes[0].textContent = ctaText + ' ';
+        })();
 
         // Track conversion in GA
         gtag('event', 'purchase', {

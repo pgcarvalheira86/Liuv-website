@@ -36,13 +36,14 @@ export async function handler(event) {
   try {
     switch (eventType) {
       case 'checkout.session.completed': {
-        const email = data.customer_email || data.customer_details?.email;
+        const rawEmail = data.customer_email || data.customer_details?.email;
+        const email = rawEmail ? String(rawEmail).toLowerCase().trim() : null;
         const customerId = data.customer;
         const plan = extractPlanFromSession(data);
+        const name = data.customer_details?.name || '';
 
         if (email) {
-          // Link Stripe customer to LIUV user
-          await linkStripeCustomer(email, customerId, plan);
+          await linkStripeCustomer(email, customerId, plan, name);
 
           // Send conversion email
           await sendConversionEmail({
@@ -159,10 +160,13 @@ function verifyStripeSignature(payload, signature, secret) {
 }
 
 function extractPlanFromSession(session) {
-  // Try to extract plan from metadata or line items
   if (session.metadata?.plan) return session.metadata.plan;
 
-  const amount = session.amount_total;
+  let amount = session.amount_total;
+  if (!amount && session.line_items?.data?.length) {
+    const first = session.line_items.data[0];
+    amount = first.price?.unit_amount ?? first.amount_total;
+  }
   if (amount) {
     const dollars = amount / 100;
     if (dollars <= 29) return 'Explorer';
