@@ -2,6 +2,9 @@
   functions = "netlify/functions"
   publish = "."
 
+[functions]
+  node_bundler = "esbuild"
+
 # API route redirects for clean URLs
 [[redirects]]
   from = "/api/auth/signup"
