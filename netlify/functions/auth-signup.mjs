@@ -3,6 +3,7 @@ import { findUserByEmail, createUser, hashPassword, verifyPassword, createToken,
 import { sendConversionEmail } from '../../lib/email-utils.mjs';
 
 export async function handler(event) {
+  console.log('[AUTH-SIGNUP] invoked', process.env.NETLIFY ? 'production' : 'local');
   try {
     connectLambda(event);
   } catch (_) {}
@@ -54,6 +55,7 @@ export async function handler(event) {
       details: 'Signed up via email/password',
     }).catch(err => console.error('[NOTIFICATION] Error:', err.message));
 
+    console.log('[AUTH-SIGNUP] success', user.email);
     return jsonResponse(
       {
         success: true,
@@ -63,7 +65,7 @@ export async function handler(event) {
       { 'Set-Cookie': setAuthCookie(token) }
     );
   } catch (err) {
-    console.error('[AUTH-SIGNUP] Error:', err);
+    console.error('[AUTH-SIGNUP] Error:', err.message || err);
     return jsonResponse({ error: 'Internal server error' }, 500);
   }
 }
