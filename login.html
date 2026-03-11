@@ -472,6 +472,7 @@
         // Check for OAuth errors in URL
         const params = new URLSearchParams(window.location.search);
         const error = params.get('error');
+        const errorDetail = params.get('error_detail');
         if (error) {
             const errorMessages = {
                 oauth_denied: 'Authentication was cancelled. Please try again.',
@@ -480,7 +481,9 @@
                 no_email: 'Could not retrieve email from provider. Please try a different sign-in method.',
                 auth_failed: 'Authentication failed. Please try again or use a different method.',
             };
-            showMessage(errorMessages[error] || 'Authentication error. Please try again.', 'error');
+            let msg = errorMessages[error] || 'Authentication error. Please try again.';
+            if (errorDetail) msg += ' (' + errorDetail + ')';
+            showMessage(msg, 'error');
         }
 
         // If already logged in, redirect to dashboard
