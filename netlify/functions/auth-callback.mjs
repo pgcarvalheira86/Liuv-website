@@ -1,3 +1,4 @@
+import { connectLambda } from '@netlify/blobs';
 import { exchangeCodeForToken, fetchUserInfo, getSiteUrl } from '../../lib/oauth-providers.mjs';
 import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, redirectResponse } from '../../lib/auth-utils.mjs';
 import { sendConversionEmail } from '../../lib/email-utils.mjs';
@@ -27,6 +28,11 @@ function getCallbackParams(event) {
 }
 
 export async function handler(event) {
+  if (event?.blobs) {
+    try {
+      connectLambda(event);
+    } catch (_) {}
+  }
   try {
     const params = getCallbackParams(event);
     const code = params.code;
