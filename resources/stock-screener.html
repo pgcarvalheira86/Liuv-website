@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Value Stock Screener — LIUV | Free Value Investing Tool</title>
+    <meta name="description" content="Screen any stock against Benjamin Graham's value investing criteria. Check if a stock passes Graham's quantitative filters for defensive investors. Free, no signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910; --bg-card: #0c1019; --bg-card-hover: #111827;
+            --accent-teal: #14B89C; --accent-teal-dim: rgba(20, 184, 156, 0.15); --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1; --text-muted: #6B7A8D; --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif; --font-display: 'Playfair Display', serif; --font-mono: 'DM Mono', monospace;
+            --success: #14B89C; --warning: #F59E0B; --danger: #EF4444;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; } .nav__logomark span:nth-child(2) { height: 60%; } .nav__logomark span:nth-child(3) { height: 80%; } .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; }
+
+        /* Screener input */
+        .screener-panel { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 32px; }
+        .screener-panel__title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .screener-panel__desc { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .form-group { margin-bottom: 0; }
+        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+        .form-hint { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .form-input { width: 100%; padding: 12px 16px; background: var(--bg-primary); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; color: var(--text-primary); font-family: var(--font-mono); font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .form-input:focus { border-color: var(--accent-teal); }
+        .form-input--ticker { text-transform: uppercase; font-weight: 600; }
+        .form-btn { width: 100%; padding: 14px 28px; background: var(--accent-teal); color: var(--bg-primary); border: none; border-radius: 6px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 20px; }
+        .form-btn:hover { opacity: 0.9; box-shadow: 0 0 30px var(--accent-teal-glow); }
+
+        /* Results */
+        .screen-result { position: relative; z-index: 1; margin-bottom: 32px; display: none; }
+        .screen-result--visible { display: block; }
+
+        .screen-summary { background: var(--bg-card); border-radius: 12px; padding: 32px; text-align: center; margin-bottom: 24px; }
+        .screen-summary__ticker { font-family: var(--font-mono); font-size: 24px; font-weight: 600; letter-spacing: 2px; margin-bottom: 8px; }
+        .screen-summary__verdict { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+        .screen-summary__count { font-size: 14px; color: var(--text-muted); }
+
+        .criteria-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+        .criterion { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
+        .criterion__status { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+        .criterion__status--pass { background: rgba(20,184,156,0.15); color: var(--success); }
+        .criterion__status--fail { background: rgba(239,68,68,0.15); color: var(--danger); }
+        .criterion__content { flex: 1; }
+        .criterion__name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .criterion__rule { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .criterion__value { font-family: var(--font-mono); font-size: 13px; }
+
+        /* Criteria Guide */
+        .guide { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .guide__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .guide__text { font-size: 14px; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; }
+        .guide__table { width: 100%; border-collapse: collapse; }
+        .guide__table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(20,184,156,0.05); }
+        .guide__table td { font-size: 13px; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-muted); }
+        .guide__table td:first-child { color: var(--text-primary); font-weight: 500; }
+        .guide__table td code { font-family: var(--font-mono); color: var(--accent-teal); font-size: 12px; }
+
+        .premium-cta { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; } .fade-in--d2 { animation-delay: 0.2s; } .fade-in--d3 { animation-delay: 0.3s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) { .input-grid { grid-template-columns: repeat(2, 1fr); } .criteria-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; } .nav__links li { padding: 12px 0; } .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; } .nav__mobile-toggle { display: block; }
+            .input-grid { grid-template-columns: 1fr; }
+            .footer__inner { flex-direction: column; gap: 40px; } .footer__links { gap: 40px; } .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) { .footer__links { flex-direction: column; gap: 32px; } }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>Value Stock Screener</li>
+    </ul>
+</div>
+
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Tool</div>
+    <h1 class="tool-hero__title">Value Stock <em style="font-style:italic;color:var(--accent-teal);">Screener</em></h1>
+    <p class="tool-hero__subtitle">Screen any stock against Benjamin Graham's seven quantitative criteria for defensive investors. Enter a stock's financial data and see which of Graham's filters it passes — the same criteria LIUV's AI uses as a starting point for deep analysis.</p>
+</section>
+
+<!-- Screener Input -->
+<section class="container fade-in fade-in--d2">
+    <div class="screener-panel">
+        <div class="screener-panel__title">Enter Stock Data for Screening</div>
+        <div class="screener-panel__desc">Look up these values on Yahoo Finance, Morningstar, or your brokerage. Graham's criteria are designed for large, established companies.</div>
+
+        <div class="input-grid">
+            <div class="form-group">
+                <label class="form-label" for="ticker">Ticker Symbol</label>
+                <input class="form-input form-input--ticker" type="text" id="ticker" placeholder="AAPL" maxlength="6">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="marketCap">Market Cap ($B)</label>
+                <input class="form-input" type="number" id="marketCap" placeholder="2500" step="1">
+                <div class="form-hint">In billions of dollars</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="currentRatio">Current Ratio</label>
+                <input class="form-input" type="number" id="currentRatio" placeholder="1.5" step="0.01">
+                <div class="form-hint">Current Assets / Current Liabilities</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="pe">P/E Ratio (TTM)</label>
+                <input class="form-input" type="number" id="pe" placeholder="18" step="0.1">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="pb">P/B Ratio</label>
+                <input class="form-input" type="number" id="pb" placeholder="3.0" step="0.01">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="divYield">Dividend Yield (%)</label>
+                <input class="form-input" type="number" id="divYield" placeholder="1.5" step="0.01">
+                <div class="form-hint">Current annual dividend yield</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="epsGrowth5yr">EPS Growth 5yr (%)</label>
+                <input class="form-input" type="number" id="epsGrowth5yr" placeholder="15" step="0.1">
+                <div class="form-hint">Total 5-year EPS growth, not CAGR</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="epsNegYears">Years with Negative EPS (last 10)</label>
+                <input class="form-input" type="number" id="epsNegYears" placeholder="0" step="1" min="0" max="10">
+                <div class="form-hint">How many of last 10 years had losses</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="ltDebt">LT Debt / Net Current Assets</label>
+                <input class="form-input" type="number" id="ltDebt" placeholder="0.8" step="0.01">
+                <div class="form-hint">Long-term debt divided by NCA</div>
+            </div>
+        </div>
+
+        <button class="form-btn" type="button" onclick="screenStock()">Screen This Stock</button>
+    </div>
+</section>
+
+<!-- Results -->
+<section class="container screen-result" id="screenResult">
+    <div class="screen-summary fade-in fade-in--d1" id="screenSummary">
+        <div class="screen-summary__ticker" id="resTicker">—</div>
+        <div class="screen-summary__verdict" id="resVerdict">—</div>
+        <div class="screen-summary__count" id="resCount">—</div>
+    </div>
+
+    <div class="criteria-grid fade-in fade-in--d2" id="criteriaGrid"></div>
+</section>
+
+<!-- Graham Criteria Guide -->
+<section class="container">
+    <div class="guide fade-in fade-in--d3">
+        <div class="guide__title">Benjamin Graham's Seven Criteria for Defensive Investors</div>
+        <div class="guide__text">From Chapter 14 of <em>The Intelligent Investor</em>, these quantitative filters help defensive investors identify large, well-financed companies trading at reasonable prices. Graham designed these criteria to be objective and measurable — requiring no subjective judgment.</div>
+        <div style="overflow-x:auto">
+            <table class="guide__table">
+                <thead>
+                    <tr><th>#</th><th>Criterion</th><th>Threshold</th><th>Rationale</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>Adequate Size</td><td><code>Market Cap &ge; $2B</code></td><td>Large companies are more stable and better analyzed</td></tr>
+                    <tr><td>2</td><td>Strong Financial Condition</td><td><code>Current Ratio &ge; 2.0</code></td><td>Sufficient liquidity to meet short-term obligations</td></tr>
+                    <tr><td>3</td><td>Earnings Stability</td><td><code>No losses in 10 years</code></td><td>Consistent profitability demonstrates business durability</td></tr>
+                    <tr><td>4</td><td>Dividend Record</td><td><code>Pays dividends</code></td><td>Regular dividends signal financial health and shareholder focus</td></tr>
+                    <tr><td>5</td><td>Earnings Growth</td><td><code>EPS growth &ge; 33% over 10 yrs</code></td><td>Business should grow ahead of inflation (we use 5yr proxy)</td></tr>
+                    <tr><td>6</td><td>Moderate P/E Ratio</td><td><code>P/E &le; 15</code></td><td>Avoid paying excessive premiums for earnings</td></tr>
+                    <tr><td>7</td><td>Moderate Price/Book</td><td><code>P/E &times; P/B &le; 22.5</code></td><td>Combined valuation check — the basis of the Graham Number</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">Screen thousands of stocks automatically</div>
+        <div class="premium-cta__text">LIUV's Portfolio Advisor scans the entire market daily using Graham's criteria plus 9 additional valuation pillars. Get alerts when undervalued stocks match your investment profile — all powered by AI.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This screener is for educational purposes only and does not constitute financial advice. Passing all of Graham's criteria does not guarantee a stock is a good investment — additional qualitative analysis is always required. The criteria were developed in the mid-20th century and may need contextual adjustment for modern markets. Consult a qualified financial advisor before making investment decisions.
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul><li><a href="/#agents">AI Agents</a></li><li><a href="/#pricing">Pricing</a></li><li><a href="/resources.html">Free Resources</a></li></ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul><li><a href="/blog.html">Blog</a></li><li><a href="/compliance.html">Compliance</a></li><li><a href="/careers.html">Team</a></li><li><a href="mailto:pedro@liuv.io">Contact</a></li></ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul><li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li><li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li><li><a href="mailto:pedro@liuv.io">Email Us</a></li></ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+function screenStock() {
+    var ticker = document.getElementById('ticker').value.trim().toUpperCase();
+    var marketCap = parseFloat(document.getElementById('marketCap').value) || 0;
+    var currentRatio = parseFloat(document.getElementById('currentRatio').value) || 0;
+    var pe = parseFloat(document.getElementById('pe').value) || 0;
+    var pb = parseFloat(document.getElementById('pb').value) || 0;
+    var divYield = parseFloat(document.getElementById('divYield').value) || 0;
+    var epsGrowth = parseFloat(document.getElementById('epsGrowth5yr').value) || 0;
+    var epsNegYears = parseInt(document.getElementById('epsNegYears').value) || 0;
+    var ltDebt = parseFloat(document.getElementById('ltDebt').value) || 0;
+
+    if (!ticker) { alert('Please enter a ticker symbol.'); return; }
+
+    var criteria = [
+        {
+            name: 'Adequate Size',
+            rule: 'Market Cap >= $2 billion',
+            pass: marketCap >= 2,
+            value: '$' + marketCap.toFixed(1) + 'B'
+        },
+        {
+            name: 'Strong Financial Condition',
+            rule: 'Current Ratio >= 2.0',
+            pass: currentRatio >= 2.0,
+            value: currentRatio.toFixed(2)
+        },
+        {
+            name: 'Earnings Stability',
+            rule: 'No negative EPS years in last 10',
+            pass: epsNegYears === 0,
+            value: epsNegYears === 0 ? 'No losses' : epsNegYears + ' loss year(s)'
+        },
+        {
+            name: 'Dividend Record',
+            rule: 'Currently pays dividends',
+            pass: divYield > 0,
+            value: divYield > 0 ? divYield.toFixed(2) + '% yield' : 'No dividend'
+        },
+        {
+            name: 'Earnings Growth',
+            rule: 'EPS growth >= 33% over period',
+            pass: epsGrowth >= 33,
+            value: epsGrowth.toFixed(1) + '% 5yr growth'
+        },
+        {
+            name: 'Moderate P/E Ratio',
+            rule: 'P/E Ratio <= 15',
+            pass: pe > 0 && pe <= 15,
+            value: pe.toFixed(1) + 'x'
+        },
+        {
+            name: 'Moderate Price-to-Book',
+            rule: 'P/E × P/B <= 22.5',
+            pass: pe > 0 && pb > 0 && (pe * pb) <= 22.5,
+            value: 'P/E × P/B = ' + (pe * pb).toFixed(1)
+        }
+    ];
+
+    var passed = criteria.filter(function(c) { return c.pass; }).length;
+    var total = criteria.length;
+
+    // Summary
+    document.getElementById('resTicker').textContent = ticker;
+    var verdict = document.getElementById('resVerdict');
+    var summaryEl = document.getElementById('screenSummary');
+
+    if (passed === total) {
+        verdict.textContent = 'Passes All Graham Criteria';
+        verdict.style.color = 'var(--success)';
+        summaryEl.style.borderColor = 'rgba(20,184,156,0.3)';
+    } else if (passed >= 5) {
+        verdict.textContent = 'Partial Pass — Room for Improvement';
+        verdict.style.color = 'var(--warning)';
+        summaryEl.style.borderColor = 'rgba(245,158,11,0.2)';
+    } else {
+        verdict.textContent = 'Does Not Meet Graham\'s Standards';
+        verdict.style.color = 'var(--danger)';
+        summaryEl.style.borderColor = 'rgba(239,68,68,0.2)';
+    }
+    document.getElementById('resCount').textContent = passed + ' of ' + total + ' criteria passed';
+
+    // Criteria cards
+    var html = '';
+    criteria.forEach(function(c) {
+        var statusClass = c.pass ? 'criterion__status--pass' : 'criterion__status--fail';
+        var icon = c.pass ? '&#10003;' : '&#10007;';
+        var valColor = c.pass ? 'var(--success)' : 'var(--danger)';
+        html += '<div class="criterion"><div class="criterion__status ' + statusClass + '">' + icon + '</div><div class="criterion__content"><div class="criterion__name">' + c.name + '</div><div class="criterion__rule">' + c.rule + '</div><div class="criterion__value" style="color:' + valColor + '">' + c.value + '</div></div></div>';
+    });
+    document.getElementById('criteriaGrid').innerHTML = html;
+
+    document.getElementById('screenResult').classList.add('screen-result--visible');
+    document.getElementById('screenResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Compound Growth Simulator — LIUV | Free Value Investing Tool</title>
+    <meta name="description" content="Visualize how compound growth builds wealth over time. Compare LIUV value investing returns against the S&P 500, bank savings, and inflation. Free, no signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #060910; --bg-card: #0c1019; --bg-card-hover: #111827;
+            --accent-teal: #14B89C; --accent-teal-dim: rgba(20, 184, 156, 0.15); --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1; --text-muted: #6B7A8D; --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif; --font-display: 'Playfair Display', serif; --font-mono: 'DM Mono', monospace;
+            --success: #14B89C; --warning: #F59E0B; --danger: #EF4444;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; } .nav__logomark span:nth-child(2) { height: 60%; } .nav__logomark span:nth-child(3) { height: 80%; } .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; }
+
+        /* Controls */
+        .controls { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 32px; }
+        .controls__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .form-group { margin-bottom: 0; }
+        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+        .form-hint { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .form-input { width: 100%; padding: 12px 16px; background: var(--bg-primary); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; color: var(--text-primary); font-family: var(--font-mono); font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .form-input:focus { border-color: var(--accent-teal); }
+        .form-btn { padding: 14px 32px; background: var(--accent-teal); color: var(--bg-primary); border: none; border-radius: 6px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .form-btn:hover { opacity: 0.9; box-shadow: 0 0 30px var(--accent-teal-glow); }
+
+        .toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 20px; }
+        .toggle { position: relative; width: 44px; height: 24px; }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle__slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.08); border-radius: 12px; transition: 0.2s; }
+        .toggle__slider::before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: var(--text-muted); border-radius: 50%; transition: 0.2s; }
+        .toggle input:checked + .toggle__slider { background: var(--accent-teal-dim); }
+        .toggle input:checked + .toggle__slider::before { transform: translateX(20px); background: var(--accent-teal); }
+        .toggle-label { font-size: 13px; color: var(--text-muted); }
+
+        /* Chart */
+        .chart-section { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 32px; }
+        .chart-container { position: relative; height: 400px; }
+
+        /* Results Stats */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; z-index: 1; margin-bottom: 32px; }
+        .stat-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 24px; text-align: center; }
+        .stat-card__value { font-family: var(--font-mono); font-size: 28px; font-weight: 500; margin-bottom: 4px; }
+        .stat-card__label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.5px; }
+        .stat-card__sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+        /* Milestones */
+        .milestones { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 32px; }
+        .milestones__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .milestones__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .milestone { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--bg-primary); border-radius: 8px; }
+        .milestone__icon { width: 32px; height: 32px; border-radius: 8px; background: var(--accent-teal-dim); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .milestone__text { font-size: 13px; color: var(--text-muted); }
+        .milestone__text strong { color: var(--text-primary); }
+
+        /* What if */
+        .whatif { background: linear-gradient(135deg, rgba(20, 184, 156, 0.06), rgba(167, 139, 250, 0.03)); border: 1px solid rgba(20, 184, 156, 0.12); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; text-align: center; }
+        .whatif__title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .whatif__value { font-family: var(--font-mono); font-size: 36px; font-weight: 500; color: var(--accent-teal); margin: 12px 0; }
+        .whatif__text { font-size: 14px; color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+
+        .premium-cta { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; } .fade-in--d2 { animation-delay: 0.2s; } .fade-in--d3 { animation-delay: 0.3s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .controls__grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .controls__grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .chart-container { height: 300px; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) { .footer__links { flex-direction: column; gap: 32px; } }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>Compound Growth Simulator</li>
+    </ul>
+</div>
+
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Tool</div>
+    <h1 class="tool-hero__title">Compound Growth <em style="font-style:italic;color:var(--accent-teal);">Simulator</em></h1>
+    <p class="tool-hero__subtitle">Visualize how disciplined value investing builds extraordinary wealth over time. Compare returns across strategies and see why Buffett calls compound interest "the eighth wonder of the world."</p>
+</section>
+
+<!-- Controls -->
+<section class="container fade-in fade-in--d2">
+    <div class="controls">
+        <div class="controls__grid">
+            <div class="form-group">
+                <label class="form-label" for="initial">Initial Investment ($)</label>
+                <input class="form-input" type="number" id="initial" value="10000" min="0" step="1000">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="monthly">Monthly Contribution ($)</label>
+                <input class="form-input" type="number" id="monthly" value="500" min="0" step="50">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="annualReturn">Annual Return (%)</label>
+                <input class="form-input" type="number" id="annualReturn" value="15" min="1" max="40" step="0.5">
+                <div class="form-hint">Buffett's avg: ~20%/yr</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="years">Investment Horizon (years)</label>
+                <input class="form-input" type="number" id="years" value="25" min="1" max="50" step="1">
+            </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;flex-wrap:wrap;gap:12px;">
+            <div class="toggle-row">
+                <label class="toggle">
+                    <input type="checkbox" id="dividendToggle" checked>
+                    <span class="toggle__slider"></span>
+                </label>
+                <span class="toggle-label">Reinvest dividends (assumed 2% yield)</span>
+            </div>
+            <button class="form-btn" type="button" onclick="simulate()">Run Simulation</button>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section class="container" id="statsSection" style="display:none;">
+    <div class="stats-grid fade-in fade-in--d2">
+        <div class="stat-card">
+            <div class="stat-card__value" id="statFinal" style="color:var(--accent-teal)">—</div>
+            <div class="stat-card__label">Final Portfolio Value</div>
+            <div class="stat-card__sub">Value investing at your target return</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__value" id="statContrib" style="color:var(--text-primary)">—</div>
+            <div class="stat-card__label">Total Contributed</div>
+            <div class="stat-card__sub">Your principal invested over time</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__value" id="statGain" style="color:var(--success)">—</div>
+            <div class="stat-card__label">Compound Growth</div>
+            <div class="stat-card__sub">Returns generated by compounding</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__value" id="statMultiple" style="color:var(--warning)">—</div>
+            <div class="stat-card__label">Growth Multiple</div>
+            <div class="stat-card__sub">Return on invested capital</div>
+        </div>
+    </div>
+</section>
+
+<!-- Chart -->
+<section class="container" id="chartSection" style="display:none;">
+    <div class="chart-section fade-in fade-in--d2">
+        <div class="chart-container">
+            <canvas id="growthChart"></canvas>
+        </div>
+    </div>
+</section>
+
+<!-- Milestones -->
+<section class="container" id="milestonesSection" style="display:none;">
+    <div class="milestones fade-in fade-in--d3">
+        <div class="milestones__title">Wealth Milestones</div>
+        <div class="milestones__list" id="milestonesList"></div>
+    </div>
+</section>
+
+<!-- What If -->
+<section class="container" id="whatifSection" style="display:none;">
+    <div class="whatif fade-in fade-in--d3">
+        <div class="whatif__title">What if you started 5 years ago?</div>
+        <div class="whatif__value" id="whatifValue">—</div>
+        <div class="whatif__text" id="whatifText">—</div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">Optimize your compounding with AI</div>
+        <div class="premium-cta__text">LIUV's Strategy Agent models compound growth scenarios for your actual portfolio, identifies rebalancing opportunities, and runs Monte Carlo simulations to stress-test your wealth trajectory.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This simulator is for educational purposes only. Projected returns are hypothetical and based on consistent annual returns, which do not reflect real-world volatility. Actual investment results will vary. Past performance does not guarantee future results. The S&P 500 historical average is approximately 10% annually including dividends. Consult a qualified financial advisor before making investment decisions.
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul><li><a href="/#agents">AI Agents</a></li><li><a href="/#pricing">Pricing</a></li><li><a href="/resources.html">Free Resources</a></li></ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul><li><a href="/blog.html">Blog</a></li><li><a href="/compliance.html">Compliance</a></li><li><a href="/careers.html">Team</a></li><li><a href="mailto:pedro@liuv.io">Contact</a></li></ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul><li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li><li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li><li><a href="mailto:pedro@liuv.io">Email Us</a></li></ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+var chartInstance = null;
+
+function fmt(n) {
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+    return '$' + n.toFixed(0);
+}
+
+function compoundGrowth(initial, monthly, annualRate, years, divYield) {
+    var monthlyRate = annualRate / 12;
+    var effectiveMonthlyRate = monthlyRate + (divYield / 12);
+    var values = [initial];
+    var balance = initial;
+    for (var y = 1; y <= years; y++) {
+        for (var m = 0; m < 12; m++) {
+            balance = balance * (1 + effectiveMonthlyRate) + monthly;
+        }
+        values.push(balance);
+    }
+    return values;
+}
+
+function simulate() {
+    var initial = parseFloat(document.getElementById('initial').value) || 0;
+    var monthly = parseFloat(document.getElementById('monthly').value) || 0;
+    var annualReturn = parseFloat(document.getElementById('annualReturn').value) / 100;
+    var years = parseInt(document.getElementById('years').value) || 25;
+    var reinvestDiv = document.getElementById('dividendToggle').checked;
+    var divYield = reinvestDiv ? 0.02 : 0;
+
+    // User's strategy
+    var userValues = compoundGrowth(initial, monthly, annualReturn, years, divYield);
+    // S&P 500 comparison (10% avg)
+    var spValues = compoundGrowth(initial, monthly, 0.10, years, 0.02);
+    // Bank savings (4.5% HYSA)
+    var bankValues = compoundGrowth(initial, monthly, 0.045, years, 0);
+    // Inflation only (3%)
+    var inflValues = compoundGrowth(initial, monthly, 0.03, years, 0);
+
+    var finalValue = userValues[years];
+    var totalContrib = initial + monthly * 12 * years;
+    var compoundGain = finalValue - totalContrib;
+    var multiple = totalContrib > 0 ? finalValue / totalContrib : 0;
+
+    // Stats
+    document.getElementById('statFinal').textContent = fmt(finalValue);
+    document.getElementById('statContrib').textContent = fmt(totalContrib);
+    document.getElementById('statGain').textContent = fmt(compoundGain);
+    document.getElementById('statMultiple').textContent = multiple.toFixed(1) + 'x';
+
+    document.getElementById('statsSection').style.display = 'block';
+    document.getElementById('chartSection').style.display = 'block';
+    document.getElementById('milestonesSection').style.display = 'block';
+    document.getElementById('whatifSection').style.display = 'block';
+
+    // Chart
+    var labels = [];
+    for (var i = 0; i <= years; i++) labels.push('Year ' + i);
+
+    if (chartInstance) chartInstance.destroy();
+
+    var ctx = document.getElementById('growthChart').getContext('2d');
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Value Investing (' + (annualReturn * 100).toFixed(1) + '%)',
+                    data: userValues,
+                    borderColor: '#14B89C',
+                    backgroundColor: 'rgba(20, 184, 156, 0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHoverRadius: 5
+                },
+                {
+                    label: 'S&P 500 (~10%)',
+                    data: spValues,
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.5,
+                    borderDash: [5, 5],
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 4
+                },
+                {
+                    label: 'Bank Savings (~4.5%)',
+                    data: bankValues,
+                    borderColor: '#A78BFA',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1.5,
+                    borderDash: [3, 3],
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 4
+                },
+                {
+                    label: 'Inflation (~3%)',
+                    data: inflValues,
+                    borderColor: '#6B7A8D',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1,
+                    borderDash: [2, 4],
+                    tension: 0.3,
+                    pointRadius: 0,
+                    pointHoverRadius: 4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            plugins: {
+                legend: {
+                    labels: { color: '#6B7A8D', font: { family: "'DM Sans', sans-serif", size: 12 }, usePointStyle: true, pointStyle: 'line' }
+                },
+                tooltip: {
+                    backgroundColor: '#0c1019',
+                    borderColor: 'rgba(20, 184, 156, 0.2)',
+                    borderWidth: 1,
+                    titleColor: '#E8ECF1',
+                    bodyColor: '#6B7A8D',
+                    titleFont: { family: "'DM Sans', sans-serif" },
+                    bodyFont: { family: "'DM Mono', monospace" },
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + fmt(context.parsed.y);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255,255,255,0.03)' },
+                    ticks: { color: '#3a4555', font: { family: "'DM Sans', sans-serif", size: 11 }, maxTicksLimit: 10 }
+                },
+                y: {
+                    grid: { color: 'rgba(255,255,255,0.03)' },
+                    ticks: {
+                        color: '#3a4555',
+                        font: { family: "'DM Mono', monospace", size: 11 },
+                        callback: function(v) { return fmt(v); }
+                    }
+                }
+            }
+        }
+    });
+
+    // Milestones
+    var milestones = [100000, 250000, 500000, 1000000, 2500000, 5000000, 10000000, 50000000, 100000000];
+    var html = '';
+    milestones.forEach(function(m) {
+        for (var y = 0; y <= years; y++) {
+            if (userValues[y] >= m) {
+                html += '<div class="milestone"><div class="milestone__icon">&#127942;</div><div class="milestone__text"><strong>' + fmt(m) + '</strong> reached in year ' + y + '</div></div>';
+                break;
+            }
+        }
+    });
+    if (!html) html = '<div class="milestone"><div class="milestone__icon">&#128200;</div><div class="milestone__text">Keep investing — your first milestone is coming!</div></div>';
+    document.getElementById('milestonesList').innerHTML = html;
+
+    // What if 5 years ago
+    var whatifYears = years + 5;
+    var whatifValues = compoundGrowth(initial, monthly, annualReturn, whatifYears, divYield);
+    var whatifFinal = whatifValues[whatifYears];
+    var missed = whatifFinal - finalValue;
+    document.getElementById('whatifValue').textContent = fmt(whatifFinal);
+    document.getElementById('whatifText').textContent = 'If you had started 5 years earlier with the same strategy, your portfolio would be ' + fmt(missed) + ' larger. The best time to start was yesterday — the second best time is today.';
+
+    document.getElementById('statsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Run on load
+window.addEventListener('DOMContentLoaded', function() { simulate(); });
+
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+</script>
+
+</body>
+</html>

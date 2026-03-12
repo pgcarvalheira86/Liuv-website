@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Portfolio Quality Checker — LIUV | Free Value Investing Tool</title>
+    <meta name="description" content="Score your portfolio's quality across five dimensions: valuation, profitability, leverage, growth, and diversification. Based on Buffett/Graham value investing principles. Free.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910; --bg-card: #0c1019; --bg-card-hover: #111827;
+            --accent-teal: #14B89C; --accent-teal-dim: rgba(20, 184, 156, 0.15); --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1; --text-muted: #6B7A8D; --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif; --font-display: 'Playfair Display', serif; --font-mono: 'DM Mono', monospace;
+            --success: #14B89C; --warning: #F59E0B; --danger: #EF4444;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; } .nav__logomark span:nth-child(2) { height: 60%; } .nav__logomark span:nth-child(3) { height: 80%; } .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; }
+
+        /* Holdings */
+        .holdings-section { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 32px; }
+        .holdings-section__title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .holdings-section__desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+
+        .holding-row { display: grid; grid-template-columns: 120px 80px 90px 90px 90px 90px 90px 40px; gap: 10px; align-items: end; margin-bottom: 10px; }
+        .holding-row--header { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px; }
+        .holding-row--header div { padding-bottom: 4px; }
+        .holding-input { width: 100%; padding: 10px 12px; background: var(--bg-primary); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; color: var(--text-primary); font-family: var(--font-mono); font-size: 13px; outline: none; transition: border-color 0.2s; }
+        .holding-input:focus { border-color: var(--accent-teal); }
+        .holding-input--ticker { text-transform: uppercase; font-weight: 600; }
+        .remove-btn { background: none; border: 1px solid rgba(239,68,68,0.3); color: var(--danger); border-radius: 6px; cursor: pointer; font-size: 16px; padding: 10px 0; transition: all 0.2s; }
+        .remove-btn:hover { background: rgba(239,68,68,0.1); }
+
+        .btn-row { display: flex; gap: 12px; margin-top: 16px; }
+        .form-btn { padding: 12px 24px; background: var(--accent-teal); color: var(--bg-primary); border: none; border-radius: 6px; font-family: var(--font-body); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .form-btn:hover { opacity: 0.9; box-shadow: 0 0 30px var(--accent-teal-glow); }
+        .form-btn--secondary { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); }
+        .form-btn--secondary:hover { border-color: var(--accent-teal); color: var(--accent-teal); box-shadow: none; }
+
+        /* Score */
+        .score-section { position: relative; z-index: 1; margin-bottom: 32px; display: none; }
+        .score-section--visible { display: block; }
+
+        .overall-score { background: var(--bg-card); border: 1px solid rgba(20,184,156,0.15); border-radius: 12px; padding: 40px; text-align: center; margin-bottom: 24px; }
+        .overall-score__label { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+        .overall-score__value { font-family: var(--font-mono); font-size: 64px; font-weight: 500; }
+        .overall-score__grade { font-size: 18px; font-weight: 600; margin-top: 4px; }
+        .overall-score__sub { font-size: 13px; color: var(--text-muted); margin-top: 8px; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+        /* Dimension cards */
+        .dims-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+        .dim-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 20px; text-align: center; }
+        .dim-card__score { font-family: var(--font-mono); font-size: 28px; font-weight: 500; margin-bottom: 4px; }
+        .dim-card__name { font-size: 12px; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 8px; }
+        .dim-card__bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.04); overflow: hidden; }
+        .dim-card__bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+
+        /* Holdings results */
+        .holdings-results { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 32px; margin-bottom: 24px; }
+        .holdings-results__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .hr-table { width: 100%; border-collapse: collapse; }
+        .hr-table th { font-size: 11px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .hr-table td { font-size: 13px; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .hr-table td:first-child { font-weight: 600; font-family: var(--font-mono); }
+        .hr-table .score-pill { display: inline-block; padding: 2px 10px; border-radius: 4px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+
+        .premium-cta { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; } .fade-in--d2 { animation-delay: 0.2s; } .fade-in--d3 { animation-delay: 0.3s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .holding-row { grid-template-columns: 1fr 1fr; }
+            .holding-row--header { display: none; }
+            .dims-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .dims-grid { grid-template-columns: repeat(2, 1fr); }
+            .hr-table { font-size: 12px; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) { .footer__links { flex-direction: column; gap: 32px; } .dims-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>Portfolio Quality Checker</li>
+    </ul>
+</div>
+
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Tool</div>
+    <h1 class="tool-hero__title">Portfolio Quality <em style="font-style:italic;color:var(--accent-teal);">Checker</em></h1>
+    <p class="tool-hero__subtitle">Score your portfolio across five key value investing dimensions: valuation, profitability, leverage, growth, and diversification. Enter your holdings and their key metrics to get an overall quality assessment.</p>
+</section>
+
+<!-- Holdings Input -->
+<section class="container fade-in fade-in--d2">
+    <div class="holdings-section">
+        <div class="holdings-section__title">Enter Your Holdings</div>
+        <div class="holdings-section__desc">Add each stock in your portfolio with its key financial metrics. Find these on Yahoo Finance, Morningstar, or your brokerage.</div>
+
+        <div class="holding-row holding-row--header">
+            <div>Ticker</div>
+            <div>Weight %</div>
+            <div>P/E Ratio</div>
+            <div>P/B Ratio</div>
+            <div>D/E Ratio</div>
+            <div>ROE %</div>
+            <div>Rev Growth %</div>
+            <div></div>
+        </div>
+
+        <div id="holdingsContainer">
+            <div class="holding-row" data-idx="0">
+                <input class="holding-input holding-input--ticker" type="text" placeholder="AAPL" maxlength="6">
+                <input class="holding-input" type="number" placeholder="25" step="1" min="0" max="100">
+                <input class="holding-input" type="number" placeholder="15" step="0.1">
+                <input class="holding-input" type="number" placeholder="3.0" step="0.1">
+                <input class="holding-input" type="number" placeholder="0.5" step="0.1">
+                <input class="holding-input" type="number" placeholder="20" step="0.1">
+                <input class="holding-input" type="number" placeholder="8" step="0.1">
+                <button class="remove-btn" onclick="removeHolding(this)" title="Remove">&times;</button>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="form-btn--secondary form-btn" type="button" onclick="addHolding()">+ Add Holding</button>
+            <button class="form-btn" type="button" onclick="analyzePortfolio()">Analyze Portfolio</button>
+        </div>
+    </div>
+</section>
+
+<!-- Score Results -->
+<section class="container score-section" id="scoreSection">
+    <div class="overall-score fade-in fade-in--d1">
+        <div class="overall-score__label">Portfolio Quality Score</div>
+        <div class="overall-score__value" id="overallScore">—</div>
+        <div class="overall-score__grade" id="overallGrade">—</div>
+        <div class="overall-score__sub" id="overallSub">—</div>
+    </div>
+
+    <div class="dims-grid fade-in fade-in--d2">
+        <div class="dim-card">
+            <div class="dim-card__score" id="dimVal">—</div>
+            <div class="dim-card__name">Valuation</div>
+            <div class="dim-card__bar"><div class="dim-card__bar-fill" id="barVal" style="width:0%"></div></div>
+        </div>
+        <div class="dim-card">
+            <div class="dim-card__score" id="dimProf">—</div>
+            <div class="dim-card__name">Profitability</div>
+            <div class="dim-card__bar"><div class="dim-card__bar-fill" id="barProf" style="width:0%"></div></div>
+        </div>
+        <div class="dim-card">
+            <div class="dim-card__score" id="dimLev">—</div>
+            <div class="dim-card__name">Leverage</div>
+            <div class="dim-card__bar"><div class="dim-card__bar-fill" id="barLev" style="width:0%"></div></div>
+        </div>
+        <div class="dim-card">
+            <div class="dim-card__score" id="dimGrow">—</div>
+            <div class="dim-card__name">Growth</div>
+            <div class="dim-card__bar"><div class="dim-card__bar-fill" id="barGrow" style="width:0%"></div></div>
+        </div>
+        <div class="dim-card">
+            <div class="dim-card__score" id="dimDiv">—</div>
+            <div class="dim-card__name">Diversification</div>
+            <div class="dim-card__bar"><div class="dim-card__bar-fill" id="barDiv" style="width:0%"></div></div>
+        </div>
+    </div>
+
+    <div class="holdings-results fade-in fade-in--d3">
+        <div class="holdings-results__title">Individual Stock Scores</div>
+        <div style="overflow-x:auto">
+            <table class="hr-table">
+                <thead>
+                    <tr><th>Ticker</th><th>Weight</th><th>Valuation</th><th>Profitability</th><th>Leverage</th><th>Growth</th><th>Overall</th></tr>
+                </thead>
+                <tbody id="resultsBody"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">Get real-time portfolio scoring with AI</div>
+        <div class="premium-cta__text">LIUV's Portfolio Advisor syncs with your brokerage, automatically pulls financial data, and continuously monitors your portfolio quality score — alerting you when holdings deteriorate.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This tool provides a simplified portfolio quality assessment based on user-entered data and does not constitute financial advice. Scoring is based on general value investing heuristics and may not apply to all sectors. Always conduct thorough due diligence and consult a qualified financial advisor before making investment decisions.
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul><li><a href="/#agents">AI Agents</a></li><li><a href="/#pricing">Pricing</a></li><li><a href="/resources.html">Free Resources</a></li></ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul><li><a href="/blog.html">Blog</a></li><li><a href="/compliance.html">Compliance</a></li><li><a href="/careers.html">Team</a></li><li><a href="mailto:pedro@liuv.io">Contact</a></li></ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul><li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li><li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li><li><a href="mailto:pedro@liuv.io">Email Us</a></li></ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+function addHolding() {
+    var container = document.getElementById('holdingsContainer');
+    var idx = container.children.length;
+    var row = document.createElement('div');
+    row.className = 'holding-row';
+    row.dataset.idx = idx;
+    row.innerHTML = '<input class="holding-input holding-input--ticker" type="text" placeholder="MSFT" maxlength="6"><input class="holding-input" type="number" placeholder="25" step="1" min="0" max="100"><input class="holding-input" type="number" placeholder="15" step="0.1"><input class="holding-input" type="number" placeholder="3.0" step="0.1"><input class="holding-input" type="number" placeholder="0.5" step="0.1"><input class="holding-input" type="number" placeholder="20" step="0.1"><input class="holding-input" type="number" placeholder="8" step="0.1"><button class="remove-btn" onclick="removeHolding(this)" title="Remove">&times;</button>';
+    container.appendChild(row);
+}
+
+function removeHolding(btn) {
+    var container = document.getElementById('holdingsContainer');
+    if (container.children.length > 1) {
+        btn.parentElement.remove();
+    }
+}
+
+function scoreVal(pe, pb) {
+    // Valuation: lower is better
+    var peScore = pe <= 10 ? 100 : pe <= 15 ? 80 : pe <= 20 ? 60 : pe <= 30 ? 40 : 20;
+    var pbScore = pb <= 1 ? 100 : pb <= 1.5 ? 80 : pb <= 3 ? 60 : pb <= 5 ? 40 : 20;
+    return (peScore + pbScore) / 2;
+}
+
+function scoreProf(roe) {
+    return roe >= 20 ? 100 : roe >= 15 ? 80 : roe >= 10 ? 60 : roe >= 5 ? 40 : 20;
+}
+
+function scoreLev(de) {
+    return de <= 0.3 ? 100 : de <= 0.5 ? 80 : de <= 1 ? 60 : de <= 2 ? 40 : 20;
+}
+
+function scoreGrow(revGrowth) {
+    return revGrowth >= 20 ? 100 : revGrowth >= 10 ? 80 : revGrowth >= 5 ? 60 : revGrowth >= 0 ? 40 : 20;
+}
+
+function getColor(score) {
+    if (score >= 80) return 'var(--success)';
+    if (score >= 60) return 'var(--warning)';
+    return 'var(--danger)';
+}
+
+function pill(score) {
+    var color = getColor(score);
+    var bg = score >= 80 ? 'rgba(20,184,156,0.15)' : score >= 60 ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)';
+    return '<span class="score-pill" style="color:' + color + ';background:' + bg + '">' + Math.round(score) + '</span>';
+}
+
+function analyzePortfolio() {
+    var rows = document.querySelectorAll('#holdingsContainer .holding-row');
+    var holdings = [];
+
+    rows.forEach(function(row) {
+        var inputs = row.querySelectorAll('.holding-input');
+        var ticker = inputs[0].value.trim().toUpperCase();
+        var weight = parseFloat(inputs[1].value) || 0;
+        var pe = parseFloat(inputs[2].value) || 0;
+        var pb = parseFloat(inputs[3].value) || 0;
+        var de = parseFloat(inputs[4].value) || 0;
+        var roe = parseFloat(inputs[5].value) || 0;
+        var revGrowth = parseFloat(inputs[6].value) || 0;
+
+        if (ticker && weight > 0) {
+            holdings.push({ ticker: ticker, weight: weight, pe: pe, pb: pb, de: de, roe: roe, revGrowth: revGrowth });
+        }
+    });
+
+    if (holdings.length === 0) {
+        alert('Please enter at least one holding with a ticker and weight.');
+        return;
+    }
+
+    // Normalize weights
+    var totalWeight = holdings.reduce(function(s, h) { return s + h.weight; }, 0);
+    holdings.forEach(function(h) { h.normWeight = h.weight / totalWeight; });
+
+    // Score each holding
+    var wVal = 0, wProf = 0, wLev = 0, wGrow = 0;
+    var tbody = '';
+
+    holdings.forEach(function(h) {
+        var val = scoreVal(h.pe, h.pb);
+        var prof = scoreProf(h.roe);
+        var lev = scoreLev(h.de);
+        var grow = scoreGrow(h.revGrowth);
+        var overall = (val + prof + lev + grow) / 4;
+
+        wVal += val * h.normWeight;
+        wProf += prof * h.normWeight;
+        wLev += lev * h.normWeight;
+        wGrow += grow * h.normWeight;
+
+        tbody += '<tr><td>' + h.ticker + '</td><td>' + h.weight.toFixed(0) + '%</td><td>' + pill(val) + '</td><td>' + pill(prof) + '</td><td>' + pill(lev) + '</td><td>' + pill(grow) + '</td><td>' + pill(overall) + '</td></tr>';
+    });
+
+    // Diversification score
+    var hhi = 0;
+    holdings.forEach(function(h) { hhi += Math.pow(h.normWeight, 2); });
+    var divScore = holdings.length >= 15 ? 100 : holdings.length >= 10 ? 80 : holdings.length >= 5 ? 60 : holdings.length >= 3 ? 40 : 20;
+    // Adjust for concentration
+    if (hhi > 0.25) divScore = Math.max(20, divScore - 20);
+
+    var overall = (wVal + wProf + wLev + wGrow + divScore) / 5;
+
+    // Display
+    var scoreEl = document.getElementById('overallScore');
+    scoreEl.textContent = Math.round(overall) + '/100';
+    scoreEl.style.color = getColor(overall);
+
+    var grade = overall >= 80 ? 'Excellent' : overall >= 60 ? 'Good' : overall >= 40 ? 'Needs Improvement' : 'High Risk';
+    document.getElementById('overallGrade').textContent = grade;
+    document.getElementById('overallGrade').style.color = getColor(overall);
+    document.getElementById('overallSub').textContent = overall >= 80 ? 'Your portfolio reflects strong value investing principles — low valuations, solid profitability, and prudent leverage.' : overall >= 60 ? 'Decent fundamentals with room to improve. Consider reducing exposure to overvalued or highly leveraged positions.' : 'Significant risks detected. Review holdings with weak profitability, high leverage, or stretched valuations.';
+
+    // Dimension cards
+    setDim('Val', wVal); setDim('Prof', wProf); setDim('Lev', wLev); setDim('Grow', wGrow); setDim('Div', divScore);
+
+    document.getElementById('resultsBody').innerHTML = tbody;
+    document.getElementById('scoreSection').classList.add('score-section--visible');
+    document.getElementById('scoreSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function setDim(name, score) {
+    var el = document.getElementById('dim' + name);
+    el.textContent = Math.round(score);
+    el.style.color = getColor(score);
+    var bar = document.getElementById('bar' + name);
+    bar.style.width = score + '%';
+    bar.style.background = getColor(score);
+}
+
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+</script>
+
+</body>
+</html>

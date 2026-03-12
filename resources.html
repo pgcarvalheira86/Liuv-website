@@ -150,6 +150,44 @@
         @media (max-width: 480px) {
             .footer__links { flex-direction: column; gap: 32px; }
         }
+
+        /* Value Investing Tools Section */
+        .tools-section { margin-top: 80px; position: relative; z-index: 1; }
+        .tools-section__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+        .tools-section__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tools-section__title { font-family: var(--font-display); font-size: clamp(28px, 3.5vw, 40px); font-weight: 400; line-height: 1.2; margin-bottom: 12px; }
+        .tools-section__subtitle { font-size: 16px; color: var(--text-muted); max-width: 600px; line-height: 1.7; margin-bottom: 40px; }
+        .tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .tool-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 28px 24px; transition: all 0.35s ease; position: relative; overflow: hidden; display: flex; gap: 20px; align-items: flex-start; text-decoration: none; color: inherit; }
+        .tool-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; opacity: 0; transition: opacity 0.35s; }
+        .tool-card:hover::before { opacity: 1; }
+        .tool-card:hover { border-color: rgba(255, 255, 255, 0.08); transform: translateY(-3px); box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3); opacity: 1; }
+        .tool-card__icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .tool-card__content { flex: 1; }
+        .tool-card__badges { display: flex; gap: 8px; margin-bottom: 8px; }
+        .tool-card__badge { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; }
+        .tool-card__title { font-size: 17px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+        .tool-card__desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
+        .tool-card__cta { font-size: 13px; font-weight: 600; color: var(--accent-teal); display: inline-flex; align-items: center; gap: 6px; }
+
+        .tool-card--graham::before { background: var(--accent-teal); }
+        .tool-card--graham .tool-card__icon { background: rgba(20, 184, 156, 0.12); }
+        .tool-card--dcf::before { background: #3B82F6; }
+        .tool-card--dcf .tool-card__icon { background: rgba(59, 130, 246, 0.12); }
+        .tool-card--mos::before { background: #A78BFA; }
+        .tool-card--mos .tool-card__icon { background: rgba(167, 139, 250, 0.12); }
+        .tool-card--screener::before { background: #F59E0B; }
+        .tool-card--screener .tool-card__icon { background: rgba(245, 158, 11, 0.12); }
+        .tool-card--portfolio::before { background: #EC4899; }
+        .tool-card--portfolio .tool-card__icon { background: rgba(236, 72, 153, 0.12); }
+        .tool-card--moat::before { background: #14B89C; }
+        .tool-card--moat .tool-card__icon { background: rgba(20, 184, 156, 0.12); }
+        .tool-card--compound::before { background: #3B82F6; }
+        .tool-card--compound .tool-card__icon { background: rgba(59, 130, 246, 0.12); }
+
+        @media (max-width: 768px) {
+            .tools-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -239,6 +277,99 @@
             <a href="/#agents" class="resource-card__link">
                 Explore the agents
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== VALUE INVESTING TOOLS ========== -->
+    <div class="tools-section fade-in fade-in--d3">
+        <div class="tools-section__overline">Value Investing Tools</div>
+        <h2 class="tools-section__title">Institutional-grade analysis. <em style="font-style:italic;color:var(--accent-teal);">Free for everyone.</em></h2>
+        <p class="tools-section__subtitle">Seven interactive tools grounded in the Buffett & Graham methodology — the same framework our AI agents use. Enter any stock's data and get real analysis instantly.</p>
+
+        <div class="tools-grid">
+            <a href="/resources/graham-number.html" class="tool-card tool-card--graham">
+                <div class="tool-card__icon">&#128202;</div>
+                <div class="tool-card__content">
+                    <div class="tool-card__badges">
+                        <span class="tool-card__badge" style="color:var(--accent-teal);background:rgba(20,184,156,0.15);">Calculator</span>
+                    </div>
+                    <div class="tool-card__title">Graham Number Calculator</div>
+                    <div class="tool-card__desc">Calculate the maximum fair price for any stock using Benjamin Graham's formula. See margin of safety with a visual gauge.</div>
+                    <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+            </a>
+
+            <a href="/resources/dcf-calculator.html" class="tool-card tool-card--dcf">
+                <div class="tool-card__icon">&#128200;</div>
+                <div class="tool-card__content">
+                    <div class="tool-card__badges">
+                        <span class="tool-card__badge" style="color:#3B82F6;background:rgba(59,130,246,0.15);">Calculator</span>
+                    </div>
+                    <div class="tool-card__title">Intrinsic Value (DCF) Calculator</div>
+                    <div class="tool-card__desc">Estimate any stock's true worth with a two-stage DCF model. Includes bear, base, and bull scenarios with sensitivity analysis.</div>
+                    <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+            </a>
+
+            <a href="/resources/margin-of-safety.html" class="tool-card tool-card--mos">
+                <div class="tool-card__icon">&#128737;</div>
+                <div class="tool-card__content">
+                    <div class="tool-card__badges">
+                        <span class="tool-card__badge" style="color:#A78BFA;background:rgba(167,139,250,0.15);">Analyzer</span>
+                    </div>
+                    <div class="tool-card__title">Margin of Safety Analyzer</div>
+                    <div class="tool-card__desc">Evaluate margin of safety using four methods — Graham Number, DCF, Net-Net Working Capital, and Earnings Power Value — with a consensus view.</div>
+                    <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+            </a>
+
+            <a href="/resources/stock-screener.html" class="tool-card tool-card--screener">
+                <div class="tool-card__icon">&#128269;</div>
+                <div class="tool-card__content">
+                    <div class="tool-card__badges">
+                        <span class="tool-card__badge" style="color:#F59E0B;background:rgba(245,158,11,0.15);">Screener</span>
+                    </div>
+                    <div class="tool-card__title">Value Stock Screener</div>
+                    <div class="tool-card__desc">Screen any stock against Benjamin Graham's seven quantitative criteria for defensive investors. See which filters it passes.</div>
+                    <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+            </a>
+
+            <a href="/resources/portfolio-checker.html" class="tool-card tool-card--portfolio">
+                <div class="tool-card__icon">&#128188;</div>
+                <div class="tool-card__content">
+                    <div class="tool-card__badges">
+                        <span class="tool-card__badge" style="color:#EC4899;background:rgba(236,72,153,0.15);">Checker</span>
+                    </div>
+                    <div class="tool-card__title">Portfolio Quality Checker</div>
+                    <div class="tool-card__desc">Score your portfolio across five dimensions: valuation, profitability, leverage, growth, and diversification.</div>
+                    <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+            </a>
+
+            <a href="/resources/moat-scorecard.html" class="tool-card tool-card--moat">
+                <div class="tool-card__icon">&#127968;</div>
+                <div class="tool-card__content">
+                    <div class="tool-card__badges">
+                        <span class="tool-card__badge" style="color:var(--accent-teal);background:rgba(20,184,156,0.15);">Scorecard</span>
+                    </div>
+                    <div class="tool-card__title">Economic Moat Scorecard</div>
+                    <div class="tool-card__desc">Assess a company's competitive moat using financial metrics. Get a Wide, Narrow, or No Moat rating across six dimensions.</div>
+                    <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+            </a>
+
+            <a href="/resources/compound-simulator.html" class="tool-card tool-card--compound" style="grid-column:1/-1;">
+                <div class="tool-card__icon">&#128640;</div>
+                <div class="tool-card__content">
+                    <div class="tool-card__badges">
+                        <span class="tool-card__badge" style="color:#3B82F6;background:rgba(59,130,246,0.15);">Simulator</span>
+                    </div>
+                    <div class="tool-card__title">Compound Growth Simulator</div>
+                    <div class="tool-card__desc">Visualize how value investing builds wealth over time with interactive charts. Compare returns against the S&P 500, bank savings, and inflation. See milestones and "what if you started earlier" analysis.</div>
+                    <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
             </a>
         </div>
     </div>
