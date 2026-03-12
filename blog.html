@@ -389,14 +389,17 @@
         }
 
         .blog-card--featured .blog-card__visual {
-            background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04));
             border: 1px solid rgba(20, 184, 156, 0.1);
             border-radius: 8px;
-            padding: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            overflow: hidden;
             min-height: 260px;
+        }
+
+        .blog-card--featured .blog-card__visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .blog-card--featured .blog-card__visual-icon {
@@ -664,20 +667,32 @@
 <section class="blog-grid container">
     <div class="blog-grid__list">
 
-        <!-- Featured Post (Blog #1) -->
-        <a href="/blog/buffett-greedy-fearful-right-data.html" class="blog-card blog-card--featured fade-in fade-in--d3">
+        <!-- Featured Post (Blog #2) -->
+        <a href="/blog/fund-managers-fail-beat-market.html" class="blog-card blog-card--featured fade-in fade-in--d3">
             <div>
-                <div class="blog-card__category">Investment Philosophy</div>
-                <h2 class="blog-card__title">Why Buffett's "Be Greedy When Others Are Fearful" Still Works&nbsp;&mdash; But Only If You Have the Right Data</h2>
-                <p class="blog-card__excerpt">Warren Buffett's most famous advice is deceptively simple. Acting on fear and greed requires more than intuition — it demands real-time data, disciplined models, and the courage to trust the numbers. Here's how AI is changing what "the right data" actually means.</p>
+                <div class="blog-card__category">Market Insight</div>
+                <h2 class="blog-card__title">Why 94% of Fund Managers Fail to Beat the Market&nbsp;&mdash; And What to Do About&nbsp;It</h2>
+                <p class="blog-card__excerpt">Over a 20-year period, approximately 94% of actively managed large-cap U.S. equity funds underperformed the S&amp;P 500. The failure is structural, not incidental. Here's what's driving it — and how AI-powered value investing offers a disciplined alternative.</p>
                 <div class="blog-card__meta">
-                    <span>March 6, 2026</span>
+                    <span>March 12, 2026</span>
                     <span class="separator"></span>
-                    <span>8 min read</span>
+                    <span>9 min read</span>
                 </div>
             </div>
             <div class="blog-card__visual">
-                <div class="blog-card__visual-icon">&#128200;</div>
+                <img src="/blog/images/LIUV_Newsletter_Cover_1920x1080.png" alt="The Value Signal — Issue #1: LIUV AI-powered investment intelligence" width="1920" height="1080">
+            </div>
+        </a>
+
+        <!-- Blog #1 -->
+        <a href="/blog/buffett-greedy-fearful-right-data.html" class="blog-card fade-in fade-in--d3">
+            <div class="blog-card__category">Investment Philosophy</div>
+            <h2 class="blog-card__title">Why Buffett's "Be Greedy When Others Are Fearful" Still Works&nbsp;&mdash; But Only If You Have the Right Data</h2>
+            <p class="blog-card__excerpt">Warren Buffett's most famous advice is deceptively simple. Acting on fear and greed requires more than intuition — it demands real-time data, disciplined models, and the courage to trust the numbers.</p>
+            <div class="blog-card__meta">
+                <span>March 6, 2026</span>
+                <span class="separator"></span>
+                <span>8 min read</span>
             </div>
         </a>
 
