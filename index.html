@@ -587,6 +587,22 @@
             flex-shrink: 0;
         }
 
+        .agent-card__learn-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: color 0.2s, gap 0.2s;
+        }
+        .agent-card__learn-more:hover { color: var(--text-primary); gap: 12px; opacity: 1; }
+        .agent-card--portfolio .agent-card__learn-more:hover { color: var(--agent-portfolio); }
+        .agent-card--spending .agent-card__learn-more:hover { color: var(--agent-spending); }
+        .agent-card--strategy .agent-card__learn-more:hover { color: var(--agent-strategy); }
+        .agent-card--crossborder .agent-card__learn-more:hover { color: var(--agent-crossborder); }
+
         .agent-card--portfolio .agent-card__features li::before { background: var(--agent-portfolio); }
         .agent-card--spending .agent-card__features li::before { background: var(--agent-spending); }
         .agent-card--strategy .agent-card__features li::before { background: var(--agent-strategy); }
@@ -1267,6 +1283,7 @@
                 <li>Portfolio allocation optimization</li>
                 <li>Risk tolerance calibration</li>
             </ul>
+            <a href="/agents/portfolio-advisor.html" class="agent-card__learn-more">Learn more <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
         <div class="agent-card agent-card--spending reveal">
             <div class="agent-card__icon">💰</div>
@@ -1278,6 +1295,7 @@
                 <li>Spending category insights</li>
                 <li>Savings opportunity alerts</li>
             </ul>
+            <a href="/agents/spending-intelligence.html" class="agent-card__learn-more">Learn more <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
         <div class="agent-card agent-card--strategy reveal">
             <div class="agent-card__icon">🎯</div>
@@ -1289,6 +1307,7 @@
                 <li>Macro stress-test simulations</li>
                 <li>Rebalancing recommendations</li>
             </ul>
+            <a href="/agents/strategy-agent.html" class="agent-card__learn-more">Learn more <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
         <div class="agent-card agent-card--crossborder reveal">
             <div class="agent-card__icon">🌐</div>
@@ -1300,6 +1319,7 @@
                 <li>Regulatory environment analysis</li>
                 <li>Cross-border tax implications</li>
             </ul>
+            <a href="/agents/cross-border-intel.html" class="agent-card__learn-more">Learn more <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
         </div>
     </div>
 </section>
