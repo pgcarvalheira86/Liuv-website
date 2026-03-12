@@ -1,8 +1,8 @@
 // Auto-triggered by Netlify when a form submission is created
-// Handles: email notification to pedro@liuv.io + Google Drive folder creation
+// Handles: email notification + Google Drive folder creation
 // Only processes career application forms (name starts with "application-")
 
-const NOTIFICATION_EMAIL = 'pedro@liuv.io';
+const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || 'contact@liuv.io';
 const FROM_EMAIL = process.env.EMAIL_FROM || 'careers@liuv.io';
 const FROM_NAME = 'LIUV Careers';
 const GOOGLE_DRIVE_PARENT_FOLDER = '1jkSnn0l5J6a43_8WC5tcg5TgjmMgRO-D';
