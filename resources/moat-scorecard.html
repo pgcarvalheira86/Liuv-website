@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Economic Moat Scorecard — LIUV | Free Value Investing Tool</title>
+    <meta name="description" content="Assess a company's competitive moat using quantitative financial metrics. Score durability across profitability, returns, efficiency, and growth. Free, no signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910; --bg-card: #0c1019; --bg-card-hover: #111827;
+            --accent-teal: #14B89C; --accent-teal-dim: rgba(20, 184, 156, 0.15); --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1; --text-muted: #6B7A8D; --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif; --font-display: 'Playfair Display', serif; --font-mono: 'DM Mono', monospace;
+            --success: #14B89C; --warning: #F59E0B; --danger: #EF4444;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; } .nav__logomark span:nth-child(2) { height: 60%; } .nav__logomark span:nth-child(3) { height: 80%; } .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; }
+
+        .input-panel { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 32px; }
+        .input-panel__title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .input-panel__desc { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+        .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .form-group { margin-bottom: 0; }
+        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+        .form-hint { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .form-input { width: 100%; padding: 12px 16px; background: var(--bg-primary); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; color: var(--text-primary); font-family: var(--font-mono); font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .form-input:focus { border-color: var(--accent-teal); }
+        .form-btn { width: 100%; padding: 14px 28px; background: var(--accent-teal); color: var(--bg-primary); border: none; border-radius: 6px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 20px; }
+        .form-btn:hover { opacity: 0.9; box-shadow: 0 0 30px var(--accent-teal-glow); }
+
+        /* Moat Result */
+        .moat-result { position: relative; z-index: 1; margin-bottom: 32px; display: none; }
+        .moat-result--visible { display: block; }
+
+        .moat-badge { text-align: center; padding: 48px 32px; background: var(--bg-card); border: 1px solid rgba(20,184,156,0.15); border-radius: 12px; margin-bottom: 24px; }
+        .moat-badge__icon { font-size: 48px; margin-bottom: 12px; }
+        .moat-badge__rating { font-family: var(--font-display); font-size: 36px; font-weight: 400; margin-bottom: 4px; }
+        .moat-badge__score { font-family: var(--font-mono); font-size: 20px; margin-bottom: 8px; }
+        .moat-badge__text { font-size: 14px; color: var(--text-muted); max-width: 500px; margin: 0 auto; }
+
+        .moat-dims { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .moat-dim { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 24px; }
+        .moat-dim__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .moat-dim__name { font-size: 14px; font-weight: 600; }
+        .moat-dim__score { font-family: var(--font-mono); font-size: 18px; font-weight: 500; }
+        .moat-dim__bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,0.04); margin-bottom: 12px; overflow: hidden; }
+        .moat-dim__bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+        .moat-dim__metrics { font-size: 12px; color: var(--text-dim); }
+        .moat-dim__metrics span { color: var(--text-muted); }
+
+        /* Learn section */
+        .learn-section { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .learn-section__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .learn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .learn-card { padding: 20px; background: var(--bg-primary); border-radius: 8px; }
+        .learn-card__title { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--accent-teal); }
+        .learn-card__text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+        .premium-cta { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; } .fade-in--d2 { animation-delay: 0.2s; } .fade-in--d3 { animation-delay: 0.3s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) { .input-grid { grid-template-columns: repeat(2, 1fr); } .moat-dims { grid-template-columns: 1fr; } .learn-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; } .nav__links li { padding: 12px 0; } .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; } .nav__mobile-toggle { display: block; }
+            .input-grid { grid-template-columns: 1fr; }
+            .footer__inner { flex-direction: column; gap: 40px; } .footer__links { gap: 40px; } .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) { .footer__links { flex-direction: column; gap: 32px; } }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>Economic Moat Scorecard</li>
+    </ul>
+</div>
+
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Tool</div>
+    <h1 class="tool-hero__title">Economic Moat <em style="font-style:italic;color:var(--accent-teal);">Scorecard</em></h1>
+    <p class="tool-hero__subtitle">Assess the strength and durability of a company's competitive advantage — its "economic moat." Buffett only invests in businesses with wide, sustainable moats. Score yours across six dimensions.</p>
+</section>
+
+<section class="container fade-in fade-in--d2">
+    <div class="input-panel">
+        <div class="input-panel__title">Enter Company Financials</div>
+        <div class="input-panel__desc">Use 5-year averages where indicated for more reliable moat assessment. Find this data in the company's annual reports or on Morningstar.</div>
+
+        <div class="input-grid">
+            <div class="form-group">
+                <label class="form-label" for="grossMargin">Gross Margin — 5yr Avg (%)</label>
+                <input class="form-input" type="number" id="grossMargin" placeholder="40" step="0.1">
+                <div class="form-hint">Higher = pricing power</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="netMargin">Net Margin — 5yr Avg (%)</label>
+                <input class="form-input" type="number" id="netMargin" placeholder="15" step="0.1">
+                <div class="form-hint">Profitability after all expenses</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="roic">ROIC — 5yr Avg (%)</label>
+                <input class="form-input" type="number" id="roic" placeholder="18" step="0.1">
+                <div class="form-hint">Return on invested capital</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="wacc">WACC (%)</label>
+                <input class="form-input" type="number" id="wacc" placeholder="10" step="0.1">
+                <div class="form-hint">Weighted avg cost of capital</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="revGrowth">Revenue Growth — 5yr CAGR (%)</label>
+                <input class="form-input" type="number" id="revGrowth" placeholder="12" step="0.1">
+                <div class="form-hint">Compound annual growth rate</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="fcfConversion">FCF/Net Income (%)</label>
+                <input class="form-input" type="number" id="fcfConversion" placeholder="90" step="1">
+                <div class="form-hint">Cash conversion quality</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="deRatio">Debt/Equity Ratio</label>
+                <input class="form-input" type="number" id="deRatio" placeholder="0.5" step="0.1">
+                <div class="form-hint">Lower = more financial strength</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="interestCoverage">Interest Coverage Ratio</label>
+                <input class="form-input" type="number" id="interestCoverage" placeholder="10" step="0.1">
+                <div class="form-hint">EBIT / Interest expense</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="roe">ROE — 5yr Avg (%)</label>
+                <input class="form-input" type="number" id="roe" placeholder="20" step="0.1">
+                <div class="form-hint">Return on equity</div>
+            </div>
+        </div>
+
+        <button class="form-btn" type="button" onclick="scoreMoat()">Score Economic Moat</button>
+    </div>
+</section>
+
+<!-- Results -->
+<section class="container moat-result" id="moatResult">
+    <div class="moat-badge fade-in fade-in--d1">
+        <div class="moat-badge__icon" id="moatIcon">&#127968;</div>
+        <div class="moat-badge__rating" id="moatRating">—</div>
+        <div class="moat-badge__score" id="moatScore">—</div>
+        <div class="moat-badge__text" id="moatText">—</div>
+    </div>
+
+    <div class="moat-dims fade-in fade-in--d2">
+        <div class="moat-dim">
+            <div class="moat-dim__header">
+                <span class="moat-dim__name">Pricing Power</span>
+                <span class="moat-dim__score" id="dimPricing">—</span>
+            </div>
+            <div class="moat-dim__bar"><div class="moat-dim__bar-fill" id="barPricing" style="width:0%;background:var(--accent-teal)"></div></div>
+            <div class="moat-dim__metrics">Based on: <span>Gross Margin, Net Margin</span></div>
+        </div>
+        <div class="moat-dim">
+            <div class="moat-dim__header">
+                <span class="moat-dim__name">Capital Efficiency</span>
+                <span class="moat-dim__score" id="dimCapital">—</span>
+            </div>
+            <div class="moat-dim__bar"><div class="moat-dim__bar-fill" id="barCapital" style="width:0%;background:#3B82F6"></div></div>
+            <div class="moat-dim__metrics">Based on: <span>ROIC, ROIC vs WACC spread</span></div>
+        </div>
+        <div class="moat-dim">
+            <div class="moat-dim__header">
+                <span class="moat-dim__name">Growth Durability</span>
+                <span class="moat-dim__score" id="dimGrowth">—</span>
+            </div>
+            <div class="moat-dim__bar"><div class="moat-dim__bar-fill" id="barGrowth" style="width:0%;background:#A78BFA"></div></div>
+            <div class="moat-dim__metrics">Based on: <span>Revenue Growth CAGR</span></div>
+        </div>
+        <div class="moat-dim">
+            <div class="moat-dim__header">
+                <span class="moat-dim__name">Cash Generation</span>
+                <span class="moat-dim__score" id="dimCash">—</span>
+            </div>
+            <div class="moat-dim__bar"><div class="moat-dim__bar-fill" id="barCash" style="width:0%;background:#F59E0B"></div></div>
+            <div class="moat-dim__metrics">Based on: <span>FCF/Net Income conversion</span></div>
+        </div>
+        <div class="moat-dim">
+            <div class="moat-dim__header">
+                <span class="moat-dim__name">Financial Strength</span>
+                <span class="moat-dim__score" id="dimStrength">—</span>
+            </div>
+            <div class="moat-dim__bar"><div class="moat-dim__bar-fill" id="barStrength" style="width:0%;background:#EC4899"></div></div>
+            <div class="moat-dim__metrics">Based on: <span>D/E Ratio, Interest Coverage</span></div>
+        </div>
+        <div class="moat-dim">
+            <div class="moat-dim__header">
+                <span class="moat-dim__name">Shareholder Returns</span>
+                <span class="moat-dim__score" id="dimReturns">—</span>
+            </div>
+            <div class="moat-dim__bar"><div class="moat-dim__bar-fill" id="barReturns" style="width:0%;background:#14B89C"></div></div>
+            <div class="moat-dim__metrics">Based on: <span>ROE</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- Learn -->
+<section class="container">
+    <div class="learn-section fade-in fade-in--d3">
+        <div class="learn-section__title">Understanding Economic Moats</div>
+        <div class="learn-grid">
+            <div class="learn-card">
+                <div class="learn-card__title">What is an Economic Moat?</div>
+                <div class="learn-card__text">A term coined by Warren Buffett to describe a company's sustainable competitive advantage that protects its profits from competitors. Like a castle's moat defends against invaders, an economic moat defends market share and margins.</div>
+            </div>
+            <div class="learn-card">
+                <div class="learn-card__title">Why Moats Matter</div>
+                <div class="learn-card__text">Companies with wide moats can maintain high returns on capital for decades. Buffett has said: "The key to investing is determining the competitive advantage of any given company and, above all, the durability of that advantage."</div>
+            </div>
+            <div class="learn-card">
+                <div class="learn-card__title">Types of Moats</div>
+                <div class="learn-card__text">Brand power (Coca-Cola), network effects (Visa), switching costs (Microsoft), cost advantages (Costco), intangible assets (patents), and efficient scale (utilities). The strongest companies often possess multiple moat sources.</div>
+            </div>
+            <div class="learn-card">
+                <div class="learn-card__title">Quantitative Signals</div>
+                <div class="learn-card__text">Consistently high ROIC above WACC, stable or expanding margins over 5+ years, strong cash conversion, and low debt relative to earnings. These financial fingerprints reveal whether a qualitative moat actually translates to economic value.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">AI-powered moat analysis for every stock</div>
+        <div class="premium-cta__text">LIUV's Portfolio Advisor combines quantitative moat scoring with qualitative analysis — brand strength, competitive positioning, management quality — to deliver a comprehensive moat assessment for your entire portfolio.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This scorecard provides a simplified quantitative assessment of competitive advantage based on user-entered financial data. Economic moats also depend on qualitative factors (brand, patents, network effects) not captured here. This is not financial advice. Consult a qualified financial advisor before making investment decisions.
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul><li><a href="/#agents">AI Agents</a></li><li><a href="/#pricing">Pricing</a></li><li><a href="/resources.html">Free Resources</a></li></ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul><li><a href="/blog.html">Blog</a></li><li><a href="/compliance.html">Compliance</a></li><li><a href="/careers.html">Team</a></li><li><a href="mailto:pedro@liuv.io">Contact</a></li></ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul><li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li><li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li><li><a href="mailto:pedro@liuv.io">Email Us</a></li></ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+function scoreDim(value, thresholds) {
+    // thresholds: [wide, narrow] — score 100/70/30
+    if (value >= thresholds[0]) return 100;
+    if (value >= thresholds[1]) return 70;
+    return 30;
+}
+
+function getColor(score) {
+    if (score >= 70) return 'var(--success)';
+    if (score >= 50) return 'var(--warning)';
+    return 'var(--danger)';
+}
+
+function setDim(id, score) {
+    document.getElementById('dim' + id).textContent = Math.round(score) + '/100';
+    document.getElementById('dim' + id).style.color = getColor(score);
+    document.getElementById('bar' + id).style.width = score + '%';
+}
+
+function scoreMoat() {
+    var gm = parseFloat(document.getElementById('grossMargin').value) || 0;
+    var nm = parseFloat(document.getElementById('netMargin').value) || 0;
+    var roic = parseFloat(document.getElementById('roic').value) || 0;
+    var wacc = parseFloat(document.getElementById('wacc').value) || 10;
+    var revGrowth = parseFloat(document.getElementById('revGrowth').value) || 0;
+    var fcfConv = parseFloat(document.getElementById('fcfConversion').value) || 0;
+    var de = parseFloat(document.getElementById('deRatio').value) || 0;
+    var ic = parseFloat(document.getElementById('interestCoverage').value) || 0;
+    var roe = parseFloat(document.getElementById('roe').value) || 0;
+
+    // 1. Pricing Power (GM + NM)
+    var gmScore = scoreDim(gm, [40, 25]);
+    var nmScore = scoreDim(nm, [20, 10]);
+    var pricing = (gmScore + nmScore) / 2;
+
+    // 2. Capital Efficiency (ROIC, ROIC-WACC spread)
+    var roicScore = scoreDim(roic, [20, 12]);
+    var spreadScore = scoreDim(roic - wacc, [10, 3]);
+    var capital = (roicScore + spreadScore) / 2;
+
+    // 3. Growth Durability
+    var growth = scoreDim(revGrowth, [15, 7]);
+
+    // 4. Cash Generation
+    var cash = scoreDim(fcfConv, [90, 70]);
+
+    // 5. Financial Strength (D/E + IC)
+    var deScore = de <= 0.3 ? 100 : de <= 0.5 ? 80 : de <= 1 ? 60 : de <= 2 ? 40 : 20;
+    var icScore = scoreDim(ic, [10, 5]);
+    var strength = (deScore + icScore) / 2;
+
+    // 6. Shareholder Returns (ROE)
+    var returns = scoreDim(roe, [20, 12]);
+
+    setDim('Pricing', pricing);
+    setDim('Capital', capital);
+    setDim('Growth', growth);
+    setDim('Cash', cash);
+    setDim('Strength', strength);
+    setDim('Returns', returns);
+
+    // Overall
+    var overall = (pricing * 0.20 + capital * 0.25 + growth * 0.15 + cash * 0.15 + strength * 0.10 + returns * 0.15);
+
+    var rating, icon, text;
+    if (overall >= 75) {
+        rating = 'Wide Moat';
+        icon = '&#127968;';
+        text = 'This company shows strong quantitative signals of a wide economic moat — high and sustained returns on capital, strong margins, and excellent cash conversion. These are the financial fingerprints of a durable competitive advantage.';
+    } else if (overall >= 50) {
+        rating = 'Narrow Moat';
+        icon = '&#128737;';
+        text = 'Moderate moat indicators. The company shows some competitive advantages but may face challenges sustaining them long-term. Look for qualitative factors (brand, patents, network effects) that may strengthen the quantitative picture.';
+    } else {
+        rating = 'No Moat Detected';
+        icon = '&#9888;';
+        text = 'Weak moat signals based on the financial data provided. This company may be operating in a highly competitive market with limited pricing power. Exercise caution — without a moat, above-average returns are difficult to sustain.';
+    }
+
+    document.getElementById('moatIcon').innerHTML = icon;
+    document.getElementById('moatRating').textContent = rating;
+    document.getElementById('moatRating').style.color = getColor(overall);
+    document.getElementById('moatScore').textContent = Math.round(overall) + '/100';
+    document.getElementById('moatScore').style.color = getColor(overall);
+    document.getElementById('moatText').textContent = text;
+
+    document.getElementById('moatResult').classList.add('moat-result--visible');
+    document.getElementById('moatResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+</script>
+
+</body>
+</html>

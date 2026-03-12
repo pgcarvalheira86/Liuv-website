@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Graham Number Calculator — LIUV | Free Value Investing Tool</title>
+    <meta name="description" content="Calculate the Graham Number and margin of safety for any stock. Based on Benjamin Graham's formula from The Intelligent Investor. Free, no signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+            --success: #14B89C;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Background */
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        /* Breadcrumb */
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        /* Hero */
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; }
+
+        /* Calculator Layout */
+        .tool-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .tool-panel { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; }
+        .tool-panel--accent { border-color: rgba(20, 184, 156, 0.15); }
+        .tool-panel__title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .tool-panel__desc { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+        /* Form */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+        .form-hint { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .form-input { width: 100%; padding: 12px 16px; background: var(--bg-primary); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; color: var(--text-primary); font-family: var(--font-mono); font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .form-input:focus { border-color: var(--accent-teal); }
+        .form-btn { width: 100%; padding: 14px 28px; background: var(--accent-teal); color: var(--bg-primary); border: none; border-radius: 6px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .form-btn:hover { opacity: 0.9; box-shadow: 0 0 30px var(--accent-teal-glow); }
+
+        /* Results */
+        .result-hero { text-align: center; padding: 24px 0 28px; }
+        .result-hero__label { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+        .result-hero__value { font-family: var(--font-mono); font-size: 42px; font-weight: 500; color: var(--accent-teal); }
+        .result-hero__sub { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+        .result-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .result-row:last-child { border-bottom: none; }
+        .result-row__label { font-size: 14px; color: var(--text-muted); }
+        .result-row__value { font-family: var(--font-mono); font-size: 15px; font-weight: 500; }
+
+        /* Gauge */
+        .gauge { margin: 28px 0; }
+        .gauge__track { height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--danger) 0%, var(--warning) 40%, var(--success) 70%, var(--success) 100%); position: relative; overflow: visible; }
+        .gauge__marker { position: absolute; top: -6px; width: 4px; height: 24px; background: var(--text-primary); border-radius: 2px; transform: translateX(-50%); transition: left 0.5s ease; box-shadow: 0 0 8px rgba(255,255,255,0.3); }
+        .gauge__labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-muted); }
+
+        /* Verdict */
+        .verdict { text-align: center; padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .verdict--undervalued { background: rgba(20, 184, 156, 0.1); border: 1px solid rgba(20, 184, 156, 0.2); }
+        .verdict--fair { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .verdict--overvalued { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .verdict__label { font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+        .verdict__text { font-size: 13px; color: var(--text-muted); }
+
+        /* Formula Box */
+        .formula-box { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .formula-box__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .formula-box__formula { font-family: var(--font-mono); font-size: 18px; color: var(--accent-teal); text-align: center; padding: 20px; background: var(--bg-primary); border-radius: 8px; margin-bottom: 16px; }
+        .formula-box__explain { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+        .formula-box__explain strong { color: var(--text-primary); }
+
+        /* CTA */
+        .premium-cta { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        /* Disclaimer */
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        /* Placeholder */
+        .result-placeholder { text-align: center; padding: 48px 20px; color: var(--text-dim); font-size: 14px; }
+
+        /* Footer */
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .tool-layout { grid-template-columns: 1fr; max-width: 600px; margin-left: auto; margin-right: auto; }
+        }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>Graham Number Calculator</li>
+    </ul>
+</div>
+
+<!-- Hero -->
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Tool</div>
+    <h1 class="tool-hero__title">Graham Number <em style="font-style:italic;color:var(--accent-teal);">Calculator</em></h1>
+    <p class="tool-hero__subtitle">Calculate the maximum fair price for a stock using Benjamin Graham's formula from <em>The Intelligent Investor</em>. Enter any stock's financial data and instantly see its Graham Number and margin of safety.</p>
+</section>
+
+<!-- Calculator -->
+<section class="container fade-in fade-in--d2">
+    <div class="tool-layout">
+        <!-- Input Panel -->
+        <div class="tool-panel">
+            <div class="tool-panel__title">Enter Stock Data</div>
+            <div class="tool-panel__desc">Find these values on Yahoo Finance, Morningstar, or any financial data provider under the stock's financials tab.</div>
+
+            <div class="form-group">
+                <label class="form-label" for="eps">Earnings Per Share (EPS) — TTM</label>
+                <input class="form-input" type="number" id="eps" placeholder="e.g. 6.50" step="0.01">
+                <div class="form-hint">Trailing twelve months net income per share</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="bvps">Book Value Per Share (BVPS)</label>
+                <input class="form-input" type="number" id="bvps" placeholder="e.g. 25.30" step="0.01">
+                <div class="form-hint">Total equity divided by shares outstanding</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="price">Current Market Price ($)</label>
+                <input class="form-input" type="number" id="price" placeholder="e.g. 85.00" step="0.01">
+                <div class="form-hint">Current stock price for margin of safety calculation</div>
+            </div>
+
+            <button class="form-btn" type="button" onclick="calculate()">Calculate Graham Number</button>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="tool-panel tool-panel--accent" id="resultsPanel">
+            <div class="tool-panel__title">Analysis Results</div>
+            <div class="tool-panel__desc">Graham Number and margin of safety assessment</div>
+
+            <div id="resultPlaceholder" class="result-placeholder">
+                Enter EPS, BVPS, and market price to see your Graham Number analysis.
+            </div>
+
+            <div id="resultContent" style="display:none;">
+                <div class="result-hero">
+                    <div class="result-hero__label">Graham Number</div>
+                    <div class="result-hero__value" id="grahamNumber">—</div>
+                    <div class="result-hero__sub">Maximum fair price per Graham's formula</div>
+                </div>
+
+                <div class="result-row">
+                    <span class="result-row__label">Current Price</span>
+                    <span class="result-row__value" id="resPrice">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-row__label">Margin of Safety</span>
+                    <span class="result-row__value" id="resMOS">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-row__label">P/E Ratio (implied)</span>
+                    <span class="result-row__value" id="resPE">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-row__label">P/B Ratio (implied)</span>
+                    <span class="result-row__value" id="resPB">—</span>
+                </div>
+
+                <!-- Gauge -->
+                <div class="gauge">
+                    <div class="gauge__track">
+                        <div class="gauge__marker" id="gaugeMarker" style="left:50%"></div>
+                    </div>
+                    <div class="gauge__labels">
+                        <span>Overvalued</span>
+                        <span>Fair Value</span>
+                        <span>Undervalued</span>
+                    </div>
+                </div>
+
+                <div id="verdict" class="verdict verdict--fair">
+                    <div class="verdict__label" id="verdictLabel">—</div>
+                    <div class="verdict__text" id="verdictText">—</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Formula Explanation -->
+<section class="container fade-in fade-in--d3">
+    <div class="formula-box">
+        <div class="formula-box__title">How the Graham Number Works</div>
+        <div class="formula-box__formula">Graham Number = √(22.5 × EPS × BVPS)</div>
+        <div class="formula-box__explain">
+            <p>Benjamin Graham, Warren Buffett's mentor and the father of value investing, created this formula to determine the maximum price a defensive investor should pay for a stock.</p>
+            <br>
+            <p>The constant <strong>22.5</strong> comes from Graham's criteria that a stock's P/E should not exceed <strong>15</strong> and its P/B should not exceed <strong>1.5</strong> (15 × 1.5 = 22.5). If the current stock price is below the Graham Number, the stock may be undervalued — the difference represents your <strong>margin of safety</strong>.</p>
+            <br>
+            <p>Graham taught that a margin of safety of <strong>30% or more</strong> provides adequate protection against analytical errors and market downturns. This principle remains the cornerstone of LIUV's AI-driven analysis methodology.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Premium CTA -->
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">Want deeper analysis powered by AI?</div>
+        <div class="premium-cta__text">LIUV's Portfolio Advisor agent runs the Graham Number alongside 9 other valuation pillars — DCF modeling, moat analysis, management quality, and more — automatically for your entire portfolio.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<!-- Disclaimer -->
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This calculator is provided for educational purposes only and does not constitute financial advice. The Graham Number is one of many valuation tools and should not be used in isolation. Always conduct thorough due diligence and consult a qualified financial advisor before making investment decisions. Past performance does not guarantee future results. LIUV does not guarantee the accuracy of user-entered data.
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+function calculate() {
+    var eps = parseFloat(document.getElementById('eps').value);
+    var bvps = parseFloat(document.getElementById('bvps').value);
+    var price = parseFloat(document.getElementById('price').value);
+
+    if (isNaN(eps) || isNaN(bvps) || isNaN(price) || eps <= 0 || bvps <= 0 || price <= 0) {
+        alert('Please enter positive values for EPS, Book Value Per Share, and Current Price.');
+        return;
+    }
+
+    // Graham Number = sqrt(22.5 * EPS * BVPS)
+    var grahamNum = Math.sqrt(22.5 * eps * bvps);
+    var mos = ((grahamNum - price) / grahamNum) * 100;
+    var pe = price / eps;
+    var pb = price / bvps;
+
+    document.getElementById('resultPlaceholder').style.display = 'none';
+    document.getElementById('resultContent').style.display = 'block';
+
+    document.getElementById('grahamNumber').textContent = '$' + grahamNum.toFixed(2);
+    document.getElementById('resPrice').textContent = '$' + price.toFixed(2);
+    document.getElementById('resMOS').textContent = mos.toFixed(1) + '%';
+    document.getElementById('resMOS').style.color = mos >= 30 ? 'var(--success)' : mos >= 0 ? 'var(--warning)' : 'var(--danger)';
+    document.getElementById('resPE').textContent = pe.toFixed(1) + 'x';
+    document.getElementById('resPE').style.color = pe <= 15 ? 'var(--success)' : pe <= 20 ? 'var(--warning)' : 'var(--danger)';
+    document.getElementById('resPB').textContent = pb.toFixed(2) + 'x';
+    document.getElementById('resPB').style.color = pb <= 1.5 ? 'var(--success)' : pb <= 3 ? 'var(--warning)' : 'var(--danger)';
+
+    // Gauge: map MOS from -50% to +60% onto 0-100%
+    var gaugePos = Math.min(100, Math.max(0, ((mos + 50) / 110) * 100));
+    document.getElementById('gaugeMarker').style.left = gaugePos + '%';
+
+    // Verdict
+    var verdict = document.getElementById('verdict');
+    var verdictLabel = document.getElementById('verdictLabel');
+    var verdictText = document.getElementById('verdictText');
+
+    verdict.className = 'verdict';
+    if (mos >= 30) {
+        verdict.classList.add('verdict--undervalued');
+        verdictLabel.textContent = 'Potentially Undervalued';
+        verdictLabel.style.color = 'var(--success)';
+        verdictText.textContent = 'This stock trades ' + mos.toFixed(1) + '% below its Graham Number. Graham recommended a margin of safety of at least 30% — this stock meets that threshold. Consider further analysis with DCF and qualitative factors.';
+    } else if (mos >= 0) {
+        verdict.classList.add('verdict--fair');
+        verdictLabel.textContent = 'Near Fair Value';
+        verdictLabel.style.color = 'var(--warning)';
+        verdictText.textContent = 'This stock trades ' + mos.toFixed(1) + '% below its Graham Number but lacks the 30% margin of safety Graham recommended. The price is near fair value — proceed with caution and deeper analysis.';
+    } else {
+        verdict.classList.add('verdict--overvalued');
+        verdictLabel.textContent = 'Potentially Overvalued';
+        verdictLabel.style.color = 'var(--danger)';
+        verdictText.textContent = 'This stock trades ' + Math.abs(mos).toFixed(1) + '% above its Graham Number. According to Graham\'s criteria, it may be overvalued at this price. Value investors would typically wait for a better entry point.';
+    }
+}
+
+// Nav scroll
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+</script>
+
+</body>
+</html>

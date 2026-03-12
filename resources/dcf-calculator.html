@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>DCF Intrinsic Value Calculator — LIUV | Free Value Investing Tool</title>
+    <meta name="description" content="Calculate the intrinsic value of any stock using a Discounted Cash Flow (DCF) model. Base, bull, and bear scenarios with sensitivity analysis. Free, no signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910; --bg-card: #0c1019; --bg-card-hover: #111827;
+            --accent-teal: #14B89C; --accent-teal-dim: rgba(20, 184, 156, 0.15); --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1; --text-muted: #6B7A8D; --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif; --font-display: 'Playfair Display', serif; --font-mono: 'DM Mono', monospace;
+            --success: #14B89C; --warning: #F59E0B; --danger: #EF4444;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; } .nav__logomark span:nth-child(2) { height: 60%; } .nav__logomark span:nth-child(3) { height: 80%; } .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; }
+
+        .tool-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .tool-panel { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; }
+        .tool-panel--accent { border-color: rgba(20, 184, 156, 0.15); }
+        .tool-panel__title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .tool-panel__desc { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+        .form-hint { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .form-input { width: 100%; padding: 12px 16px; background: var(--bg-primary); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; color: var(--text-primary); font-family: var(--font-mono); font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .form-input:focus { border-color: var(--accent-teal); }
+        .form-btn { width: 100%; padding: 14px 28px; background: var(--accent-teal); color: var(--bg-primary); border: none; border-radius: 6px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+        .form-btn:hover { opacity: 0.9; box-shadow: 0 0 30px var(--accent-teal-glow); }
+
+        /* Slider */
+        .slider-group { display: flex; align-items: center; gap: 12px; }
+        .slider-group input[type="range"] { flex: 1; -webkit-appearance: none; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; outline: none; }
+        .slider-group input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-teal); cursor: pointer; }
+        .slider-group input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent-teal); cursor: pointer; border: none; }
+        .slider-value { font-family: var(--font-mono); font-size: 14px; color: var(--accent-teal); min-width: 48px; text-align: right; }
+
+        /* Results */
+        .result-placeholder { text-align: center; padding: 48px 20px; color: var(--text-dim); font-size: 14px; }
+        .result-hero { text-align: center; padding: 24px 0 28px; }
+        .result-hero__label { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+        .result-hero__value { font-family: var(--font-mono); font-size: 42px; font-weight: 500; color: var(--accent-teal); }
+        .result-hero__sub { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+        .scenarios { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+        .scenario { text-align: center; padding: 16px 12px; background: var(--bg-primary); border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); }
+        .scenario--active { border-color: rgba(20, 184, 156, 0.3); }
+        .scenario__label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .scenario__value { font-family: var(--font-mono); font-size: 20px; font-weight: 500; }
+        .scenario__mos { font-size: 12px; margin-top: 2px; }
+
+        .result-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .result-row:last-child { border-bottom: none; }
+        .result-row__label { font-size: 14px; color: var(--text-muted); }
+        .result-row__value { font-family: var(--font-mono); font-size: 15px; font-weight: 500; }
+
+        /* Sensitivity Table */
+        .sensitivity { position: relative; z-index: 1; margin-bottom: 48px; }
+        .sensitivity__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .sensitivity__table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.04); }
+        .sensitivity__table th, .sensitivity__table td { padding: 12px 16px; text-align: center; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .sensitivity__table th { background: rgba(20, 184, 156, 0.08); color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; font-size: 11px; }
+        .sensitivity__table td { font-family: var(--font-mono); color: var(--text-muted); }
+        .sensitivity__table td.highlight { color: var(--accent-teal); font-weight: 500; background: rgba(20, 184, 156, 0.05); }
+        .sensitivity__table tr:last-child td { border-bottom: none; }
+
+        .verdict { text-align: center; padding: 20px; border-radius: 8px; margin-top: 16px; }
+        .verdict--undervalued { background: rgba(20, 184, 156, 0.1); border: 1px solid rgba(20, 184, 156, 0.2); }
+        .verdict--fair { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .verdict--overvalued { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .verdict__label { font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+        .verdict__text { font-size: 13px; color: var(--text-muted); }
+
+        .formula-box { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .formula-box__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .formula-box__formula { font-family: var(--font-mono); font-size: 16px; color: var(--accent-teal); text-align: center; padding: 20px; background: var(--bg-primary); border-radius: 8px; margin-bottom: 16px; line-height: 1.8; }
+        .formula-box__explain { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+        .formula-box__explain strong { color: var(--text-primary); }
+
+        .premium-cta { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; } .fade-in--d2 { animation-delay: 0.2s; } .fade-in--d3 { animation-delay: 0.3s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .tool-layout { grid-template-columns: 1fr; max-width: 600px; margin-left: auto; margin-right: auto; }
+            .sensitivity__table { font-size: 12px; }
+        }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .form-row { grid-template-columns: 1fr; }
+            .scenarios { grid-template-columns: 1fr; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+            .sensitivity__table th, .sensitivity__table td { padding: 8px 6px; font-size: 11px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>DCF Calculator</li>
+    </ul>
+</div>
+
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Tool</div>
+    <h1 class="tool-hero__title">Intrinsic Value <em style="font-style:italic;color:var(--accent-teal);">DCF Calculator</em></h1>
+    <p class="tool-hero__subtitle">Estimate the true worth of any company using a two-stage Discounted Cash Flow model — the same methodology used by Warren Buffett and institutional investors worldwide.</p>
+</section>
+
+<section class="container fade-in fade-in--d2">
+    <div class="tool-layout">
+        <div class="tool-panel">
+            <div class="tool-panel__title">Enter Company Data</div>
+            <div class="tool-panel__desc">Find free cash flow and shares outstanding in the company's annual report, Yahoo Finance, or Morningstar.</div>
+
+            <div class="form-group">
+                <label class="form-label" for="fcf">Free Cash Flow — TTM ($M)</label>
+                <input class="form-input" type="number" id="fcf" placeholder="e.g. 5000" step="1">
+                <div class="form-hint">Operating cash flow minus capital expenditures, in millions</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Growth Rate — Years 1–5</label>
+                <div class="slider-group">
+                    <input type="range" id="growth1" min="0" max="40" value="15" step="0.5" oninput="document.getElementById('growth1Val').textContent=this.value+'%'">
+                    <span class="slider-value" id="growth1Val">15%</span>
+                </div>
+                <div class="form-hint">High-growth phase — base this on historical revenue/FCF growth</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Growth Rate — Years 6–10</label>
+                <div class="slider-group">
+                    <input type="range" id="growth2" min="0" max="25" value="8" step="0.5" oninput="document.getElementById('growth2Val').textContent=this.value+'%'">
+                    <span class="slider-value" id="growth2Val">8%</span>
+                </div>
+                <div class="form-hint">Maturation phase — typically lower as company scales</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="termGrowth">Terminal Growth (%)</label>
+                    <input class="form-input" type="number" id="termGrowth" value="3" step="0.5" min="0" max="5">
+                    <div class="form-hint">Long-term GDP growth (2–3%)</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="discount">Discount Rate / WACC (%)</label>
+                    <input class="form-input" type="number" id="discount" value="10" step="0.5" min="5" max="25">
+                    <div class="form-hint">Required return (8–12% typical)</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="shares">Shares Outstanding (M)</label>
+                    <input class="form-input" type="number" id="shares" placeholder="e.g. 1500" step="1">
+                    <div class="form-hint">Diluted shares outstanding</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="price">Current Share Price ($)</label>
+                    <input class="form-input" type="number" id="price" placeholder="e.g. 150" step="0.01">
+                    <div class="form-hint">For margin of safety calculation</div>
+                </div>
+            </div>
+
+            <button class="form-btn" type="button" onclick="calculateDCF()">Calculate Intrinsic Value</button>
+        </div>
+
+        <div class="tool-panel tool-panel--accent" id="resultsPanel">
+            <div class="tool-panel__title">Valuation Results</div>
+            <div class="tool-panel__desc">DCF intrinsic value with base, bull, and bear scenarios</div>
+
+            <div id="resultPlaceholder" class="result-placeholder">
+                Enter company financials to see the DCF valuation with three scenarios.
+            </div>
+
+            <div id="resultContent" style="display:none;">
+                <div class="result-hero">
+                    <div class="result-hero__label">Intrinsic Value Per Share (Base)</div>
+                    <div class="result-hero__value" id="ivBase">—</div>
+                    <div class="result-hero__sub" id="ivMOS">—</div>
+                </div>
+
+                <div class="scenarios">
+                    <div class="scenario">
+                        <div class="scenario__label">Bear Case</div>
+                        <div class="scenario__value" id="ivBear" style="color:var(--danger)">—</div>
+                        <div class="scenario__mos" id="mosBear">—</div>
+                    </div>
+                    <div class="scenario scenario--active">
+                        <div class="scenario__label">Base Case</div>
+                        <div class="scenario__value" id="ivBaseScenario" style="color:var(--accent-teal)">—</div>
+                        <div class="scenario__mos" id="mosBase">—</div>
+                    </div>
+                    <div class="scenario">
+                        <div class="scenario__label">Bull Case</div>
+                        <div class="scenario__value" id="ivBull" style="color:var(--success)">—</div>
+                        <div class="scenario__mos" id="mosBull">—</div>
+                    </div>
+                </div>
+
+                <div class="result-row">
+                    <span class="result-row__label">Current Price</span>
+                    <span class="result-row__value" id="resPrice">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-row__label">PV of FCF (Years 1–10)</span>
+                    <span class="result-row__value" id="resPVFCF">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-row__label">PV of Terminal Value</span>
+                    <span class="result-row__value" id="resPVTV">—</span>
+                </div>
+                <div class="result-row">
+                    <span class="result-row__label">Total Enterprise Value</span>
+                    <span class="result-row__value" id="resEV">—</span>
+                </div>
+
+                <div id="verdict" class="verdict verdict--fair" style="margin-top:16px">
+                    <div class="verdict__label" id="verdictLabel">—</div>
+                    <div class="verdict__text" id="verdictText">—</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sensitivity Table -->
+<section class="container sensitivity fade-in fade-in--d3" id="sensitivitySection" style="display:none;">
+    <div class="formula-box">
+        <div class="formula-box__title">Sensitivity Analysis — Intrinsic Value Per Share</div>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">How the intrinsic value changes across different discount rates and growth assumptions. Your inputs are highlighted.</p>
+        <div style="overflow-x:auto;">
+            <table class="sensitivity__table" id="sensitivityTable">
+                <thead id="sensHead"></thead>
+                <tbody id="sensBody"></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Formula Explanation -->
+<section class="container fade-in fade-in--d3">
+    <div class="formula-box">
+        <div class="formula-box__title">How the Two-Stage DCF Model Works</div>
+        <div class="formula-box__formula">
+            IV = Σ [FCF × (1 + g)^t / (1 + r)^t] + Terminal Value / (1 + r)^10<br>
+            <span style="font-size:13px;color:var(--text-muted);">Terminal Value = FCF₁₀ × (1 + g_term) / (r − g_term)</span>
+        </div>
+        <div class="formula-box__explain">
+            <p>The Discounted Cash Flow model estimates what a company is worth by projecting its future cash flows and discounting them to today's value. This two-stage approach uses:</p>
+            <br>
+            <p><strong>Stage 1 (Years 1–5):</strong> A higher growth rate reflecting the company's current competitive advantages and growth trajectory.</p>
+            <p><strong>Stage 2 (Years 6–10):</strong> A lower growth rate as the company matures and growth naturally decelerates.</p>
+            <p><strong>Terminal Value:</strong> Captures the company's value beyond year 10 using a perpetuity growth model, assuming the company grows at a rate approximating long-term GDP growth.</p>
+            <br>
+            <p>As Buffett says: <em>"Intrinsic value is the discounted value of the cash that can be taken out of a business during its remaining life."</em> When the market price is significantly below this intrinsic value, you have a <strong>margin of safety</strong>.</p>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">Let AI run this analysis automatically</div>
+        <div class="premium-cta__text">LIUV's Portfolio Advisor agent builds DCF models for every stock in your portfolio, updates them with real-time data, and alerts you when valuations change significantly.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This calculator is for educational purposes only and does not constitute financial advice. DCF models involve significant assumptions about future growth and discount rates. Small changes in inputs can produce large changes in output. Always validate assumptions with independent research and consult a qualified financial advisor before making investment decisions. LIUV does not guarantee the accuracy of user-entered data or projections.
+    </div>
+</section>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div><div class="nav__wordmark">LIUV</div><div class="nav__tagline">AI Wealth Agent</div></div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+function runDCF(fcf, g1, g2, gTerm, discount, shares) {
+    var r = discount / 100;
+    var gt = gTerm / 100;
+    var pvFCF = 0;
+    var currentFCF = fcf;
+
+    // Stage 1: Years 1-5
+    for (var t = 1; t <= 5; t++) {
+        currentFCF *= (1 + g1 / 100);
+        pvFCF += currentFCF / Math.pow(1 + r, t);
+    }
+    // Stage 2: Years 6-10
+    for (var t = 6; t <= 10; t++) {
+        currentFCF *= (1 + g2 / 100);
+        pvFCF += currentFCF / Math.pow(1 + r, t);
+    }
+    // Terminal value
+    var terminalFCF = currentFCF * (1 + gt);
+    var terminalValue = terminalFCF / (r - gt);
+    var pvTerminal = terminalValue / Math.pow(1 + r, 10);
+    var enterpriseValue = pvFCF + pvTerminal;
+    var ivPerShare = enterpriseValue / shares;
+
+    return { pvFCF: pvFCF, pvTerminal: pvTerminal, ev: enterpriseValue, iv: ivPerShare };
+}
+
+function fmt(n) {
+    if (Math.abs(n) >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+    if (Math.abs(n) >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+    if (Math.abs(n) >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+    return '$' + n.toFixed(2);
+}
+
+function fmtShare(n) { return '$' + n.toFixed(2); }
+
+function mosStr(iv, price) {
+    var mos = ((iv - price) / iv) * 100;
+    var color = mos >= 30 ? 'var(--success)' : mos >= 0 ? 'var(--warning)' : 'var(--danger)';
+    return '<span style="color:' + color + '">' + mos.toFixed(1) + '% MOS</span>';
+}
+
+function calculateDCF() {
+    var fcf = parseFloat(document.getElementById('fcf').value);
+    var g1 = parseFloat(document.getElementById('growth1').value);
+    var g2 = parseFloat(document.getElementById('growth2').value);
+    var gTerm = parseFloat(document.getElementById('termGrowth').value);
+    var discount = parseFloat(document.getElementById('discount').value);
+    var shares = parseFloat(document.getElementById('shares').value);
+    var price = parseFloat(document.getElementById('price').value);
+
+    if (isNaN(fcf) || isNaN(shares) || isNaN(price) || fcf <= 0 || shares <= 0 || price <= 0) {
+        alert('Please enter positive values for FCF, Shares Outstanding, and Current Price.');
+        return;
+    }
+    if (discount <= gTerm) {
+        alert('Discount rate must be greater than terminal growth rate.');
+        return;
+    }
+
+    // Base case
+    var base = runDCF(fcf, g1, g2, gTerm, discount, shares);
+    // Bear case: growth -30%, discount +2%
+    var bear = runDCF(fcf, g1 * 0.7, g2 * 0.7, gTerm, discount + 2, shares);
+    // Bull case: growth +20%, discount -1%
+    var bull = runDCF(fcf, g1 * 1.2, g2 * 1.2, gTerm, Math.max(gTerm + 1, discount - 1), shares);
+
+    document.getElementById('resultPlaceholder').style.display = 'none';
+    document.getElementById('resultContent').style.display = 'block';
+
+    document.getElementById('ivBase').textContent = fmtShare(base.iv);
+    var baseMOS = ((base.iv - price) / base.iv) * 100;
+    document.getElementById('ivMOS').innerHTML = 'Margin of Safety: <strong style="color:' + (baseMOS >= 30 ? 'var(--success)' : baseMOS >= 0 ? 'var(--warning)' : 'var(--danger)') + '">' + baseMOS.toFixed(1) + '%</strong>';
+
+    document.getElementById('ivBear').textContent = fmtShare(bear.iv);
+    document.getElementById('ivBaseScenario').textContent = fmtShare(base.iv);
+    document.getElementById('ivBull').textContent = fmtShare(bull.iv);
+    document.getElementById('mosBear').innerHTML = mosStr(bear.iv, price);
+    document.getElementById('mosBase').innerHTML = mosStr(base.iv, price);
+    document.getElementById('mosBull').innerHTML = mosStr(bull.iv, price);
+
+    document.getElementById('resPrice').textContent = fmtShare(price);
+    document.getElementById('resPVFCF').textContent = fmt(base.pvFCF * 1e6);
+    document.getElementById('resPVTV').textContent = fmt(base.pvTerminal * 1e6);
+    document.getElementById('resEV').textContent = fmt(base.ev * 1e6);
+
+    // Verdict
+    var v = document.getElementById('verdict');
+    var vl = document.getElementById('verdictLabel');
+    var vt = document.getElementById('verdictText');
+    v.className = 'verdict';
+    if (baseMOS >= 30) {
+        v.classList.add('verdict--undervalued');
+        vl.textContent = 'Potentially Undervalued';
+        vl.style.color = 'var(--success)';
+        vt.textContent = 'The current price of ' + fmtShare(price) + ' is ' + baseMOS.toFixed(1) + '% below the DCF intrinsic value. Even in the bear case, the intrinsic value is ' + fmtShare(bear.iv) + '. This margin of safety meets Graham\'s threshold for defensive investors.';
+    } else if (baseMOS >= 0) {
+        v.classList.add('verdict--fair');
+        vl.textContent = 'Near Fair Value';
+        vl.style.color = 'var(--warning)';
+        vt.textContent = 'The current price of ' + fmtShare(price) + ' is only ' + baseMOS.toFixed(1) + '% below intrinsic value. This does not meet the 30% margin of safety threshold. Consider waiting for a better entry point.';
+    } else {
+        v.classList.add('verdict--overvalued');
+        vl.textContent = 'Potentially Overvalued';
+        vl.style.color = 'var(--danger)';
+        vt.textContent = 'The current price of ' + fmtShare(price) + ' exceeds the DCF intrinsic value by ' + Math.abs(baseMOS).toFixed(1) + '%. The market may be pricing in growth beyond what the fundamentals support.';
+    }
+
+    // Sensitivity table
+    buildSensitivityTable(fcf, g1, g2, gTerm, discount, shares);
+    document.getElementById('sensitivitySection').style.display = 'block';
+}
+
+function buildSensitivityTable(fcf, g1, g2, gTerm, discount, shares) {
+    var discountRates = [discount - 2, discount - 1, discount, discount + 1, discount + 2];
+    var growthRates = [g1 - 4, g1 - 2, g1, g1 + 2, g1 + 4];
+
+    var head = '<tr><th>Discount \\ Growth Y1-5</th>';
+    growthRates.forEach(function(g) { head += '<th>' + g.toFixed(1) + '%</th>'; });
+    head += '</tr>';
+    document.getElementById('sensHead').innerHTML = head;
+
+    var body = '';
+    discountRates.forEach(function(dr) {
+        body += '<tr><td style="font-weight:600;color:var(--text-primary)">' + dr.toFixed(1) + '%</td>';
+        growthRates.forEach(function(gr) {
+            if (dr / 100 <= gTerm / 100) {
+                body += '<td>N/A</td>';
+                return;
+            }
+            var result = runDCF(fcf, gr, g2, gTerm, dr, shares);
+            var isBase = Math.abs(dr - discount) < 0.01 && Math.abs(gr - g1) < 0.01;
+            body += '<td class="' + (isBase ? 'highlight' : '') + '">' + fmtShare(result.iv) + '</td>';
+        });
+        body += '</tr>';
+    });
+    document.getElementById('sensBody').innerHTML = body;
+}
+
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+</script>
+
+</body>
+</html>
