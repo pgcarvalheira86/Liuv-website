@@ -1,5 +1,5 @@
 import { connectLambda } from '@netlify/blobs';
-import { findUserByEmail, createUser, hashPassword, verifyPassword, createToken, setAuthCookie, getCookieDomain, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
+import { findUserByEmail, createUser, hashPassword, verifyPassword, createToken, setAuthCookie, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
 import { sendConversionEmail } from '../../lib/email-utils.js';
 import { sendSignupNotification } from '../../lib/chat-notify.js';
 
@@ -65,15 +65,13 @@ export async function handler(event) {
     }).catch(err => console.error('[CHAT-NOTIFY]', err.message));
 
     console.log('[AUTH-SIGNUP] success', user.email);
-    const host = event.headers?.host || event.headers?.Host;
-    const domain = getCookieDomain(host);
     return jsonResponse(
       {
         success: true,
         user: { id: user.id, email: user.email, name: user.name, plan: user.plan },
       },
       201,
-      { 'Set-Cookie': setAuthCookie(token, domain ? { domain } : {}) }
+      { 'Set-Cookie': setAuthCookie(token) }
     );
   } catch (err) {
     console.error('[AUTH-SIGNUP] Error:', err.message || err);
