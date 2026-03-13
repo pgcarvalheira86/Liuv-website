@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Dashboard — LIUV AI Wealth Agent</title>
+    <meta name="description" content="Your LIUV account. Subscribe to unlock AI-powered stock analysis and investment intelligence.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+
+        .bg-grid {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none; z-index: 0;
+        }
+        .bg-glow {
+            position: fixed; width: 600px; height: 600px; border-radius: 50%;
+            filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0;
+        }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        .nav {
+            position: relative; z-index: 100; padding: 20px 0;
+            background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+        .nav__inner {
+            display: flex; align-items: center; justify-content: space-between;
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+        }
+        .nav__logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span {
+            display: block; width: 5px; border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__right { display: flex; align-items: center; gap: 16px; }
+        .nav__user { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-muted); }
+        .nav__avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--accent-teal-dim); border: 1px solid rgba(20,184,156,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 13px; color: var(--accent-teal);
+        }
+        .nav__logout {
+            font-size: 13px; color: var(--text-dim); cursor: pointer;
+            background: none; border: 1px solid rgba(255,255,255,0.06);
+            padding: 6px 14px; border-radius: 6px; font-family: var(--font-body);
+            transition: all 0.2s;
+        }
+        .nav__logout:hover { border-color: rgba(255,255,255,0.15); color: var(--text-muted); }
+
+        .dashboard {
+            flex: 1; position: relative; z-index: 1;
+            max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; width: 100%;
+        }
+        .dash-header { margin-bottom: 40px; }
+        .dash-header__greeting {
+            font-family: var(--font-display); font-size: 32px; font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .dash-header__greeting em { font-style: italic; color: var(--accent-teal); }
+        .dash-header__sub { font-size: 15px; color: var(--text-muted); }
+
+        .status-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+            margin-bottom: 40px;
+        }
+        .status-card {
+            padding: 24px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+            transition: border-color 0.2s;
+        }
+        .status-card:hover { border-color: rgba(20,184,156,0.2); }
+        .status-card__label {
+            font-size: 12px; text-transform: uppercase; letter-spacing: 2px;
+            color: var(--text-muted); margin-bottom: 8px; font-weight: 500;
+        }
+        .status-card__value { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+        .status-card__value--teal { color: var(--accent-teal); }
+        .status-card__note { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+        .no-plan-card {
+            padding: 40px 36px; background: var(--bg-card);
+            border: 1px solid rgba(20,184,156,0.2); border-radius: 12px;
+            margin-bottom: 40px; text-align: center;
+        }
+        .no-plan-card__icon {
+            width: 72px; height: 72px; margin: 0 auto 20px;
+            border-radius: 16px; background: var(--accent-teal-dim);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent-teal);
+        }
+        .no-plan-card__title {
+            font-family: var(--font-display); font-size: 24px; font-weight: 700;
+            margin-bottom: 12px; color: var(--text-primary);
+        }
+        .no-plan-card__desc {
+            font-size: 15px; color: var(--text-muted); line-height: 1.7;
+            max-width: 480px; margin: 0 auto 24px;
+        }
+        .no-plan-card__btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--accent-teal); color: var(--bg-primary);
+            padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;
+            transition: all 0.2s;
+        }
+        .no-plan-card__btn:hover { opacity: 0.9; transform: translateY(-1px); color: var(--bg-primary); }
+
+        .section-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+        .actions-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+            margin-bottom: 40px;
+        }
+        .action-card {
+            display: flex; align-items: center; gap: 16px;
+            padding: 24px; background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+            cursor: pointer; transition: all 0.2s; text-decoration: none;
+            color: var(--text-primary);
+        }
+        .action-card:hover { border-color: rgba(20,184,156,0.3); transform: translateY(-2px); opacity: 1; }
+        .action-card__icon {
+            width: 48px; height: 48px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .action-card__icon--teal { background: var(--accent-teal-dim); }
+        .action-card__icon--blue { background: rgba(59, 130, 246, 0.15); }
+        .action-card__icon--purple { background: rgba(167, 139, 250, 0.15); }
+        .action-card__icon--amber { background: rgba(245, 158, 11, 0.15); }
+        .action-card__title { font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+        .action-card__desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+
+        .upgrade-banner {
+            padding: 28px 32px; background: var(--bg-card);
+            border: 1px solid rgba(20,184,156,0.15); border-radius: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 24px;
+        }
+        .upgrade-banner__text { flex: 1; }
+        .upgrade-banner__title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .upgrade-banner__desc { font-size: 13px; color: var(--text-muted); }
+        .upgrade-banner__btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--accent-teal); color: var(--bg-primary);
+            padding: 12px 24px; border-radius: 8px; font-weight: 600;
+            font-size: 14px; white-space: nowrap; transition: all 0.2s;
+        }
+        .upgrade-banner__btn:hover { opacity: 0.9; transform: translateY(-1px); color: var(--bg-primary); }
+
+        .loading {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 1;
+        }
+        .loading__spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(20,184,156,0.2);
+            border-top-color: var(--accent-teal); border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .footer-minimal {
+            text-align: center; padding: 24px; border-top: 1px solid rgba(255,255,255,0.04);
+            position: relative; z-index: 1;
+        }
+        .footer-minimal p { font-size: 12px; color: var(--text-dim); }
+
+        @media (max-width: 768px) {
+            .status-grid { grid-template-columns: 1fr; }
+            .actions-grid { grid-template-columns: 1fr; }
+            .dash-header__greeting { font-size: 26px; }
+            .upgrade-banner { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow--teal"></div>
+    <div class="bg-glow bg-glow--purple"></div>
+
+    <div class="loading" id="loadingState">
+        <div class="loading__spinner"></div>
+    </div>
+
+    <div id="authContent" style="display:none; flex-direction: column; min-height: 100vh;">
+        <nav class="nav">
+            <div class="nav__inner">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <div class="nav__right">
+                    <div class="nav__user">
+                        <div class="nav__avatar" id="userAvatar">U</div>
+                        <span id="userName">User</span>
+                    </div>
+                    <button class="nav__logout" onclick="logout()">Sign Out</button>
+                </div>
+            </div>
+        </nav>
+
+        <main class="dashboard">
+            <div class="dash-header">
+                <h1 class="dash-header__greeting">Welcome back, <em id="greetingName">Investor</em></h1>
+                <p class="dash-header__sub">Subscribe to unlock AI stock analysis and your full dashboard.</p>
+            </div>
+
+            <div class="status-grid">
+                <div class="status-card">
+                    <div class="status-card__label">Current Plan</div>
+                    <div class="status-card__value status-card__value--teal" id="planName">No Plan</div>
+                    <div class="status-card__note" id="planNote">Subscribe to activate AI agents</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-card__label">Account Status</div>
+                    <div class="status-card__value">Active</div>
+                    <div class="status-card__note" id="accountSince">Member since --</div>
+                </div>
+                <div class="status-card">
+                    <div class="status-card__label">Sign-In Method</div>
+                    <div class="status-card__value" id="authMethod">Email</div>
+                    <div class="status-card__note" id="userEmail">--</div>
+                </div>
+            </div>
+
+            <div class="no-plan-card">
+                <div class="no-plan-card__icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <h2 class="no-plan-card__title">Subscribe to unlock AI stock analysis</h2>
+                <p class="no-plan-card__desc">Stock analysis and the full 10-pillar value report are available with an Explorer, Investor, or Professional plan. Choose a plan to start analyzing any ticker.</p>
+                <a href="/#pricing" class="no-plan-card__btn">
+                    View plans
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+            </div>
+
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="actions-grid">
+                <a href="/#pricing" class="action-card">
+                    <div class="action-card__icon action-card__icon--blue">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="4" height="9" rx="1" fill="#3B82F6" opacity="0.4"/><rect x="10" y="7" width="4" height="13" rx="1" fill="#3B82F6" opacity="0.6"/><rect x="17" y="3" width="4" height="17" rx="1" fill="#3B82F6"/></svg>
+                    </div>
+                    <div>
+                        <div class="action-card__title">View Plans</div>
+                        <div class="action-card__desc">Explore subscription options and upgrade your investment intelligence.</div>
+                    </div>
+                </a>
+                <a href="/onboarding/explorer.html" class="action-card">
+                    <div class="action-card__icon action-card__icon--teal">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#14B89C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div>
+                        <div class="action-card__title">Complete Onboarding</div>
+                        <div class="action-card__desc">Set up your investment profile and configure your AI agents.</div>
+                    </div>
+                </a>
+                <a href="/resources.html" class="action-card">
+                    <div class="action-card__icon action-card__icon--purple">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="#A78BFA" stroke-width="1.5"/></svg>
+                    </div>
+                    <div>
+                        <div class="action-card__title">Resources</div>
+                        <div class="action-card__desc">Access free investment tools, guides, and market insights.</div>
+                    </div>
+                </a>
+                <a href="/blog.html" class="action-card">
+                    <div class="action-card__icon action-card__icon--amber">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#F59E0B" stroke-width="1.5"/><polyline points="14 2 14 8 20 8" stroke="#F59E0B" stroke-width="1.5"/><line x1="16" y1="13" x2="8" y2="13" stroke="#F59E0B" stroke-width="1.5"/><line x1="16" y1="17" x2="8" y2="17" stroke="#F59E0B" stroke-width="1.5"/></svg>
+                    </div>
+                    <div>
+                        <div class="action-card__title">Blog & Insights</div>
+                        <div class="action-card__desc">Read the latest from our AI agents on market opportunities.</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="upgrade-banner">
+                <div class="upgrade-banner__text">
+                    <div class="upgrade-banner__title">Unlock the full power of LIUV AI</div>
+                    <div class="upgrade-banner__desc">Get unlimited AI analyses, DCF modeling, and real-time alerts with a paid plan.</div>
+                </div>
+                <a href="/#pricing" class="upgrade-banner__btn">
+                    View Plans
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M9 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </a>
+            </div>
+        </main>
+
+        <footer class="footer-minimal">
+            <p>&copy; 2026 LIUV Ventures. All rights reserved. &nbsp;|&nbsp; <a href="mailto:contact@liuv.io" style="color:var(--text-dim);">Need help? contact@liuv.io</a></p>
+        </footer>
+    </div>
+
+    <script>
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/auth/check');
+                const data = await res.json();
+
+                if (!data.authenticated) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                if (data.user.plan && data.user.plan.trim()) {
+                    window.location.href = '/dashboard.html';
+                    return;
+                }
+
+                renderDashboard(data.user);
+            } catch {
+                window.location.href = '/login.html';
+            }
+        }
+
+        function renderDashboard(user) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('authContent').style.display = 'flex';
+
+            const firstName = (user.name || user.email.split('@')[0]).split(' ')[0];
+            document.getElementById('greetingName').textContent = firstName;
+            document.getElementById('userName').textContent = user.name || user.email;
+            document.getElementById('userAvatar').textContent = (user.name || user.email)[0].toUpperCase();
+            document.getElementById('userEmail').textContent = user.email;
+
+            const providerNames = {
+                email: 'Email',
+                google: 'Google',
+                microsoft: 'Microsoft',
+                apple: 'Apple',
+                facebook: 'Facebook',
+                linkedin: 'LinkedIn',
+                amazon: 'Amazon',
+            };
+            document.getElementById('authMethod').textContent = providerNames[user.provider] || 'Email';
+
+            if (user.createdAt) {
+                const date = new Date(user.createdAt);
+                document.getElementById('accountSince').textContent = 'Member since ' + date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            }
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'page_view', { page_title: 'Dashboard (no plan)', user_plan: 'none' });
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+            } catch {}
+            window.location.href = '/';
+        }
+
+        checkAuth();
+    </script>
+</body>
+</html>

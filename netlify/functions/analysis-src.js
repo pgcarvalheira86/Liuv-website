@@ -1,4 +1,5 @@
-import { getTokenFromCookie, verifyToken, findUserByEmail, jsonResponse } from '../../lib/auth-utils.js';
+import { connectLambda } from '@netlify/blobs';
+import { getTokenFromCookie, verifyToken, findUserByEmail, updateUser, getStripeCustomerMapping, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { dirname, resolve } from 'path';
@@ -220,6 +221,11 @@ async function runStep(ticker, step, apiKey, yahooContext) {
 }
 
 export async function handler(event) {
+  try {
+    connectLambda(event);
+    setBlobsContextFromEvent(event);
+  } catch (_) {}
+
   if (event.httpMethod === 'OPTIONS') {
     return jsonResponse({}, 200);
   }
@@ -263,7 +269,13 @@ export async function handler(event) {
     const step = Math.max(1, Math.min(5, parseInt(body.step, 10) || 1));
     const refresh = !!body.refresh;
 
-    const user = await findUserByEmail(payload.email);
+    let user = await findUserByEmail(payload.email);
+    if (!user?.plan && user?.stripeCustomerId) {
+      const mapping = await getStripeCustomerMapping(user.stripeCustomerId);
+      if (mapping?.plan) {
+        user = (await updateUser(user.email, { plan: mapping.plan })) || user;
+      }
+    }
     if (!user?.plan) {
       return jsonResponse({ error: 'Active subscription required to run analysis' }, 403);
     }

@@ -180,34 +180,6 @@
         }
         .analysis-card__btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
         .analysis-card__btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        .no-plan-card {
-            padding: 40px 36px; background: var(--bg-card);
-            border: 1px solid rgba(20,184,156,0.2); border-radius: 12px;
-            margin-bottom: 40px; text-align: center;
-        }
-        .no-plan-card__icon {
-            width: 72px; height: 72px; margin: 0 auto 20px;
-            border-radius: 16px; background: var(--accent-teal-dim);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--accent-teal);
-        }
-        .no-plan-card__title {
-            font-family: var(--font-display); font-size: 24px; font-weight: 700;
-            margin-bottom: 12px; color: var(--text-primary);
-        }
-        .no-plan-card__desc {
-            font-size: 15px; color: var(--text-muted); line-height: 1.7;
-            max-width: 480px; margin: 0 auto 24px;
-        }
-        .no-plan-card__btn {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: var(--accent-teal); color: var(--bg-primary);
-            padding: 14px 28px; border-radius: 8px; font-weight: 600; font-size: 15px;
-            transition: all 0.2s;
-        }
-        .no-plan-card__btn:hover { opacity: 0.9; transform: translateY(-1px); color: var(--bg-primary); }
-
         .analysis-result {
             margin-top: 24px; padding: 20px 24px; background: var(--bg-primary);
             border: 1px solid rgba(255,255,255,0.06); border-radius: 10px;
@@ -415,19 +387,7 @@
                 </div>
             </div>
 
-            <div id="dashboardNoPlanView" class="no-plan-card" style="display:none;">
-                <div class="no-plan-card__icon">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <h2 class="no-plan-card__title">Subscribe to unlock AI stock analysis</h2>
-                <p class="no-plan-card__desc">Stock analysis and the full 10-pillar value report are available with an Explorer, Investor, or Professional plan. Choose a plan to start analyzing any ticker.</p>
-                <a href="/#pricing" class="no-plan-card__btn">
-                    View plans
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </a>
-            </div>
-
-            <div id="dashboardAnalysisSection" class="analysis-card">
+            <div class="analysis-card">
                 <h2 class="section-title">Analyze a stock</h2>
                 <p class="dash-header__sub" style="margin-bottom: 20px;">Get a brief value-investing style analysis for any ticker.</p>
                 <div class="analysis-card__row">
@@ -519,6 +479,11 @@
                     return;
                 }
 
+                if (!data.user.plan || !data.user.plan.trim()) {
+                    window.location.href = '/dashboard-no-plan.html';
+                    return;
+                }
+
                 renderDashboard(data.user);
             } catch {
                 window.location.href = '/login.html';
@@ -547,35 +512,21 @@
             };
             document.getElementById('authMethod').textContent = providerNames[user.provider] || 'Email';
 
-            const hasPlan = !!(user.plan && user.plan.trim());
-            const noPlanView = document.getElementById('dashboardNoPlanView');
-            const analysisSection = document.getElementById('dashboardAnalysisSection');
+            document.querySelector('.dash-header__sub').textContent = "Your AI agents are monitoring the markets. Here's your overview.";
+            document.getElementById('planName').textContent = user.plan;
+            document.getElementById('planNote').textContent = 'Active subscription';
+
+            const planLinks = {
+                Explorer: '/onboarding/explorer.html',
+                Investor: '/onboarding/investor.html',
+                Professional: '/onboarding/professional.html',
+            };
+            document.getElementById('onboardingLink').href = planLinks[user.plan] || '/onboarding/explorer.html';
+
             const upgradeBanner = document.getElementById('upgradeBanner');
-            const dashSub = document.querySelector('.dash-header__sub');
-
-            if (hasPlan) {
-                noPlanView.style.display = 'none';
-                analysisSection.style.display = 'block';
-                dashSub.textContent = "Your AI agents are monitoring the markets. Here's your overview.";
-                document.getElementById('planName').textContent = user.plan;
-                document.getElementById('planNote').textContent = 'Active subscription';
-
-                const planLinks = {
-                    Explorer: '/onboarding/explorer.html',
-                    Investor: '/onboarding/investor.html',
-                    Professional: '/onboarding/professional.html',
-                };
-                document.getElementById('onboardingLink').href = planLinks[user.plan] || '/onboarding/explorer.html';
-
-                if (user.plan === 'Professional') {
-                    upgradeBanner.style.display = 'none';
-                } else {
-                    upgradeBanner.style.display = '';
-                }
+            if (user.plan === 'Professional') {
+                upgradeBanner.style.display = 'none';
             } else {
-                noPlanView.style.display = 'block';
-                analysisSection.style.display = 'none';
-                dashSub.textContent = 'Subscribe to unlock AI stock analysis and your full dashboard.';
                 upgradeBanner.style.display = '';
             }
 
