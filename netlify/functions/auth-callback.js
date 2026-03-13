@@ -1,6 +1,6 @@
 import { connectLambda } from '@netlify/blobs';
 import { exchangeCodeForToken, fetchUserInfo, getSiteUrl } from '../../lib/oauth-providers.js';
-import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, getCookieDomain, redirectResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
+import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, redirectResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
 import { sendConversionEmail } from '../../lib/email-utils.js';
 import { sendLoginNotification } from '../../lib/chat-notify.js';
 
@@ -102,10 +102,8 @@ export async function handler(event) {
       provider: providerName,
     }).catch(err => console.error('[CHAT-NOTIFY]', err.message));
 
-    const host = event.headers?.host || event.headers?.Host;
-    const domain = getCookieDomain(host);
     return redirectResponse(`${siteUrl}/dashboard.html`, {
-      'Set-Cookie': setAuthCookie(jwtToken, domain ? { domain } : {}),
+      'Set-Cookie': setAuthCookie(jwtToken),
     });
   } catch (err) {
     console.error('[AUTH-CALLBACK]', err.message);
