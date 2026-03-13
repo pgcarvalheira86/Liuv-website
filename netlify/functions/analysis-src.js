@@ -264,8 +264,8 @@ export async function handler(event) {
     const refresh = !!body.refresh;
 
     const user = await findUserByEmail(payload.email);
-    if (user?.plan === null && process.env.ANALYSIS_REQUIRES_PLAN === 'true') {
-      return jsonResponse({ error: 'Active plan required to run analysis' }, 403);
+    if (!user?.plan) {
+      return jsonResponse({ error: 'Active subscription required to run analysis' }, 403);
     }
 
     const stepCacheKey = 'step:' + ticker + ':' + step;
