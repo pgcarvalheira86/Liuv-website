@@ -1,4 +1,4 @@
-import { getTokenFromCookie, verifyToken, findUserByEmail, jsonResponse } from '../../lib/auth-utils.mjs';
+import { getTokenFromCookie, verifyToken, findUserByEmail, jsonResponse } from '../../lib/auth-utils.js';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { dirname, resolve } from 'path';

@@ -1,5 +1,5 @@
 import { connectLambda } from '@netlify/blobs';
-import { getTokenFromCookie, verifyToken, findUserByEmail, updateUser, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.mjs';
+import { getTokenFromCookie, verifyToken, findUserByEmail, updateUser, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
 
 const ALLOWED_PLANS = ['Explorer', 'Investor', 'Professional'];
 

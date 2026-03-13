@@ -1,5 +1,5 @@
-import { sendConversionEmail } from '../../lib/email-utils.mjs';
-import { getTokenFromCookie, verifyToken, jsonResponse } from '../../lib/auth-utils.mjs';
+import { sendConversionEmail } from '../../lib/email-utils.js';
+import { getTokenFromCookie, verifyToken, jsonResponse } from '../../lib/auth-utils.js';
 
 // Public notification endpoint for triggering conversion emails
 // Called from the client on specific conversion events (e.g., thank-you page visit, onboarding completion)

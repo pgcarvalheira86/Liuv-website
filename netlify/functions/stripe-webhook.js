@@ -1,6 +1,6 @@
 import { createHmac } from 'crypto';
-import { findUserByEmail, linkStripeCustomer, jsonResponse } from '../../lib/auth-utils.mjs';
-import { sendConversionEmail } from '../../lib/email-utils.mjs';
+import { findUserByEmail, linkStripeCustomer, jsonResponse } from '../../lib/auth-utils.js';
+import { sendConversionEmail } from '../../lib/email-utils.js';
 
 // Stripe webhook handler
 // Receives events from Stripe and links payments to user accounts

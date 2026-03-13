@@ -1,5 +1,5 @@
 import { connectLambda } from '@netlify/blobs';
-import { getTokenFromCookie, verifyToken, findUserByEmail, createUser, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.mjs';
+import { getTokenFromCookie, verifyToken, findUserByEmail, createUser, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
 
 export async function handler(event) {
   try {

@@ -1,4 +1,4 @@
-import { clearAuthCookie, jsonResponse, redirectResponse } from '../../lib/auth-utils.mjs';
+import { clearAuthCookie, jsonResponse, redirectResponse } from '../../lib/auth-utils.js';
 
 export async function handler(event) {
   // Support both GET (redirect) and POST (API)
