@@ -359,7 +359,12 @@ async function runStep(ticker, step, apiKey, yahooContext) {
     } catch {
       errBody = { error: raw };
     }
-    const msg = errBody.error?.message || errBody.error?.type || (typeof errBody.error === 'string' ? errBody.error : null) || (raw && raw.length < 200 ? raw : `API ${res.status}`);
+    const msg =
+      errBody.error?.message
+      || errBody.error?.type
+      || (typeof errBody.error === 'string' ? errBody.error : null)
+      || (raw && raw.length < 300 ? raw : null)
+      || `API error ${res.status}`;
     throw new Error(msg);
   }
 
@@ -460,13 +465,15 @@ ${placeholderLine}`;
       done: step === 5,
     });
   } catch (err) {
-    console.error('[ANALYSIS] Error:', err.message);
-    const msg = err.message || '';
-    let userError = 'Analysis failed';
-    if (msg.includes('invalid') && msg.toLowerCase().includes('key')) userError = 'Invalid API key. Check ANTHROPIC_API_KEY in Netlify.';
+    const msg = (err && err.message) ? String(err.message).trim() : String(err || 'Unknown error');
+    console.error('[ANALYSIS] Error:', msg);
+    let userError = 'Analysis failed. Try again.';
+    if (msg.includes('invalid') && msg.toLowerCase().includes('key')) userError = 'Invalid API key. Set ANTHROPIC_API_KEY in Netlify site env vars.';
     else if (msg.includes('model') || msg.includes('not found')) userError = 'Model unavailable. Try again later.';
-    else if (msg.includes('rate') || msg.includes('quota')) userError = 'Rate limit reached. Try again in a few minutes.';
-    else if (msg.length > 0 && msg.length < 200) userError = msg;
+    else if (msg.includes('rate') || msg.includes('quota') || msg.includes('429')) userError = 'Rate limit reached. Try again in a few minutes.';
+    else if (msg.includes('Empty response')) userError = 'AI returned no content. Try again.';
+    else if (msg.includes('fetch failed') || msg.includes('timeout') || msg.includes('ETIMEDOUT') || msg.includes('network')) userError = 'Network error talking to AI. Try again.';
+    else if (msg.length > 0) userError = msg.length <= 220 ? msg : msg.slice(0, 217) + '…';
     return jsonResponse({ error: userError }, 502);
   }
 }
