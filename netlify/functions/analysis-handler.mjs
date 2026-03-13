@@ -4,9 +4,13 @@ import { dirname, resolve } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const authUtilsPathFromRepo = resolve(__dirname, '../../lib/auth-utils.mjs');
-const authUtilsPathFromServe = resolve(__dirname, '../../../lib/auth-utils.mjs');
-const authUtilsPath = existsSync(authUtilsPathFromRepo) ? authUtilsPathFromRepo : authUtilsPathFromServe;
+const authUtilsCandidates = [
+  resolve(__dirname, 'lib/auth-utils.mjs'),
+  resolve(__dirname, '../../lib/auth-utils.mjs'),
+  resolve(__dirname, '../../../lib/auth-utils.mjs'),
+];
+const authUtilsPath = authUtilsCandidates.find(existsSync);
+if (!authUtilsPath) throw new Error('auth-utils.mjs not found (tried: ' + authUtilsCandidates.join(', ') + ')');
 const { getTokenFromCookie, verifyToken, findUserByEmail, jsonResponse } = await import(pathToFileURL(authUtilsPath).href);
 
 let envLoaded = false;
