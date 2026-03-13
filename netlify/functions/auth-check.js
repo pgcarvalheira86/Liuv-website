@@ -1,5 +1,5 @@
 import { connectLambda } from '@netlify/blobs';
-import { getTokenFromCookie, verifyToken, findUserByEmail, createUser, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
+import { getTokenFromCookie, verifyToken, findUserByEmail, createUser, updateUser, getStripeCustomerMapping, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
 
 export async function handler(event) {
   try {
@@ -42,6 +42,13 @@ export async function handler(event) {
           provider: 'email',
           createdAt: payload.iat ? new Date(payload.iat * 1000).toISOString() : new Date().toISOString(),
         };
+      }
+    }
+
+    if (!user.plan && user.stripeCustomerId) {
+      const mapping = await getStripeCustomerMapping(user.stripeCustomerId);
+      if (mapping?.plan) {
+        user = (await updateUser(user.email, { plan: mapping.plan })) || user;
       }
     }
 

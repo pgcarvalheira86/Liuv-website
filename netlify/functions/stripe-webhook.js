@@ -1,5 +1,5 @@
 import { createHmac } from 'crypto';
-import { findUserByEmail, linkStripeCustomer, jsonResponse } from '../../lib/auth-utils.js';
+import { findUserByEmail, linkStripeCustomer, syncUserPlanFromStripeCustomer, jsonResponse } from '../../lib/auth-utils.js';
 import { sendConversionEmail } from '../../lib/email-utils.js';
 
 // Stripe webhook handler
@@ -60,7 +60,9 @@ export async function handler(event) {
       case 'customer.subscription.created': {
         const customerId = data.customer;
         const plan = extractPlanFromSubscription(data);
-
+        if (plan && customerId) {
+          await syncUserPlanFromStripeCustomer(customerId, plan);
+        }
         await sendConversionEmail({
           eventType: 'Subscription Created',
           userEmail: customerId,
@@ -71,8 +73,11 @@ export async function handler(event) {
       }
 
       case 'customer.subscription.updated': {
+        const customerId = data.customer;
         const plan = extractPlanFromSubscription(data);
-
+        if (customerId) {
+          await syncUserPlanFromStripeCustomer(customerId, plan || null);
+        }
         await sendConversionEmail({
           eventType: 'Subscription Updated',
           userEmail: data.customer,
@@ -83,6 +88,10 @@ export async function handler(event) {
       }
 
       case 'customer.subscription.deleted': {
+        const customerId = data.customer;
+        if (customerId) {
+          await syncUserPlanFromStripeCustomer(customerId, null);
+        }
         await sendConversionEmail({
           eventType: 'Subscription Cancelled',
           userEmail: data.customer,
