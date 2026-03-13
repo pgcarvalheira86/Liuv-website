@@ -5,6 +5,9 @@
 [functions]
   node_bundler = "esbuild"
 
+[functions.analysis]
+  timeout = 60
+
 # API route redirects for clean URLs
 [[redirects]]
   from = "/api/auth/signup"
