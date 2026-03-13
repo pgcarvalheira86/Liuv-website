@@ -1,7 +1,13 @@
-import { getTokenFromCookie, verifyToken, findUserByEmail, jsonResponse } from '../../lib/auth-utils.mjs';
+import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const authUtilsPathFromRepo = resolve(__dirname, '../../lib/auth-utils.mjs');
+const authUtilsPathFromServe = resolve(__dirname, '../../../lib/auth-utils.mjs');
+const authUtilsPath = existsSync(authUtilsPathFromRepo) ? authUtilsPathFromRepo : authUtilsPathFromServe;
+const { getTokenFromCookie, verifyToken, findUserByEmail, jsonResponse } = await import(pathToFileURL(authUtilsPath).href);
 
 let envLoaded = false;
 async function loadEnvIfNeeded() {
@@ -9,7 +15,8 @@ async function loadEnvIfNeeded() {
   envLoaded = true;
   try {
     const dir = dirname(fileURLToPath(import.meta.url));
-    const raw = await readFile(resolve(dir, '../../.env'), 'utf8');
+    const envPath = existsSync(resolve(dir, '../../.env')) ? resolve(dir, '../../.env') : resolve(dir, '../../../.env');
+    const raw = await readFile(envPath, 'utf8');
     for (const line of raw.split('\n')) {
       const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
       if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '').trim();
@@ -477,11 +484,27 @@ ${placeholderLine}`;
       else if (msg.includes('Empty response')) userError = 'AI returned no content. Try again.';
       else if (msg.includes('fetch failed') || msg.includes('timeout') || msg.includes('ETIMEDOUT') || msg.includes('network')) userError = 'Network error talking to AI. Try again.';
       else if (msg.length > 0) userError = msg.length <= 220 ? msg : msg.slice(0, 217) + '…';
-      return jsonResponse({ error: userError }, 502);
+      const payload = { error: userError };
+      if (body.debug) payload.errorDetail = msg.slice(0, 500);
+      return jsonResponse(payload, 502);
     }
   } catch (outerErr) {
-    const msg = (outerErr && outerErr.message) ? String(outerErr.message).trim() : String(outerErr || 'Unknown error');
-    console.error('[ANALYSIS] Unhandled error:', msg);
-    return jsonResponse({ error: 'Analysis failed. Try again.' }, 502);
+    const msg = (outerErr?.message && String(outerErr.message).trim())
+      || (outerErr?.code && String(outerErr.code))
+      || String(outerErr || 'Unknown error').trim();
+    console.error('[ANALYSIS] Unhandled error:', msg, outerErr);
+    let userError = 'Analysis failed. Try again.';
+    if (msg.includes('invalid') && msg.toLowerCase().includes('key')) userError = 'Invalid API key. Set ANTHROPIC_API_KEY in Netlify site env vars.';
+    else if (msg.includes('model') || msg.includes('not found')) userError = 'Model unavailable. Try again later.';
+    else if (msg.includes('rate') || msg.includes('quota') || msg.includes('429')) userError = 'Rate limit reached. Try again in a few minutes.';
+    else if (msg.includes('fetch failed') || msg.includes('timeout') || msg.includes('ETIMEDOUT') || msg.includes('network') || msg.includes('ECONNREFUSED')) userError = 'Network error. Try again.';
+    else if (msg.length > 0 && msg.length <= 220) userError = msg;
+    else if (msg.length > 220) userError = msg.slice(0, 217) + '…';
+    const payload = { error: userError };
+    try {
+      const reqBody = typeof event.body === 'string' ? JSON.parse(event.body) : event.body || {};
+      if (reqBody.debug) payload.errorDetail = msg.slice(0, 500);
+    } catch (_) {}
+    return jsonResponse(payload, 502);
   }
 }
