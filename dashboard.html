@@ -192,6 +192,70 @@
             font-family: var(--font-mono); font-weight: 600; color: var(--accent-teal);
             margin-bottom: 12px; font-size: 12px; letter-spacing: 2px;
         }
+        .analysis-result__step {
+            margin-top: 24px;
+        }
+        .analysis-result__step:first-of-type { margin-top: 0; }
+        .analysis-result__step.report { white-space: normal; }
+        .report { font-size: 14px; line-height: 1.75; color: var(--text-primary); }
+        .report__h1 { font-size: 18px; font-weight: 700; color: var(--text-primary); margin: 24px 0 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(20,184,156,0.25); letter-spacing: 0.5px; }
+        .report__h1:first-child { margin-top: 0; }
+        .report__h2 { font-size: 15px; font-weight: 600; color: var(--accent-teal); margin: 20px 0 10px; }
+        .report__h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 14px 0 8px; }
+        .report p { margin-bottom: 12px; }
+        .report p:last-child { margin-bottom: 0; }
+        .report strong { color: var(--text-primary); font-weight: 600; }
+        .report__hr { border: none; height: 1px; background: rgba(255,255,255,0.08); margin: 20px 0; }
+        .report-table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; border-radius: 8px; overflow: hidden; }
+        .report-table th, .report-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .report-table th { background: rgba(20,184,156,0.12); color: var(--accent-teal); font-weight: 600; }
+        .report-table tr:last-child td { border-bottom: none; }
+        .report-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .report ul { margin: 10px 0 16px 20px; padding: 0; list-style: none; }
+        .report ul li { margin-bottom: 8px; padding-left: 16px; position: relative; }
+        .report ul li::before { content: '+'; position: absolute; left: 0; color: var(--accent-teal); font-weight: 600; }
+        .report ul.bear li::before { content: '—'; color: var(--text-dim); }
+        .asection { margin-bottom: 28px; }
+        .asection:last-child { margin-bottom: 0; }
+        .asection__title {
+            font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--accent-teal); margin-bottom: 10px; font-weight: 600;
+            padding-bottom: 6px; border-bottom: 1px solid rgba(20,184,156,0.2);
+        }
+        .asection__body { color: var(--text-primary); line-height: 1.75; }
+        .asection__body p { margin-bottom: 12px; }
+        .asection__body p:last-child { margin-bottom: 0; }
+        .ametrics {
+            font-family: var(--font-mono); font-size: 13px;
+            color: var(--text-muted); margin: 10px 0 14px;
+            padding: 12px 16px; background: rgba(20,184,156,0.08);
+            border: 1px solid rgba(20,184,156,0.15); border-radius: 8px;
+            overflow-x: auto;
+        }
+        .apillar { display: block; margin-bottom: 12px; padding: 14px 16px; background: rgba(255,255,255,0.04); border-radius: 8px; border-left: 4px solid rgba(255,255,255,0.1); }
+        .apillar--strong { border-left-color: var(--accent-teal); }
+        .apillar--good { border-left-color: #22c55e; }
+        .apillar--exceptional { border-left-color: #a78bfa; }
+        .apillar--weak { border-left-color: #f59e0b; }
+        .apillar__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 6px; }
+        .apillar__name { font-weight: 600; color: var(--text-primary); }
+        .apillar__score { color: var(--accent-teal); font-family: var(--font-mono); font-weight: 500; }
+        .apillar__verdict { font-size: 12px; padding: 2px 8px; border-radius: 4px; font-weight: 500; }
+        .apillar__verdict--strong { background: rgba(20,184,156,0.2); color: #5eead4; }
+        .apillar__verdict--good { background: rgba(34,197,94,0.2); color: #4ade80; }
+        .apillar__verdict--exceptional { background: rgba(167,139,250,0.2); color: #c4b5fd; }
+        .apillar__verdict--weak { background: rgba(245,158,11,0.2); color: #fbbf24; }
+        .apillar__line { width: 100%; font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-top: 6px; }
+        .abullet { margin-left: 18px; margin-bottom: 8px; padding-left: 4px; }
+        .abullet::before { content: '+'; margin-right: 8px; color: var(--accent-teal); font-weight: 600; }
+        .abear::before { content: '—'; color: var(--text-dim); }
+        .adcf-grid { display: grid; gap: 8px 20px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); margin: 12px 0; font-size: 13px; color: var(--text-muted); }
+        .ascenario { margin-bottom: 24px; padding: 18px; background: rgba(255,255,255,0.04); border-radius: 10px; border-left: 4px solid var(--accent-teal); }
+        .ascenario__name { font-weight: 600; color: var(--accent-teal); margin-bottom: 6px; font-size: 15px; }
+        .ascenario__driver { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+        .ascenario__outcome { font-size: 13px; margin-top: 10px; color: var(--text-primary); line-height: 1.5; }
+        .ascenario .report-table { margin: 10px 0; }
+        .adisclaimer { font-size: 12px; color: var(--text-dim); margin-top: 20px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); line-height: 1.6; }
 
         /* Quick actions */
         .section-title {
@@ -339,6 +403,10 @@
                         </svg>
                     </button>
                 </div>
+                <label class="analysis-card__refresh" style="display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-size:13px;color:var(--text-muted);cursor:pointer;">
+                    <input type="checkbox" id="refreshDataCheckbox" style="accent-color:var(--accent-teal);">
+                    Use latest price data (skip cache)
+                </label>
                 <div class="analysis-result" id="analysisResult" role="status"></div>
             </div>
 
@@ -476,6 +544,196 @@
             window.location.href = '/';
         }
 
+        function escapeHtml(text) {
+            return (text || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+        }
+
+        function formatRawReport(text) {
+            if (!text || typeof text !== 'string') return '';
+            var raw = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            var out = [];
+            var lines = raw.split(/\n/);
+            var i = 0;
+            function peek() { return lines[i]; }
+            function take() { return lines[i++]; }
+            function tableFromRows(rows) {
+                if (rows.length < 2) return rows.map(function(r){ return '<p>' + r + '</p>'; }).join('');
+                var header = rows[0].split(/\s*\|\s*/).filter(Boolean);
+                var body = rows.slice(1).filter(function(r){ return /\|/.test(r); }).map(function(r){ return r.split(/\s*\|\s*/).filter(Boolean); });
+                var html = '<table class="report-table"><thead><tr>';
+                header.forEach(function(c){ html += '<th>' + c.trim() + '</th>'; });
+                html += '</tr></thead><tbody>';
+                body.forEach(function(row){
+                    html += '<tr>';
+                    row.forEach(function(c){ html += '<td>' + c.trim() + '</td>'; });
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+                return html;
+            }
+            while (i < lines.length) {
+                var line = lines[i];
+                var trimmed = line.trim();
+                if (/^#{1,3}\s+/.test(trimmed)) {
+                    var level = trimmed.match(/^(#{1,3})/)[1].length;
+                    var title = trimmed.replace(/^#{1,3}\s*/, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    var cls = level === 1 ? 'report__h1' : (level === 2 ? 'report__h2' : 'report__h3');
+                    out.push('<div class="' + cls + '">' + title + '</div>');
+                    i++;
+                    continue;
+                }
+                if (/^---+$/.test(trimmed)) {
+                    out.push('<hr class="report__hr">');
+                    i++;
+                    continue;
+                }
+                if ((/^\|\s*.+\s*\|/.test(trimmed) || (trimmed.indexOf('|') !== -1 && trimmed.split(/\s*\|\s*/).length >= 2)) && !/^#+\s/.test(trimmed)) {
+                    var tableRows = [];
+                    while (i < lines.length) {
+                        var ln = lines[i];
+                        var t = ln.trim();
+                        if (!t) break;
+                        if (/^\|\s*.+\s*\|/.test(t) || (t.indexOf('|') !== -1 && t.split(/\s*\|\s*/).length >= 2 && !/^#+\s/.test(t)))
+                            tableRows.push(ln);
+                        else break;
+                        i++;
+                    }
+                    if (tableRows.length) out.push(tableFromRows(tableRows));
+                    else i++;
+                    continue;
+                }
+                if (/^\s*[\+\-\*]\s+/.test(trimmed) || /^\s*—\s+/.test(trimmed)) {
+                    var listClass = /^\s*—\s+/.test(trimmed) ? ' class="bear"' : '';
+                    out.push('<ul' + listClass + '>');
+                    while (i < lines.length && (/^\s*[\+\-\*]\s+/.test(lines[i]) || /^\s*—\s+/.test(lines[i]))) {
+                        var bullet = lines[i].replace(/^\s*[\+\-\*—]\s+/, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        out.push('<li>' + bullet + '</li>');
+                        i++;
+                    }
+                    out.push('</ul>');
+                    continue;
+                }
+                if (/^\d+\)\s+/.test(trimmed)) {
+                    out.push('<ul style="list-style:decimal;margin-left:20px;">');
+                    while (i < lines.length && /^\d+\)\s+/.test(lines[i])) {
+                        var numLine = lines[i].replace(/^\d+\)\s+/, '').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                        out.push('<li>' + numLine + '</li>');
+                        i++;
+                    }
+                    out.push('</ul>');
+                    continue;
+                }
+                if (trimmed === '') {
+                    i++;
+                    continue;
+                }
+                var para = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                out.push('<p>' + para + '</p>');
+                i++;
+            }
+            return '<div class="report">' + out.join('') + '</div>';
+        }
+
+        function verdictClass(v) {
+            if (!v) return '';
+            var vv = (v + '').toLowerCase();
+            if (vv === 'strong') return 'apillar--strong apillar__verdict--strong';
+            if (vv === 'good') return 'apillar--good apillar__verdict--good';
+            if (vv === 'exceptional') return 'apillar--exceptional apillar__verdict--exceptional';
+            if (vv === 'weak') return 'apillar--weak apillar__verdict--weak';
+            return '';
+        }
+
+        function renderStepData(step, data) {
+            if (!data || typeof data !== 'object') return '';
+            const e = escapeHtml;
+            const wrap = function(title, body) {
+                return '<div class="asection"><div class="asection__title">' + e(title) + '</div><div class="asection__body">' + body + '</div></div>';
+            };
+            function pillarHtml(p) {
+                var vc = verdictClass(p.verdict);
+                var badgeClass = vc ? vc.split(' ').filter(function(c){ return c.indexOf('apillar__verdict') === 0; })[0] || '' : '';
+                return '<div class="apillar ' + vc + '"><div class="apillar__head"><span class="apillar__name">' + e(p.name || '') + '</span><span class="apillar__score">' + (p.score != null ? p.score + '/10' : '') + '</span><span class="apillar__verdict ' + badgeClass + '">' + e(p.verdict || '') + '</span></div>' + (p.line ? '<div class="apillar__line">' + e(p.line) + '</div>' : '') + '</div>';
+            }
+            if (step === 1) {
+                if (data.error) return '<div class="report">' + wrap('Error', '<p>' + e(data.message || data.error) + '</p>') + '</div>';
+                var s = '';
+                if (data.companyName || data.ticker) s += '<p><strong>' + e(data.companyName || '') + '</strong> ' + e(data.exchange || '') + ' ' + e(data.ticker || '') + '</p>';
+                if (data.tagline) s += '<p style="color:var(--text-muted);">' + e(data.tagline) + '</p>';
+                if (data.metricsLine) s += '<div class="ametrics">' + e(data.metricsLine) + '</div>';
+                if (data.overallScore != null || data.overallVerdict) s += '<p><strong>Overall LIUV 10-Pillar Score:</strong> ' + e(String(data.overallScore ?? '')) + ' / 10 — ' + e(data.overallVerdict || '') + '</p>';
+                if (data.oneLineSummary) s += '<p>' + e(data.oneLineSummary) + '</p>';
+                if (data.overview) s += '<p>' + e(data.overview) + '</p>';
+                if (data.thesis) s += '<p><strong>Investment thesis</strong> ' + e(data.thesis) + '</p>';
+                return s ? '<div class="report">' + wrap('Overview', s) + '</div>' : '';
+            }
+            if (step === 2 && Array.isArray(data.pillars)) {
+                var s = data.pillars.map(pillarHtml).join('');
+                return '<div class="report">' + wrap('Pillar scores', s) + '</div>';
+            }
+            if (step === 3) {
+                var s = '';
+                if (Array.isArray(data.bullCase) && data.bullCase.length) s += '<div class="asection__title">Bull case</div><div class="asection__body">' + data.bullCase.map(function(b){ return '<div class="abullet">' + e(b) + '</div>'; }).join('') + '</div>';
+                if (Array.isArray(data.bearCase) && data.bearCase.length) s += '<div class="asection__title">Bear case</div><div class="asection__body">' + data.bearCase.map(function(b){ return '<div class="abullet abear">' + e(b) + '</div>'; }).join('') + '</div>';
+                if (data.dcf && typeof data.dcf === 'object') {
+                    var d = data.dcf;
+                    var dcfParts = [];
+                    if (d.fcfBase) dcfParts.push('FCF Base: ' + e(d.fcfBase));
+                    if (d.growth5yr) dcfParts.push('Growth (5yr): ' + e(d.growth5yr));
+                    if (d.terminalGrowth) dcfParts.push('Terminal: ' + e(d.terminalGrowth));
+                    if (d.discountRate) dcfParts.push('Discount rate: ' + e(d.discountRate));
+                    if (d.shares) dcfParts.push('Shares: ' + e(d.shares));
+                    if (d.intrinsicRange) dcfParts.push('Intrinsic range: ' + e(d.intrinsicRange));
+                    if (d.marginOfSafety) dcfParts.push('Margin of safety: ' + e(d.marginOfSafety));
+                    s += wrap('Simplified DCF', (dcfParts.length ? '<div class="ametrics">' + dcfParts.join(' | ') + '</div>' : '') + (d.grahamLine ? '<p>' + e(d.grahamLine) + '</p>' : ''));
+                }
+                if (data.verdict && (data.verdict.paragraph || data.verdict.verdict)) s += wrap('LIUV 10-Pillar Verdict', '<p><strong>' + e(data.verdict.verdict || '') + '</strong>' + (data.verdict.score != null ? ' — ' + e(String(data.verdict.score)) + ' / 10' : '') + '</p><p>' + e(data.verdict.paragraph || '') + '</p>');
+                return s ? '<div class="report">' + s + '</div>' : '';
+            }
+            if (step === 4) {
+                var s = '';
+                if (data.startingPoint && typeof data.startingPoint === 'object') {
+                    var sp = data.startingPoint;
+                    var spParts = [];
+                    if (sp.price) spParts.push('Price ' + e(sp.price));
+                    if (sp.eps) spParts.push('EPS ' + e(sp.eps));
+                    if (sp.fcf) spParts.push('FCF ' + e(sp.fcf));
+                    if (sp.revenue) spParts.push('Revenue ' + e(sp.revenue));
+                    if (sp.etfBaseline) spParts.push('ETF baseline ' + e(sp.etfBaseline));
+                    if (spParts.length) s += '<div class="ametrics">' + spParts.join(' | ') + '</div>';
+                }
+                if (Array.isArray(data.scenarios)) data.scenarios.forEach(function(sc) {
+                    s += '<div class="ascenario"><div class="ascenario__name">' + e(sc.name || '') + (sc.driver ? ' — ' + e(sc.driver) : '') + '</div>';
+                    if (sc.description) s += '<div class="ascenario__driver">' + e(sc.description) + '</div>';
+                    if (sc.table && Array.isArray(sc.table)) {
+                        s += '<table class="report-table"><thead><tr>';
+                        if (sc.table[0]) sc.table[0].forEach(function(c){ s += '<th>' + e(typeof c === 'string' ? c : (c && c.label || '')) + '</th>'; });
+                        s += '</tr></thead><tbody>';
+                        for (var r = 1; r < sc.table.length; r++) {
+                            s += '<tr>';
+                            (sc.table[r] || []).forEach(function(c){ s += '<td>' + e(typeof c === 'string' ? c : (c && (c.value || c))) + '</td>'; });
+                            s += '</tr>';
+                        }
+                        s += '</tbody></table>';
+                    }
+                    if (sc.year1 || sc.year5 || sc.year10) s += '<div class="ascenario__outcome">Y1: ' + e(sc.year1 || '') + ' | Y5: ' + e(sc.year5 || '') + ' | Y10: ' + e(sc.year10 || '') + '</div>';
+                    if (sc.invested10k) s += '<div class="ascenario__outcome">' + e(sc.invested10k) + (sc.annualizedReturn ? ' ' + e(sc.annualizedReturn) : '') + '</div>';
+                    if (sc.verdict) s += '<div class="ascenario__outcome">' + e(sc.verdict) + '</div>';
+                    s += '</div>';
+                });
+                if (data.readingTheScenarios) s += wrap('Reading the scenarios', '<p>' + e(data.readingTheScenarios) + '</p>');
+                return s ? '<div class="report">' + s + '</div>' : '';
+            }
+            if (step === 5) {
+                var s = '';
+                if (Array.isArray(data.pillars)) s += '<div class="asection__body">' + data.pillars.map(pillarHtml).join('') + '</div>';
+                if (data.overallScore != null || data.overallVerdict) s += '<p style="margin-top:14px;font-size:15px;"><strong>Overall ' + e(String(data.overallScore ?? '')) + ' / 10 — ' + e(data.overallVerdict || '') + '</strong></p>';
+                if (data.disclaimer) s += '<div class="adisclaimer">' + e(data.disclaimer) + '</div>';
+                return s ? '<div class="report"><div class="asection"><div class="asection__title">Score summary</div>' + s + '</div></div>' : '';
+            }
+            return '';
+        }
+
         async function runAnalysis() {
             const input = document.getElementById('tickerInput');
             const resultEl = document.getElementById('analysisResult');
@@ -491,31 +749,49 @@
             }
 
             resultEl.classList.remove('analysis-result--visible', 'analysis-result--error');
-            resultEl.textContent = '';
+            resultEl.innerHTML = '<span class="analysis-result__ticker">' + ticker + '</span>';
+            resultEl.classList.add('analysis-result--visible');
             btn.disabled = true;
-            btnText.textContent = 'Analyzing…';
             btnSpinner.style.display = 'inline-block';
 
-            try {
-                const res = await fetch('/api/analysis', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ticker }),
-                    credentials: 'include',
-                });
-                const data = await res.json();
+            const steps = [
+                'Overview & thesis',
+                'Pillar scores',
+                'Bull/bear & DCF',
+                'Scenarios',
+                'Summary & disclaimer'
+            ];
 
-                resultEl.classList.add('analysis-result--visible');
-                if (!res.ok) {
-                    resultEl.classList.add('analysis-result--error');
-                    resultEl.textContent = data.error || 'Analysis failed. Try again.';
-                    return;
+            try {
+                const refresh = document.getElementById('refreshDataCheckbox')?.checked ?? false;
+                for (let step = 1; step <= 5; step++) {
+                    btnText.textContent = 'Step ' + step + '/5: ' + steps[step - 1] + '…';
+                    const res = await fetch('/api/analysis', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ticker, step, refresh }),
+                        credentials: 'include',
+                    });
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        resultEl.classList.add('analysis-result--error');
+                        resultEl.innerHTML = '<span class="analysis-result__ticker">' + ticker + '</span>' + escapeHtml(data.error || 'Analysis failed. Try again.');
+                        return;
+                    }
+                    const part = (data.analysis || '').trim();
+                    const stepHtml = data.data ? renderStepData(step, data.data) : (part ? formatRawReport(part) : '');
+                    if (stepHtml) {
+                        const wrap = document.createElement('div');
+                        wrap.className = 'analysis-result__step' + (!data.data ? ' report' : '');
+                        wrap.innerHTML = stepHtml;
+                        resultEl.appendChild(wrap);
+                    }
                 }
                 resultEl.classList.remove('analysis-result--error');
-                resultEl.innerHTML = '<span class="analysis-result__ticker">' + (data.ticker || ticker) + '</span>' + (data.analysis || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
             } catch {
-                resultEl.classList.add('analysis-result--visible', 'analysis-result--error');
-                resultEl.textContent = 'Network error. Check your connection and try again.';
+                resultEl.classList.add('analysis-result--error');
+                resultEl.innerHTML = '<span class="analysis-result__ticker">' + ticker + '</span>Network error. Check your connection and try again.';
             } finally {
                 btn.disabled = false;
                 btnText.textContent = 'Run analysis';
