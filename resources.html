@@ -186,6 +186,8 @@
         .tool-card--compound .tool-card__icon { background: rgba(59, 130, 246, 0.12); }
         .tool-card--buffett::before { background: #F97316; }
         .tool-card--buffett .tool-card__icon { background: rgba(249, 115, 22, 0.12); }
+        .tool-card--health::before { background: #6366F1; }
+        .tool-card--health .tool-card__icon { background: rgba(99, 102, 241, 0.12); }
 
         @media (max-width: 768px) {
             .tools-grid { grid-template-columns: 1fr; }
@@ -287,7 +289,7 @@
     <div class="tools-section fade-in fade-in--d3">
         <div class="tools-section__overline">Value Investing Tools</div>
         <h2 class="tools-section__title">Institutional-grade analysis. <em style="font-style:italic;color:var(--accent-teal);">Free for everyone.</em></h2>
-        <p class="tools-section__subtitle">Eight interactive tools grounded in the Buffett & Graham methodology — the same framework our AI agents use. Enter any stock's data and get real analysis instantly.</p>
+        <p class="tools-section__subtitle">Nine interactive tools grounded in the Buffett & Graham methodology — the same framework our AI agents use. Enter any stock's data and get real analysis instantly.</p>
 
         <div class="tools-grid">
             <a href="/resources/graham-number.html" class="tool-card tool-card--graham">
@@ -370,6 +372,18 @@
                     </div>
                     <div class="tool-card__title">Buffett Indicator</div>
                     <div class="tool-card__desc">Track Warren Buffett's favorite market valuation metric — total stock market cap / GDP — with live Federal Reserve data, a visual gauge, and historical chart.</div>
+                    <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                </div>
+            </a>
+
+            <a href="/resources/market-health.html" class="tool-card tool-card--health">
+                <div class="tool-card__icon">&#128201;</div>
+                <div class="tool-card__content">
+                    <div class="tool-card__badges">
+                        <span class="tool-card__badge" style="color:#6366F1;background:rgba(99,102,241,0.15);">Dashboard</span>
+                    </div>
+                    <div class="tool-card__title">Market Health Dashboard</div>
+                    <div class="tool-card__desc">Three institutional-grade macro indicators in one view — Modern Buffett (P/S), Equity Risk Premium, and Classic Buffett (Cap/GDP). Live FRED data with traffic-light signals.</div>
                     <span class="tool-card__cta">Try it free <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 </div>
             </a>
