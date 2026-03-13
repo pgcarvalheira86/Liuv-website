@@ -1,8 +1,8 @@
 import { connectLambda } from '@netlify/blobs';
-import { exchangeCodeForToken, fetchUserInfo, getSiteUrl } from '../../lib/oauth-providers.mjs';
-import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, redirectResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.mjs';
-import { sendConversionEmail } from '../../lib/email-utils.mjs';
-import { sendLoginNotification } from '../../lib/chat-notify.mjs';
+import { exchangeCodeForToken, fetchUserInfo, getSiteUrl } from '../../lib/oauth-providers.js';
+import { findUserByEmail, createUser, updateUser, createToken, setAuthCookie, redirectResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
+import { sendConversionEmail } from '../../lib/email-utils.js';
+import { sendLoginNotification } from '../../lib/chat-notify.js';
 
 function getCallbackParams(event) {
   const q = event.queryStringParameters || {};

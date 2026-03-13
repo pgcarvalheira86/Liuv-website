@@ -1,5 +1,5 @@
-import { buildAuthUrl, providers, getClientCredentials } from '../../lib/oauth-providers.mjs';
-import { jsonResponse, redirectResponse } from '../../lib/auth-utils.mjs';
+import { buildAuthUrl, providers, getClientCredentials } from '../../lib/oauth-providers.js';
+import { jsonResponse, redirectResponse } from '../../lib/auth-utils.js';
 
 export async function handler(event) {
   try {

@@ -195,4 +195,4 @@ for (let i = 0; i < tickers.length; i++) {
 }
 
 console.log('Done.');
-console.log('Usage: node scripts/verify-market-data.mjs [TICKER ...]  (default: AAPL INTU MSFT)');
+console.log('Usage: node scripts/verify-market-data.js [TICKER ...]  (default: AAPL INTU MSFT)');

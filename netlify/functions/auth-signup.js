@@ -1,7 +1,7 @@
 import { connectLambda } from '@netlify/blobs';
-import { findUserByEmail, createUser, hashPassword, verifyPassword, createToken, setAuthCookie, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.mjs';
-import { sendConversionEmail } from '../../lib/email-utils.mjs';
-import { sendSignupNotification } from '../../lib/chat-notify.mjs';
+import { findUserByEmail, createUser, hashPassword, verifyPassword, createToken, setAuthCookie, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
+import { sendConversionEmail } from '../../lib/email-utils.js';
+import { sendSignupNotification } from '../../lib/chat-notify.js';
 
 export async function handler(event) {
   console.log('[AUTH-SIGNUP] invoked', process.env.NETLIFY ? 'production' : 'local');

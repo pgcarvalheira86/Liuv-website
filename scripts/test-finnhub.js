@@ -37,7 +37,7 @@ if (!apiKey) {
 const base = 'https://finnhub.io/api/v1';
 
 console.log('Finnhub test for', ticker);
-console.log('Usage: node scripts/test-finnhub.mjs [TICKER]  (default: AAPL)');
+console.log('Usage: node scripts/test-finnhub.js [TICKER]  (default: AAPL)');
 console.log('Free tier: 60 calls/min, no daily limit.');
 console.log('---');
 

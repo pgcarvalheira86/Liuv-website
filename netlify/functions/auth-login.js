@@ -1,6 +1,6 @@
 import { connectLambda } from '@netlify/blobs';
-import { findUserByEmail, verifyPassword, createToken, setAuthCookie, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.mjs';
-import { sendLoginNotification } from '../../lib/chat-notify.mjs';
+import { findUserByEmail, verifyPassword, createToken, setAuthCookie, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
+import { sendLoginNotification } from '../../lib/chat-notify.js';
 
 export async function handler(event) {
   console.log('[AUTH-LOGIN] invoked', process.env.NETLIFY ? 'production' : 'local');

@@ -37,7 +37,7 @@ if (!apiKey) {
 const base = 'https://www.alphavantage.co/query';
 
 console.log('Alpha Vantage test for', ticker);
-console.log('Usage: node scripts/test-alpha-vantage.mjs [TICKER]  (default: AAPL)');
+console.log('Usage: node scripts/test-alpha-vantage.js [TICKER]  (default: AAPL)');
 console.log('---');
 
 try {
