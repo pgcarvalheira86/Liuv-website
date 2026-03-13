@@ -1,17 +1,8 @@
+import { getTokenFromCookie, verifyToken, findUserByEmail, jsonResponse } from '../../lib/auth-utils.mjs';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { dirname, resolve } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const authUtilsCandidates = [
-  resolve(__dirname, 'lib/auth-utils.mjs'),
-  resolve(__dirname, '../../lib/auth-utils.mjs'),
-  resolve(__dirname, '../../../lib/auth-utils.mjs'),
-];
-const authUtilsPath = authUtilsCandidates.find(existsSync);
-if (!authUtilsPath) throw new Error('auth-utils.mjs not found (tried: ' + authUtilsCandidates.join(', ') + ')');
-const { getTokenFromCookie, verifyToken, findUserByEmail, jsonResponse } = await import(pathToFileURL(authUtilsPath).href);
+import { fileURLToPath } from 'url';
 
 let envLoaded = false;
 async function loadEnvIfNeeded() {
