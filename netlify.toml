@@ -7,7 +7,6 @@
 
 [functions.analysis]
   timeout = 60
-  included_files = ["netlify/functions/analysis-handler.mjs", "lib/auth-utils.mjs", "node_modules"]
 
 # API route redirects for clean URLs
 [[redirects]]
