@@ -385,95 +385,103 @@ export async function handler(event) {
     return jsonResponse({ error: 'Method not allowed' }, 405);
   }
 
-  const cookieHeader = event.headers.cookie || event.headers.Cookie || '';
-  const token = getTokenFromCookie(cookieHeader);
-  if (!token) {
-    return jsonResponse({ error: 'Unauthorized', code: 'no_token' }, 401);
-  }
-
-  const payload = verifyToken(token);
-  if (!payload) {
-    return jsonResponse({ error: 'Invalid or expired session', code: 'invalid_token' }, 401);
-  }
-
-  const apiKey = (process.env.ANTHROPIC_API_KEY || '').trim();
-  if (!apiKey) {
-    console.error('[ANALYSIS] ANTHROPIC_API_KEY not set');
-    return jsonResponse({ error: 'Analysis service not configured' }, 503);
-  }
-
-  let body;
   try {
-    body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body || {};
-  } catch {
-    return jsonResponse({ error: 'Invalid JSON body' }, 400);
-  }
+    await loadEnvIfNeeded();
 
-  const ticker = (body.ticker || '').toString().trim().toUpperCase();
-  if (!ticker || ticker.length > 10) {
-    return jsonResponse({ error: 'Valid ticker required (1–10 characters)' }, 400);
-  }
-
-  const step = Math.max(1, Math.min(5, parseInt(body.step, 10) || 1));
-  const refresh = !!body.refresh;
-
-  const user = await findUserByEmail(payload.email);
-  if (user?.plan === null && process.env.ANALYSIS_REQUIRES_PLAN === 'true') {
-    return jsonResponse({ error: 'Active plan required to run analysis' }, 403);
-  }
-
-  const stepCacheKey = 'step:' + ticker + ':' + step;
-  if (!refresh) {
-    const cached = getCached(stepCacheKey);
-    if (cached !== undefined) {
-      return jsonResponse({
-        ticker,
-        step,
-        analysis: cached.raw ?? cached,
-        data: cached.data ?? null,
-        done: step === 5,
-      });
+    const cookieHeader = event.headers.cookie || event.headers.Cookie || '';
+    const token = getTokenFromCookie(cookieHeader);
+    if (!token) {
+      return jsonResponse({ error: 'Unauthorized', code: 'no_token' }, 401);
     }
-  }
 
-  let marketContext = null;
-  try {
-    marketContext = await getFinnhubContext(ticker, refresh);
-    if (marketContext == null) {
-      console.warn('[ANALYSIS] Using placeholder market data (Finnhub returned no data for', ticker + ')');
-      const header = 'Current Price | EPS TTM | P/E TTM | P/FCF TTM | ROE TTM | ROIC TTM';
-      const placeholderLine = '— | — | — | — | — | —';
-      marketContext = `No live market data available. Use reasonable estimates in your narrative. Do not ask the user for data or for the exact line.
+    const payload = verifyToken(token);
+    if (!payload) {
+      return jsonResponse({ error: 'Invalid or expired session', code: 'invalid_token' }, 401);
+    }
+
+    const apiKey = (process.env.ANTHROPIC_API_KEY || '').trim();
+    if (!apiKey) {
+      console.error('[ANALYSIS] ANTHROPIC_API_KEY not set');
+      return jsonResponse({ error: 'Analysis service not configured' }, 503);
+    }
+
+    let body;
+    try {
+      body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body || {};
+    } catch {
+      return jsonResponse({ error: 'Invalid JSON body' }, 400);
+    }
+
+    const ticker = (body.ticker || '').toString().trim().toUpperCase();
+    if (!ticker || ticker.length > 10) {
+      return jsonResponse({ error: 'Valid ticker required (1–10 characters)' }, 400);
+    }
+
+    const step = Math.max(1, Math.min(5, parseInt(body.step, 10) || 1));
+    const refresh = !!body.refresh;
+
+    const user = await findUserByEmail(payload.email);
+    if (user?.plan === null && process.env.ANALYSIS_REQUIRES_PLAN === 'true') {
+      return jsonResponse({ error: 'Active plan required to run analysis' }, 403);
+    }
+
+    const stepCacheKey = 'step:' + ticker + ':' + step;
+    if (!refresh) {
+      const cached = getCached(stepCacheKey);
+      if (cached !== undefined) {
+        return jsonResponse({
+          ticker,
+          step,
+          analysis: cached.raw ?? cached,
+          data: cached.data ?? null,
+          done: step === 5,
+        });
+      }
+    }
+
+    let marketContext = null;
+    try {
+      marketContext = await getFinnhubContext(ticker, refresh);
+      if (marketContext == null) {
+        console.warn('[ANALYSIS] Using placeholder market data (Finnhub returned no data for', ticker + ')');
+        const header = 'Current Price | EPS TTM | P/E TTM | P/FCF TTM | ROE TTM | ROIC TTM';
+        const placeholderLine = '— | — | — | — | — | —';
+        marketContext = `No live market data available. Use reasonable estimates in your narrative. Do not ask the user for data or for the exact line.
 
 ${header}
 Copy this EXACT line into metricsLine (use as-is):
 ${placeholderLine}`;
+      }
+    } catch (e) {
+      console.warn('[ANALYSIS] Market data fetch failed:', e.message);
     }
-  } catch (e) {
-    console.warn('[ANALYSIS] Market data fetch failed:', e.message);
-  }
 
-  try {
-    const result = await runStep(ticker, step, apiKey, marketContext);
-    const payload = { raw: result.raw, data: result.data };
-    setCached(stepCacheKey, payload);
-    return jsonResponse({
-      ticker,
-      step,
-      analysis: result.raw,
-      data: result.data ?? null,
-      done: step === 5,
-    });
-  } catch (err) {
-    const msg = (err && err.message) ? String(err.message).trim() : String(err || 'Unknown error');
-    console.error('[ANALYSIS] Error:', msg);
-    let userError = 'Analysis failed. Try again.';
-    if (msg.includes('invalid') && msg.toLowerCase().includes('key')) userError = 'Invalid API key. Set ANTHROPIC_API_KEY in Netlify site env vars.';
-    else if (msg.includes('model') || msg.includes('not found')) userError = 'Model unavailable. Try again later.';
-    else if (msg.includes('rate') || msg.includes('quota') || msg.includes('429')) userError = 'Rate limit reached. Try again in a few minutes.';
-    else if (msg.includes('Empty response')) userError = 'AI returned no content. Try again.';
-    else if (msg.includes('fetch failed') || msg.includes('timeout') || msg.includes('ETIMEDOUT') || msg.includes('network')) userError = 'Network error talking to AI. Try again.';
-    else if (msg.length > 0) userError = msg.length <= 220 ? msg : msg.slice(0, 217) + '…';
-    return jsonResponse({ error: userError }, 502);
+    try {
+      const result = await runStep(ticker, step, apiKey, marketContext);
+      const payload = { raw: result.raw, data: result.data };
+      setCached(stepCacheKey, payload);
+      return jsonResponse({
+        ticker,
+        step,
+        analysis: result.raw,
+        data: result.data ?? null,
+        done: step === 5,
+      });
+    } catch (err) {
+      const msg = (err && err.message) ? String(err.message).trim() : String(err || 'Unknown error');
+      console.error('[ANALYSIS] Error:', msg);
+      let userError = 'Analysis failed. Try again.';
+      if (msg.includes('invalid') && msg.toLowerCase().includes('key')) userError = 'Invalid API key. Set ANTHROPIC_API_KEY in Netlify site env vars.';
+      else if (msg.includes('model') || msg.includes('not found')) userError = 'Model unavailable. Try again later.';
+      else if (msg.includes('rate') || msg.includes('quota') || msg.includes('429')) userError = 'Rate limit reached. Try again in a few minutes.';
+      else if (msg.includes('Empty response')) userError = 'AI returned no content. Try again.';
+      else if (msg.includes('fetch failed') || msg.includes('timeout') || msg.includes('ETIMEDOUT') || msg.includes('network')) userError = 'Network error talking to AI. Try again.';
+      else if (msg.length > 0) userError = msg.length <= 220 ? msg : msg.slice(0, 217) + '…';
+      return jsonResponse({ error: userError }, 502);
+    }
+  } catch (outerErr) {
+    const msg = (outerErr && outerErr.message) ? String(outerErr.message).trim() : String(outerErr || 'Unknown error');
+    console.error('[ANALYSIS] Unhandled error:', msg);
+    return jsonResponse({ error: 'Analysis failed. Try again.' }, 502);
   }
 }
