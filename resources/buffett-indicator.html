@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Buffett Indicator — LIUV | Free Market Valuation Tool</title>
+    <meta name="description" content="Track the Buffett Indicator (Total Market Cap / GDP) in real time. See whether the U.S. stock market is overvalued or undervalued using Warren Buffett's favorite valuation metric. Free, no signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+            --success: #22C55E;
+            --teal: #14B89C;
+            --warning: #F59E0B;
+            --orange: #F97316;
+            --danger: #EF4444;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Background */
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        /* Breadcrumb */
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        /* Hero */
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 640px; line-height: 1.7; }
+
+        /* Gauge Section */
+        .gauge-section { position: relative; z-index: 1; margin-bottom: 48px; }
+        .gauge-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        .gauge-panel { background: var(--bg-card); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .gauge-panel__title { font-size: 16px; font-weight: 600; margin-bottom: 6px; text-align: center; }
+        .gauge-panel__desc { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; text-align: center; }
+
+        /* Semi-circular Gauge */
+        .semi-gauge { position: relative; width: 280px; height: 160px; margin: 0 auto; }
+        .semi-gauge__svg { width: 100%; height: 100%; }
+        .semi-gauge__value { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); text-align: center; }
+        .semi-gauge__number { font-family: var(--font-mono); font-size: 36px; font-weight: 500; line-height: 1; }
+        .semi-gauge__unit { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+        .semi-gauge__labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-dim); padding: 0 8px; }
+
+        /* Zone Badge */
+        .zone-badge { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 8px 20px; border-radius: 6px; margin-top: 20px; }
+
+        /* Stats Bar */
+        .stats-panel { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; display: flex; flex-direction: column; justify-content: center; }
+        .stats-panel__title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .stats-panel__desc { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+        .stat-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+        .stat-row:last-child { border-bottom: none; }
+        .stat-row__label { font-size: 14px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+        .stat-row__dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .stat-row__value { font-family: var(--font-mono); font-size: 15px; font-weight: 500; }
+
+        /* Historical Chart */
+        .chart-section { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .chart-section__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .chart-section__title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .chart-section__subtitle { font-size: 13px; color: var(--text-muted); }
+        .chart-legend { display: flex; gap: 16px; }
+        .chart-legend__item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+        .chart-legend__line { width: 20px; height: 2px; border-radius: 1px; }
+        .chart-canvas-wrap { position: relative; width: 100%; height: 300px; }
+        .chart-canvas-wrap canvas { width: 100%; height: 100%; }
+
+        /* Zone Bands Reference */
+        .zone-bands { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .zone-band { text-align: center; padding: 10px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+        .zone-band__range { display: block; font-family: var(--font-mono); font-size: 12px; margin-top: 2px; opacity: 0.8; }
+
+        /* Methodology / Formula Box */
+        .formula-box { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .formula-box__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .formula-box__formula { font-family: var(--font-mono); font-size: 18px; color: var(--accent-teal); text-align: center; padding: 20px; background: var(--bg-primary); border-radius: 8px; margin-bottom: 16px; }
+        .formula-box__explain { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+        .formula-box__explain strong { color: var(--text-primary); }
+
+        /* Premium CTA */
+        .premium-cta { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        /* Cross-links */
+        .cross-links { position: relative; z-index: 1; margin-bottom: 48px; }
+        .cross-links__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .cross-links__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .cross-link-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 10px; padding: 20px; transition: all 0.3s ease; text-decoration: none; color: inherit; display: block; }
+        .cross-link-card:hover { border-color: rgba(255, 255, 255, 0.08); transform: translateY(-2px); opacity: 1; }
+        .cross-link-card__name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .cross-link-card__desc { font-size: 12px; color: var(--text-muted); }
+
+        /* Disclaimer */
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        /* Loading Spinner */
+        .loading { text-align: center; padding: 32px; }
+        .loading__spinner { width: 32px; height: 32px; border: 3px solid var(--text-dim); border-top-color: var(--accent-teal); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+        .loading__text { font-size: 13px; color: var(--text-muted); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Data source badge */
+        .data-source { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); margin-top: 12px; }
+        .data-source__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-teal); animation: pulse-dot 2s ease infinite; }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Footer */
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+        .fade-in--d4 { animation-delay: 0.4s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .gauge-layout { grid-template-columns: 1fr; max-width: 600px; margin-left: auto; margin-right: auto; }
+            .cross-links__grid { grid-template-columns: 1fr; max-width: 400px; }
+        }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+            .zone-bands { grid-template-columns: repeat(3, 1fr); }
+            .chart-section__header { flex-direction: column; gap: 12px; }
+            .chart-canvas-wrap { height: 220px; }
+        }
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+            .zone-bands { grid-template-columns: 1fr 1fr; }
+            .semi-gauge { width: 240px; height: 140px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>Buffett Indicator</li>
+    </ul>
+</div>
+
+<!-- Hero -->
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Tool</div>
+    <h1 class="tool-hero__title">Buffett <em style="font-style:italic;color:var(--accent-teal);">Indicator</em></h1>
+    <p class="tool-hero__subtitle">Warren Buffett called this ratio "probably the best single measure of where valuations stand at any given moment." Track the total U.S. stock market capitalization relative to GDP and see whether the market is overvalued or undervalued — updated with live Federal Reserve data.</p>
+</section>
+
+<!-- Gauge + Stats -->
+<section class="container gauge-section fade-in fade-in--d2">
+    <div class="gauge-layout">
+        <!-- Gauge Panel -->
+        <div class="gauge-panel">
+            <div class="gauge-panel__title">Current Market Valuation</div>
+            <div class="gauge-panel__desc">Total Stock Market Cap / GDP</div>
+
+            <div id="gaugeLoading" class="loading">
+                <div class="loading__spinner"></div>
+                <div class="loading__text">Fetching live data from FRED...</div>
+            </div>
+
+            <div id="gaugeContent" style="display:none;">
+                <div class="semi-gauge" id="semiGauge">
+                    <svg class="semi-gauge__svg" viewBox="0 0 280 160">
+                        <!-- Background arcs for zones -->
+                        <path d="M 24 148 A 116 116 0 0 1 59.5 52.5" fill="none" stroke="#22C55E" stroke-width="14" stroke-linecap="round" opacity="0.3"/>
+                        <path d="M 59.5 52.5 A 116 116 0 0 1 101 22.5" fill="none" stroke="#14B89C" stroke-width="14" stroke-linecap="round" opacity="0.3"/>
+                        <path d="M 101 22.5 A 116 116 0 0 1 179 22.5" fill="none" stroke="#F59E0B" stroke-width="14" stroke-linecap="round" opacity="0.3"/>
+                        <path d="M 179 22.5 A 116 116 0 0 1 220.5 52.5" fill="none" stroke="#F97316" stroke-width="14" stroke-linecap="round" opacity="0.3"/>
+                        <path d="M 220.5 52.5 A 116 116 0 0 1 256 148" fill="none" stroke="#EF4444" stroke-width="14" stroke-linecap="round" opacity="0.3"/>
+                        <!-- Needle -->
+                        <line id="gaugeNeedle" x1="140" y1="148" x2="140" y2="44" stroke="var(--text-primary)" stroke-width="3" stroke-linecap="round" transform="rotate(0, 140, 148)" style="transition: transform 1s ease-out;"/>
+                        <!-- Center dot -->
+                        <circle cx="140" cy="148" r="6" fill="var(--text-primary)"/>
+                    </svg>
+                    <div class="semi-gauge__value">
+                        <div class="semi-gauge__number" id="gaugeValue">—</div>
+                        <div class="semi-gauge__unit">% of GDP</div>
+                    </div>
+                    <div class="semi-gauge__labels">
+                        <span>Undervalued</span>
+                        <span>Fair</span>
+                        <span>Overvalued</span>
+                    </div>
+                </div>
+
+                <div style="text-align:center;">
+                    <div class="zone-badge" id="zoneBadge">Loading...</div>
+                    <div class="data-source">
+                        <span class="data-source__dot"></span>
+                        <span id="dataSourceText">Source: Federal Reserve Economic Data (FRED)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Panel -->
+        <div class="stats-panel">
+            <div class="stats-panel__title">Market Data Breakdown</div>
+            <div class="stats-panel__desc">Key metrics behind the Buffett Indicator calculation</div>
+
+            <div class="stat-row">
+                <span class="stat-row__label">
+                    <span class="stat-row__dot" style="background:var(--accent-teal);"></span>
+                    Total Market Cap (Wilshire 5000)
+                </span>
+                <span class="stat-row__value" id="statMarketCap">—</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-row__label">
+                    <span class="stat-row__dot" style="background:#3B82F6;"></span>
+                    U.S. Gross Domestic Product
+                </span>
+                <span class="stat-row__value" id="statGdp">—</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-row__label">
+                    <span class="stat-row__dot" style="background:#A78BFA;"></span>
+                    Buffett Indicator Ratio
+                </span>
+                <span class="stat-row__value" id="statRatio">—</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-row__label">
+                    <span class="stat-row__dot" style="background:#F59E0B;"></span>
+                    Valuation Zone
+                </span>
+                <span class="stat-row__value" id="statZone">—</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-row__label">
+                    <span class="stat-row__dot" style="background:#EC4899;"></span>
+                    Market Cap Date
+                </span>
+                <span class="stat-row__value" id="statMcDate">—</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-row__label">
+                    <span class="stat-row__dot" style="background:#6366F1;"></span>
+                    GDP Date
+                </span>
+                <span class="stat-row__value" id="statGdpDate">—</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Historical Chart -->
+<section class="container fade-in fade-in--d3">
+    <div class="chart-section">
+        <div class="chart-section__header">
+            <div>
+                <div class="chart-section__title">Historical Buffett Indicator</div>
+                <div class="chart-section__subtitle">Tracking total market cap / GDP over time</div>
+            </div>
+            <div class="chart-legend">
+                <div class="chart-legend__item">
+                    <div class="chart-legend__line" style="background:var(--accent-teal);"></div>
+                    Ratio
+                </div>
+                <div class="chart-legend__item">
+                    <div class="chart-legend__line" style="background:var(--warning); border-style:dashed;"></div>
+                    Fair Value (100%)
+                </div>
+            </div>
+        </div>
+        <div class="chart-canvas-wrap">
+            <canvas id="historyChart"></canvas>
+        </div>
+
+        <!-- Zone bands reference -->
+        <div class="zone-bands">
+            <div class="zone-band" style="background:rgba(34,197,94,0.15);color:#22C55E;">
+                Significantly<br>Undervalued
+                <span class="zone-band__range">&lt; 75%</span>
+            </div>
+            <div class="zone-band" style="background:rgba(20,184,156,0.15);color:#14B89C;">
+                Modestly<br>Undervalued
+                <span class="zone-band__range">75–90%</span>
+            </div>
+            <div class="zone-band" style="background:rgba(245,158,11,0.15);color:#F59E0B;">
+                Fair<br>Valued
+                <span class="zone-band__range">90–115%</span>
+            </div>
+            <div class="zone-band" style="background:rgba(249,115,22,0.15);color:#F97316;">
+                Modestly<br>Overvalued
+                <span class="zone-band__range">115–140%</span>
+            </div>
+            <div class="zone-band" style="background:rgba(239,68,68,0.15);color:#EF4444;">
+                Significantly<br>Overvalued
+                <span class="zone-band__range">&gt; 140%</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Methodology -->
+<section class="container fade-in fade-in--d3">
+    <div class="formula-box">
+        <div class="formula-box__title">How the Buffett Indicator Works</div>
+        <div class="formula-box__formula">Buffett Indicator = (Total Stock Market Cap / GDP) &times; 100</div>
+        <div class="formula-box__explain">
+            <p>In a 2001 Fortune article, Warren Buffett described the ratio of total stock market capitalization to gross domestic product (GDP) as <strong>"probably the best single measure of where valuations stand at any given moment."</strong></p>
+            <br>
+            <p>The indicator uses the <strong>Wilshire 5000 Total Market Index</strong> as a proxy for total U.S. stock market capitalization, divided by the latest quarterly <strong>U.S. GDP</strong> figure — both sourced from the Federal Reserve Economic Data (FRED) database.</p>
+            <br>
+            <p>When the ratio is <strong>below 75%</strong>, the market is historically considered significantly undervalued. Between <strong>90% and 115%</strong> is considered fair value. Above <strong>140%</strong>, the market enters territory that has historically preceded major corrections — including the dot-com bubble (2000) and pre-pandemic highs (2020).</p>
+            <br>
+            <p>While no single metric should drive investment decisions, the Buffett Indicator provides valuable context for <strong>long-term value investors</strong>. It's one of the macro-level signals that LIUV's AI agents monitor continuously alongside company-specific analysis.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Premium CTA -->
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">Want AI-powered macro analysis?</div>
+        <div class="premium-cta__text">LIUV's Strategy Agent continuously monitors the Buffett Indicator alongside dozens of other macro and fundamental signals — alerting you when market conditions create value investing opportunities.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<!-- Cross-links -->
+<section class="container">
+    <div class="cross-links fade-in fade-in--d4">
+        <div class="cross-links__title">More Free Tools</div>
+        <div class="cross-links__grid">
+            <a href="/resources/graham-number.html" class="cross-link-card">
+                <div class="cross-link-card__name">Graham Number Calculator</div>
+                <div class="cross-link-card__desc">Calculate fair price using Benjamin Graham's formula</div>
+            </a>
+            <a href="/resources/dcf-calculator.html" class="cross-link-card">
+                <div class="cross-link-card__name">Intrinsic Value (DCF) Calculator</div>
+                <div class="cross-link-card__desc">Two-stage DCF with bear, base, and bull scenarios</div>
+            </a>
+            <a href="/resources/margin-of-safety.html" class="cross-link-card">
+                <div class="cross-link-card__name">Margin of Safety Analyzer</div>
+                <div class="cross-link-card__desc">Four-method evaluation with consensus view</div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Disclaimer -->
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This tool is provided for educational and informational purposes only and does not constitute financial advice. The Buffett Indicator is one of many market valuation metrics and should not be used in isolation to make investment decisions. Historical zone classifications are based on long-term averages and may not predict future market movements. Data is sourced from the Federal Reserve Economic Data (FRED) database and may be subject to revisions. Always conduct thorough due diligence and consult a qualified financial advisor before making investment decisions. Past performance does not guarantee future results.
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:contact@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:contact@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// ========== Buffett Indicator Logic ==========
+
+// Demo data used when FRED API is not configured
+var DEMO_DATA = {
+    current: {
+        ratio: 183.5,
+        marketCap: 52400,
+        gdp: 28560,
+        zone: 'Significantly Overvalued',
+        zoneColor: '#EF4444',
+        severity: 5,
+        marketCapDate: '2026-03-07',
+        gdpDate: '2025-10-01'
+    },
+    historical: [
+        { date: '2022-01-01', ratio: 188.7 },
+        { date: '2022-04-01', ratio: 156.2 },
+        { date: '2022-07-01', ratio: 152.8 },
+        { date: '2022-10-01', ratio: 145.1 },
+        { date: '2023-01-01', ratio: 151.3 },
+        { date: '2023-04-01', ratio: 158.7 },
+        { date: '2023-07-01', ratio: 162.4 },
+        { date: '2023-10-01', ratio: 155.9 },
+        { date: '2024-01-01', ratio: 170.2 },
+        { date: '2024-04-01', ratio: 175.8 },
+        { date: '2024-07-01', ratio: 178.3 },
+        { date: '2024-10-01', ratio: 180.1 },
+        { date: '2025-01-01', ratio: 176.4 },
+        { date: '2025-04-01', ratio: 179.9 },
+        { date: '2025-07-01', ratio: 182.1 },
+        { date: '2025-10-01', ratio: 181.7 },
+        { date: '2026-01-01', ratio: 183.5 }
+    ]
+};
+
+function getZoneInfo(ratio) {
+    if (ratio < 75) return { zone: 'Significantly Undervalued', color: '#22C55E' };
+    if (ratio < 90) return { zone: 'Modestly Undervalued', color: '#14B89C' };
+    if (ratio < 115) return { zone: 'Fair Valued', color: '#F59E0B' };
+    if (ratio < 140) return { zone: 'Modestly Overvalued', color: '#F97316' };
+    return { zone: 'Significantly Overvalued', color: '#EF4444' };
+}
+
+function formatBillions(val) {
+    if (val >= 1000) return '$' + (val / 1000).toFixed(1) + 'T';
+    return '$' + val.toFixed(0) + 'B';
+}
+
+function formatDate(dateStr) {
+    var d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function updateGauge(ratio, zoneColor) {
+    // Map ratio to angle: 50% = -90deg (left), 200% = +90deg (right)
+    var minR = 50, maxR = 200;
+    var clamped = Math.max(minR, Math.min(maxR, ratio));
+    var angle = ((clamped - minR) / (maxR - minR)) * 180 - 90;
+
+    var needle = document.getElementById('gaugeNeedle');
+    needle.setAttribute('transform', 'rotate(' + angle + ', 140, 148)');
+
+    document.getElementById('gaugeValue').textContent = ratio.toFixed(1);
+    document.getElementById('gaugeValue').style.color = zoneColor;
+}
+
+function updateStats(data) {
+    var c = data.current;
+    document.getElementById('statMarketCap').textContent = formatBillions(c.marketCap);
+    document.getElementById('statGdp').textContent = formatBillions(c.gdp);
+    document.getElementById('statRatio').textContent = c.ratio.toFixed(1) + '%';
+    document.getElementById('statRatio').style.color = c.zoneColor;
+    document.getElementById('statZone').textContent = c.zone;
+    document.getElementById('statZone').style.color = c.zoneColor;
+    document.getElementById('statMcDate').textContent = formatDate(c.marketCapDate);
+    document.getElementById('statGdpDate').textContent = formatDate(c.gdpDate);
+
+    var badge = document.getElementById('zoneBadge');
+    badge.textContent = c.zone;
+    badge.style.color = c.zoneColor;
+    badge.style.background = c.zoneColor + '22';
+    badge.style.border = '1px solid ' + c.zoneColor + '44';
+}
+
+function drawChart(historical) {
+    var canvas = document.getElementById('historyChart');
+    if (!canvas) return;
+
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    var W = rect.width, H = rect.height;
+    var pad = { top: 20, right: 20, bottom: 40, left: 50 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    if (!historical || !historical.length) {
+        ctx.fillStyle = '#6B7A8D';
+        ctx.font = '14px DM Sans, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Historical data unavailable', W / 2, H / 2);
+        return;
+    }
+
+    var ratios = historical.map(function(d) { return d.ratio; });
+    var minVal = Math.max(0, Math.min.apply(null, ratios) - 20);
+    var maxVal = Math.max.apply(null, ratios) + 20;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    var gridSteps = [50, 75, 100, 115, 140, 175, 200];
+    gridSteps.forEach(function(v) {
+        if (v < minVal || v > maxVal) return;
+        var y = pad.top + cH - ((v - minVal) / (maxVal - minVal)) * cH;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(W - pad.right, y);
+        ctx.stroke();
+        ctx.fillStyle = '#3a4555';
+        ctx.font = '11px DM Mono, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(v + '%', pad.left - 8, y + 4);
+    });
+
+    // Zone bands (background)
+    var zones = [
+        { min: 0, max: 75, color: 'rgba(34,197,94,0.04)' },
+        { min: 75, max: 90, color: 'rgba(20,184,156,0.04)' },
+        { min: 90, max: 115, color: 'rgba(245,158,11,0.04)' },
+        { min: 115, max: 140, color: 'rgba(249,115,22,0.04)' },
+        { min: 140, max: 300, color: 'rgba(239,68,68,0.04)' }
+    ];
+    zones.forEach(function(z) {
+        var yTop = pad.top + cH - ((Math.min(z.max, maxVal) - minVal) / (maxVal - minVal)) * cH;
+        var yBot = pad.top + cH - ((Math.max(z.min, minVal) - minVal) / (maxVal - minVal)) * cH;
+        if (yTop < yBot) {
+            ctx.fillStyle = z.color;
+            ctx.fillRect(pad.left, yTop, cW, yBot - yTop);
+        }
+    });
+
+    // Fair value line at 100%
+    if (100 >= minVal && 100 <= maxVal) {
+        var fairY = pad.top + cH - ((100 - minVal) / (maxVal - minVal)) * cH;
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, fairY);
+        ctx.lineTo(W - pad.right, fairY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // Data line
+    ctx.strokeStyle = '#14B89C';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    historical.forEach(function(d, i) {
+        var x = pad.left + (i / (historical.length - 1)) * cW;
+        var y = pad.top + cH - ((d.ratio - minVal) / (maxVal - minVal)) * cH;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Gradient fill under line
+    var gradient = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
+    gradient.addColorStop(0, 'rgba(20, 184, 156, 0.15)');
+    gradient.addColorStop(1, 'rgba(20, 184, 156, 0)');
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    historical.forEach(function(d, i) {
+        var x = pad.left + (i / (historical.length - 1)) * cW;
+        var y = pad.top + cH - ((d.ratio - minVal) / (maxVal - minVal)) * cH;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.lineTo(pad.left + cW, pad.top + cH);
+    ctx.lineTo(pad.left, pad.top + cH);
+    ctx.closePath();
+    ctx.fill();
+
+    // Data points
+    historical.forEach(function(d, i) {
+        var x = pad.left + (i / (historical.length - 1)) * cW;
+        var y = pad.top + cH - ((d.ratio - minVal) / (maxVal - minVal)) * cH;
+        ctx.fillStyle = getZoneInfo(d.ratio).color;
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // X-axis dates
+    ctx.fillStyle = '#3a4555';
+    ctx.font = '10px DM Mono, monospace';
+    ctx.textAlign = 'center';
+    var step = Math.max(1, Math.floor(historical.length / 6));
+    for (var i = 0; i < historical.length; i += step) {
+        var x = pad.left + (i / (historical.length - 1)) * cW;
+        var label = historical[i].date.substring(0, 7);
+        ctx.fillText(label, x, H - pad.bottom + 20);
+    }
+    // Always show last label
+    if ((historical.length - 1) % step !== 0) {
+        var lastX = pad.left + cW;
+        ctx.fillText(historical[historical.length - 1].date.substring(0, 7), lastX, H - pad.bottom + 20);
+    }
+}
+
+function renderData(data, isLive) {
+    document.getElementById('gaugeLoading').style.display = 'none';
+    document.getElementById('gaugeContent').style.display = 'block';
+
+    updateGauge(data.current.ratio, data.current.zoneColor);
+    updateStats(data);
+    drawChart(data.historical);
+
+    if (!isLive) {
+        document.getElementById('dataSourceText').textContent = 'Demo data shown — configure FRED_API_KEY for live data';
+    }
+}
+
+// Fetch live data, fall back to demo
+function init() {
+    fetch('/.netlify/functions/buffett-indicator')
+        .then(function(res) {
+            if (!res.ok) throw new Error('API returned ' + res.status);
+            return res.json();
+        })
+        .then(function(data) {
+            if (data.error) throw new Error(data.error);
+            renderData(data, true);
+        })
+        .catch(function() {
+            renderData(DEMO_DATA, false);
+        });
+}
+
+// Nav scroll
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+
+// Redraw chart on resize
+var resizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        var data;
+        try { data = window.__buffettData || DEMO_DATA; } catch(e) { data = DEMO_DATA; }
+        drawChart(data.historical);
+    }, 200);
+});
+
+// Store data globally for resize redraw, then init
+var _origRender = renderData;
+renderData = function(data, isLive) {
+    window.__buffettData = data;
+    _origRender(data, isLive);
+};
+
+init();
+</script>
+
+</body>
+</html>
