@@ -590,10 +590,10 @@
 
                 <div class="step-nav">
                     <button class="btn-secondary" onclick="goToStep(2)">Back</button>
-                    <a href="/dashboard.html" class="btn-primary" style="text-decoration:none;">
+                    <button type="button" class="btn-primary" onclick="goToDashboard()" style="display:inline-flex;align-items:center;gap:8px;">
                         Go to Dashboard
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 9h10M10 5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </a>
+                    </button>
                 </div>
             </div>
 
@@ -605,7 +605,56 @@
     </footer>
 
     <script>
+        const ONBOARDING_PLAN = 'professional';
         let currentStep = 1;
+
+        function getPreferences() {
+            const prefs = {};
+            document.querySelectorAll('.preference-grid[data-group]').forEach(function(grid) {
+                const group = grid.getAttribute('data-group');
+                const selected = grid.querySelectorAll('.preference-option--selected');
+                const labels = Array.from(selected).map(function(el) { return (el.querySelector('.preference-option__label') || {}).textContent; }).filter(Boolean).map(function(s) { return s.trim(); });
+                if (group === 'markets') prefs[group] = labels;
+                else prefs[group] = labels[0] || undefined;
+            });
+            return prefs;
+        }
+
+        function applyPreferences(prefs) {
+            if (!prefs || typeof prefs !== 'object') return;
+            document.querySelectorAll('.preference-grid[data-group]').forEach(function(grid) {
+                const group = grid.getAttribute('data-group');
+                const value = prefs[group];
+                if (value === undefined) return;
+                const values = Array.isArray(value) ? value : [value];
+                grid.querySelectorAll('.preference-option').forEach(function(opt) {
+                    const label = ((opt.querySelector('.preference-option__label') || {}).textContent || '').trim();
+                    if (values.includes(label)) opt.classList.add('preference-option--selected');
+                    else opt.classList.remove('preference-option--selected');
+                });
+            });
+        }
+
+        async function saveOnboarding() {
+            const prefs = getPreferences();
+            try {
+                await fetch('/api/onboarding', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: ONBOARDING_PLAN, preferences: prefs, completedStep: currentStep }),
+                    credentials: 'include'
+                });
+            } catch (_) {}
+        }
+
+        async function loadOnboarding() {
+            try {
+                const res = await fetch('/api/onboarding', { credentials: 'include' });
+                const data = await res.json();
+                if (data.onboarding && data.onboarding.plan === ONBOARDING_PLAN && data.onboarding.preferences)
+                    applyPreferences(data.onboarding.preferences);
+            } catch (_) {}
+        }
 
         function goToStep(step) {
             document.getElementById('step-' + currentStep).classList.remove('step-panel--active');
@@ -626,6 +675,8 @@
             currentStep = step;
             window.scrollTo({ top: 0, behavior: 'smooth' });
             gtag('event', 'onboarding_step', { step: step, plan: 'professional' });
+
+            if (step === 3) saveOnboarding();
         }
 
         function selectOption(el, group) {
@@ -634,6 +685,12 @@
             el.classList.add('preference-option--selected');
             gtag('event', 'onboarding_preference', { group: group, value: el.querySelector('.preference-option__label').textContent, plan: 'professional' });
         }
+
+        function goToDashboard() {
+            saveOnboarding().then(function() { window.location.href = '/dashboard.html'; });
+        }
+
+        loadOnboarding();
     </script>
 </body>
 </html>
