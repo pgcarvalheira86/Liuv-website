@@ -56,6 +56,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/onboarding"
+  to = "/.netlify/functions/onboarding"
+  status = 200
+
+[[redirects]]
   from = "/api/analysis"
   to = "/.netlify/functions/analysis"
   status = 200
