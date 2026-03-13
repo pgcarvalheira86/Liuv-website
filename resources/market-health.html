@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Market Health Dashboard — LIUV | Free Macro Valuation Tool</title>
+    <meta name="description" content="Three institutional-grade market health indicators in one dashboard — Modern Buffett (P/S), Equity Risk Premium, and Classic Buffett (Cap/GDP). Live FRED data with traffic-light signals. Free, no signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+            --success: #22C55E;
+            --teal: #14B89C;
+            --warning: #F59E0B;
+            --orange: #F97316;
+            --danger: #EF4444;
+            --indigo: #6366F1;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Background */
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        /* Breadcrumb */
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        /* Hero */
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--indigo); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--indigo); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 700px; line-height: 1.7; }
+
+        /* Composite Signal Banner */
+        .composite-banner { background: var(--bg-card); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: 12px; padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; z-index: 1; margin-bottom: 32px; }
+        .composite-banner__left { display: flex; align-items: center; gap: 20px; }
+        .composite-banner__icon { width: 56px; height: 56px; border-radius: 12px; background: rgba(99, 102, 241, 0.12); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+        .composite-banner__label { font-size: 13px; color: var(--text-muted); letter-spacing: 0.5px; }
+        .composite-banner__signal { font-family: var(--font-mono); font-size: 28px; font-weight: 500; line-height: 1.2; }
+        .composite-banner__right { display: flex; gap: 32px; flex-shrink: 0; }
+        .composite-banner__indicator { text-align: center; }
+        .composite-banner__indicator-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 4px; }
+        .composite-banner__indicator-dot { width: 14px; height: 14px; border-radius: 50%; margin: 0 auto; }
+        .data-source { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+        .data-source__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-teal); animation: pulse-dot 2s ease infinite; }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Indicator Cards */
+        .indicators-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .indicator-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px 28px; position: relative; overflow: hidden; }
+        .indicator-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+        .indicator-card--modern::before { background: var(--accent-teal); }
+        .indicator-card--erp::before { background: #3B82F6; }
+        .indicator-card--classic::before { background: var(--orange); }
+        .indicator-card__header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .indicator-card__icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .indicator-card--modern .indicator-card__icon { background: rgba(20, 184, 156, 0.12); }
+        .indicator-card--erp .indicator-card__icon { background: rgba(59, 130, 246, 0.12); }
+        .indicator-card--classic .indicator-card__icon { background: rgba(249, 115, 22, 0.12); }
+        .indicator-card__name { font-size: 15px; font-weight: 600; }
+        .indicator-card__badge { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; margin-left: auto; }
+
+        .indicator-card__value-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+        .indicator-card__value { font-family: var(--font-mono); font-size: 36px; font-weight: 500; line-height: 1; }
+        .indicator-card__unit { font-size: 14px; color: var(--text-muted); }
+        .indicator-card__zone { font-size: 13px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 20px; }
+
+        /* Mini gauge */
+        .mini-gauge { position: relative; width: 100%; height: 8px; background: rgba(255,255,255,0.04); border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
+        .mini-gauge__fill { height: 100%; border-radius: 4px; transition: width 1s ease-out; }
+        .mini-gauge__zones { display: flex; height: 100%; position: absolute; top: 0; left: 0; right: 0; border-radius: 4px; overflow: hidden; }
+        .mini-gauge__zone { height: 100%; }
+        .mini-gauge__needle { position: absolute; top: -3px; width: 3px; height: 14px; background: var(--text-primary); border-radius: 2px; transition: left 1s ease-out; }
+        .mini-gauge__labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+
+        /* Stat rows in card */
+        .indicator-card__stats { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 16px; }
+        .indicator-stat { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
+        .indicator-stat__label { font-size: 13px; color: var(--text-muted); }
+        .indicator-stat__value { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+
+        /* Chart section */
+        .chart-section { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .chart-section__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .chart-section__title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .chart-section__subtitle { font-size: 13px; color: var(--text-muted); }
+        .chart-tabs { display: flex; gap: 8px; }
+        .chart-tab { padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.06); background: transparent; color: var(--text-muted); transition: all 0.2s; }
+        .chart-tab:hover { border-color: rgba(255,255,255,0.12); color: var(--text-primary); }
+        .chart-tab--active { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.3); color: var(--indigo); }
+        .chart-canvas-wrap { position: relative; width: 100%; height: 300px; }
+        .chart-canvas-wrap canvas { width: 100%; height: 100%; }
+
+        /* Methodology */
+        .methodology { position: relative; z-index: 1; margin-bottom: 48px; }
+        .methodology__title { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+        .methodology__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .method-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 28px 24px; }
+        .method-card__title { font-size: 15px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .method-card__formula { font-family: var(--font-mono); font-size: 13px; color: var(--accent-teal); background: var(--bg-primary); padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; text-align: center; }
+        .method-card__text { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+        .method-card__zones { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+        .method-card__zone-row { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+        .method-card__zone-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+        /* Premium CTA */
+        .premium-cta { background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(20, 184, 156, 0.04)); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        /* Cross-links */
+        .cross-links { position: relative; z-index: 1; margin-bottom: 48px; }
+        .cross-links__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .cross-links__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .cross-link-card { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 10px; padding: 20px; transition: all 0.3s ease; text-decoration: none; color: inherit; display: block; }
+        .cross-link-card:hover { border-color: rgba(255, 255, 255, 0.08); transform: translateY(-2px); opacity: 1; }
+        .cross-link-card__name { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .cross-link-card__desc { font-size: 12px; color: var(--text-muted); }
+
+        /* Disclaimer */
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        /* Loading */
+        .loading { text-align: center; padding: 32px; }
+        .loading__spinner { width: 32px; height: 32px; border: 3px solid var(--text-dim); border-top-color: var(--indigo); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+        .loading__text { font-size: 13px; color: var(--text-muted); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Footer */
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+        .fade-in--d4 { animation-delay: 0.4s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .indicators-grid { grid-template-columns: 1fr; max-width: 520px; margin-left: auto; margin-right: auto; }
+            .methodology__grid { grid-template-columns: 1fr; max-width: 520px; margin-left: auto; margin-right: auto; }
+            .cross-links__grid { grid-template-columns: 1fr; max-width: 400px; }
+            .composite-banner { flex-direction: column; text-align: center; }
+            .composite-banner__right { justify-content: center; }
+        }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+            .chart-section__header { flex-direction: column; gap: 12px; }
+            .chart-canvas-wrap { height: 220px; }
+            .chart-tabs { flex-wrap: wrap; }
+        }
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>Market Health Dashboard</li>
+    </ul>
+</div>
+
+<!-- Hero -->
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Dashboard</div>
+    <h1 class="tool-hero__title">Market Health <em style="font-style:italic;color:var(--indigo);">Dashboard</em></h1>
+    <p class="tool-hero__subtitle">Three institutional-grade macro indicators — Modern Buffett (P/S), Equity Risk Premium, and Classic Buffett (Cap/GDP) — combined into a single composite signal. Updated with live Federal Reserve data. The same macro framework that powers LIUV's AI agents.</p>
+</section>
+
+<!-- Composite Signal Banner -->
+<section class="container fade-in fade-in--d2">
+    <div class="composite-banner">
+        <div class="composite-banner__left">
+            <div class="composite-banner__icon">&#128201;</div>
+            <div>
+                <div class="composite-banner__label">Composite Market Signal</div>
+                <div class="composite-banner__signal" id="compositeSignal">Loading...</div>
+                <div class="data-source">
+                    <span class="data-source__dot"></span>
+                    <span id="dataSourceText">Source: Federal Reserve Economic Data (FRED)</span>
+                </div>
+            </div>
+        </div>
+        <div class="composite-banner__right">
+            <div class="composite-banner__indicator">
+                <div class="composite-banner__indicator-label">Modern Buffett</div>
+                <div class="composite-banner__indicator-dot" id="dotModern" style="background:var(--text-dim);"></div>
+            </div>
+            <div class="composite-banner__indicator">
+                <div class="composite-banner__indicator-label">Risk Premium</div>
+                <div class="composite-banner__indicator-dot" id="dotErp" style="background:var(--text-dim);"></div>
+            </div>
+            <div class="composite-banner__indicator">
+                <div class="composite-banner__indicator-label">Classic Buffett</div>
+                <div class="composite-banner__indicator-dot" id="dotClassic" style="background:var(--text-dim);"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Loading state -->
+<section class="container" id="loadingSection">
+    <div class="loading fade-in fade-in--d2">
+        <div class="loading__spinner"></div>
+        <div class="loading__text">Fetching live data from FRED...</div>
+    </div>
+</section>
+
+<!-- Three Indicator Cards -->
+<section class="container" id="indicatorsSection" style="display:none;">
+    <div class="indicators-grid fade-in fade-in--d3">
+
+        <!-- Indicator 1: Modern Buffett (P/S) -->
+        <div class="indicator-card indicator-card--modern">
+            <div class="indicator-card__header">
+                <div class="indicator-card__icon">&#128202;</div>
+                <div class="indicator-card__name">Modern Buffett (P/S)</div>
+            </div>
+            <div class="indicator-card__value-row">
+                <div class="indicator-card__value" id="modernValue">—</div>
+                <div class="indicator-card__unit">x</div>
+            </div>
+            <div class="indicator-card__zone" id="modernZone">—</div>
+            <div class="mini-gauge">
+                <div class="mini-gauge__zones">
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(34,197,94,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:15%;background:rgba(20,184,156,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:25%;background:rgba(245,158,11,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(249,115,22,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(239,68,68,0.3);"></div>
+                </div>
+                <div class="mini-gauge__needle" id="modernNeedle"></div>
+            </div>
+            <div class="mini-gauge__labels">
+                <span>&lt;1.5x</span>
+                <span>2.8x</span>
+                <span>&gt;3.5x</span>
+            </div>
+            <div class="indicator-card__stats">
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">S&P 500 Price</span>
+                    <span class="indicator-stat__value" id="modernSp500">—</span>
+                </div>
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">Data Date</span>
+                    <span class="indicator-stat__value" id="modernDate">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Indicator 2: Equity Risk Premium -->
+        <div class="indicator-card indicator-card--erp">
+            <div class="indicator-card__header">
+                <div class="indicator-card__icon">&#128176;</div>
+                <div class="indicator-card__name">Equity Risk Premium</div>
+            </div>
+            <div class="indicator-card__value-row">
+                <div class="indicator-card__value" id="erpValue">—</div>
+                <div class="indicator-card__unit">%</div>
+            </div>
+            <div class="indicator-card__zone" id="erpZone">—</div>
+            <div class="mini-gauge">
+                <div class="mini-gauge__zones">
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(239,68,68,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(249,115,22,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(245,158,11,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(20,184,156,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(34,197,94,0.3);"></div>
+                </div>
+                <div class="mini-gauge__needle" id="erpNeedle"></div>
+            </div>
+            <div class="mini-gauge__labels">
+                <span>Bonds</span>
+                <span>Neutral</span>
+                <span>Stocks</span>
+            </div>
+            <div class="indicator-card__stats">
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">Earnings Yield</span>
+                    <span class="indicator-stat__value" id="erpEarningsYield">—</span>
+                </div>
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">10Y Treasury</span>
+                    <span class="indicator-stat__value" id="erpTreasury">—</span>
+                </div>
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">Data Date</span>
+                    <span class="indicator-stat__value" id="erpDate">—</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Indicator 3: Classic Buffett (Cap/GDP) -->
+        <div class="indicator-card indicator-card--classic">
+            <div class="indicator-card__header">
+                <div class="indicator-card__icon">&#128200;</div>
+                <div class="indicator-card__name">Classic Buffett (Cap/GDP)</div>
+            </div>
+            <div class="indicator-card__value-row">
+                <div class="indicator-card__value" id="classicValue">—</div>
+                <div class="indicator-card__unit">%</div>
+            </div>
+            <div class="indicator-card__zone" id="classicZone">—</div>
+            <div class="mini-gauge">
+                <div class="mini-gauge__zones">
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(34,197,94,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:10%;background:rgba(20,184,156,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(245,158,11,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:20%;background:rgba(249,115,22,0.3);"></div>
+                    <div class="mini-gauge__zone" style="width:30%;background:rgba(239,68,68,0.3);"></div>
+                </div>
+                <div class="mini-gauge__needle" id="classicNeedle"></div>
+            </div>
+            <div class="mini-gauge__labels">
+                <span>&lt;75%</span>
+                <span>115%</span>
+                <span>&gt;200%</span>
+            </div>
+            <div class="indicator-card__stats">
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">Market Cap</span>
+                    <span class="indicator-stat__value" id="classicMarketCap">—</span>
+                </div>
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">GDP</span>
+                    <span class="indicator-stat__value" id="classicGdp">—</span>
+                </div>
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">Market Cap Date</span>
+                    <span class="indicator-stat__value" id="classicMcDate">—</span>
+                </div>
+                <div class="indicator-stat">
+                    <span class="indicator-stat__label">GDP Date</span>
+                    <span class="indicator-stat__value" id="classicGdpDate">—</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Historical Chart -->
+<section class="container fade-in fade-in--d3" id="chartSection" style="display:none;">
+    <div class="chart-section">
+        <div class="chart-section__header">
+            <div>
+                <div class="chart-section__title">Historical Trends</div>
+                <div class="chart-section__subtitle">Track each indicator over time</div>
+            </div>
+            <div class="chart-tabs">
+                <button class="chart-tab chart-tab--active" data-chart="modern">Modern Buffett</button>
+                <button class="chart-tab" data-chart="erp">Risk Premium</button>
+                <button class="chart-tab" data-chart="classic">Classic Buffett</button>
+            </div>
+        </div>
+        <div class="chart-canvas-wrap">
+            <canvas id="historyChart"></canvas>
+        </div>
+    </div>
+</section>
+
+<!-- Methodology -->
+<section class="container fade-in fade-in--d3">
+    <div class="methodology">
+        <div class="methodology__title">How Each Indicator Works</div>
+        <div class="methodology__grid">
+            <div class="method-card">
+                <div class="method-card__title" style="color:var(--accent-teal);">&#128202; Modern Buffett (P/S)</div>
+                <div class="method-card__formula">P/S = S&P 500 Price / Revenue per Share</div>
+                <div class="method-card__text">A revenue-based valuation metric that avoids earnings manipulation. Unlike P/E, revenue is harder to game through accounting choices, making P/S a cleaner signal for broad market valuation.</div>
+                <div class="method-card__zones">
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#22C55E;"></span><span style="color:var(--text-muted);">&lt;1.5x — Significantly Undervalued</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#14B89C;"></span><span style="color:var(--text-muted);">1.5–2.0x — Modestly Undervalued</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#F59E0B;"></span><span style="color:var(--text-muted);">2.0–2.8x — Fair Valued</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#F97316;"></span><span style="color:var(--text-muted);">2.8–3.5x — Modestly Overvalued</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#EF4444;"></span><span style="color:var(--text-muted);">&gt;3.5x — Significantly Overvalued</span></div>
+                </div>
+            </div>
+            <div class="method-card">
+                <div class="method-card__title" style="color:#3B82F6;">&#128176; Equity Risk Premium</div>
+                <div class="method-card__formula">ERP = Earnings Yield − 10Y Treasury</div>
+                <div class="method-card__text">Measures the excess return stocks offer over risk-free government bonds. When the spread compresses or turns negative, bonds become more competitive — a critical cross-asset signal for asset allocation.</div>
+                <div class="method-card__zones">
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#22C55E;"></span><span style="color:var(--text-muted);">&gt;5% — Stocks Very Attractive</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#14B89C;"></span><span style="color:var(--text-muted);">3–5% — Stocks Attractive</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#F59E0B;"></span><span style="color:var(--text-muted);">1–3% — Neutral</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#F97316;"></span><span style="color:var(--text-muted);">−1 to 1% — Bonds Competitive</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#EF4444;"></span><span style="color:var(--text-muted);">&lt;−1% — Bonds Preferred</span></div>
+                </div>
+            </div>
+            <div class="method-card">
+                <div class="method-card__title" style="color:var(--orange);">&#128200; Classic Buffett (Cap/GDP)</div>
+                <div class="method-card__formula">Ratio = (Market Cap / GDP) &times; 100</div>
+                <div class="method-card__text">Warren Buffett's "best single measure" of market valuation. Compares total stock market capitalization to the GDP, revealing whether stocks are priced above or below economic output.</div>
+                <div class="method-card__zones">
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#22C55E;"></span><span style="color:var(--text-muted);">&lt;75% — Significantly Undervalued</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#14B89C;"></span><span style="color:var(--text-muted);">75–90% — Modestly Undervalued</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#F59E0B;"></span><span style="color:var(--text-muted);">90–115% — Fair Valued</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#F97316;"></span><span style="color:var(--text-muted);">115–140% — Modestly Overvalued</span></div>
+                    <div class="method-card__zone-row"><span class="method-card__zone-dot" style="background:#EF4444;"></span><span style="color:var(--text-muted);">&gt;140% — Significantly Overvalued</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Premium CTA -->
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">Want continuous AI-powered macro monitoring?</div>
+        <div class="premium-cta__text">LIUV's Strategy Agent tracks these indicators alongside dozens of fundamental signals 24/7 — alerting you when macro conditions create value investing opportunities.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<!-- Cross-links -->
+<section class="container">
+    <div class="cross-links fade-in fade-in--d4">
+        <div class="cross-links__title">More Free Tools</div>
+        <div class="cross-links__grid">
+            <a href="/resources/buffett-indicator.html" class="cross-link-card">
+                <div class="cross-link-card__name">Buffett Indicator</div>
+                <div class="cross-link-card__desc">Deep-dive into the classic Market Cap / GDP metric with a full gauge and historical chart</div>
+            </a>
+            <a href="/resources/graham-number.html" class="cross-link-card">
+                <div class="cross-link-card__name">Graham Number Calculator</div>
+                <div class="cross-link-card__desc">Calculate fair price using Benjamin Graham's formula</div>
+            </a>
+            <a href="/resources/dcf-calculator.html" class="cross-link-card">
+                <div class="cross-link-card__name">Intrinsic Value (DCF) Calculator</div>
+                <div class="cross-link-card__desc">Two-stage DCF with bear, base, and bull scenarios</div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Disclaimer -->
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This dashboard is provided for educational and informational purposes only and does not constitute financial advice. The indicators shown are macro-level valuation metrics and should not be used in isolation to make investment decisions. Zone classifications are based on historical analysis and may not predict future market movements. Data is sourced from the Federal Reserve Economic Data (FRED) database and may be subject to revisions. The Equity Risk Premium is calculated using earnings yield approximations that may differ from institutional models. Always conduct thorough due diligence and consult a qualified financial advisor before making investment decisions. Past performance does not guarantee future results.
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:contact@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:contact@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// ========== Market Health Dashboard Logic ==========
+
+// Demo data used when FRED API is not configured
+var DEMO_DATA = {
+    timestamp: new Date().toISOString(),
+    composite: { signal: 'Caution', color: '#F97316' },
+    modernBuffett: {
+        value: 2.95,
+        zone: 'Modestly Overvalued',
+        zoneColor: '#F97316',
+        severity: 4,
+        sp500Price: 5950,
+        date: '2026-03-07',
+        historical: [
+            { date: '2022-01-01', value: 3.10 },
+            { date: '2022-04-01', value: 2.65 },
+            { date: '2022-07-01', value: 2.50 },
+            { date: '2022-10-01', value: 2.35 },
+            { date: '2023-01-01', value: 2.45 },
+            { date: '2023-04-01', value: 2.55 },
+            { date: '2023-07-01', value: 2.65 },
+            { date: '2023-10-01', value: 2.50 },
+            { date: '2024-01-01', value: 2.75 },
+            { date: '2024-04-01', value: 2.85 },
+            { date: '2024-07-01', value: 2.90 },
+            { date: '2024-10-01', value: 2.88 },
+            { date: '2025-01-01', value: 2.82 },
+            { date: '2025-04-01', value: 2.90 },
+            { date: '2025-07-01', value: 2.93 },
+            { date: '2025-10-01', value: 2.91 },
+            { date: '2026-01-01', value: 2.95 }
+        ]
+    },
+    erp: {
+        value: 0.8,
+        earningsYield: 4.9,
+        treasuryYield: 4.1,
+        zone: 'Bonds Competitive',
+        zoneColor: '#F97316',
+        severity: 4,
+        date: '2026-03-07',
+        historical: [
+            { date: '2022-01-01', value: 1.8 },
+            { date: '2022-04-01', value: 2.3 },
+            { date: '2022-07-01', value: 1.9 },
+            { date: '2022-10-01', value: 1.2 },
+            { date: '2023-01-01', value: 1.5 },
+            { date: '2023-04-01', value: 1.1 },
+            { date: '2023-07-01', value: 0.8 },
+            { date: '2023-10-01', value: 0.5 },
+            { date: '2024-01-01', value: 0.9 },
+            { date: '2024-04-01', value: 1.0 },
+            { date: '2024-07-01', value: 0.7 },
+            { date: '2024-10-01', value: 0.6 },
+            { date: '2025-01-01', value: 0.9 },
+            { date: '2025-04-01', value: 0.8 },
+            { date: '2025-07-01', value: 0.7 },
+            { date: '2025-10-01', value: 0.75 },
+            { date: '2026-01-01', value: 0.8 }
+        ]
+    },
+    classicBuffett: {
+        value: 183.5,
+        marketCap: 52400,
+        gdp: 28560,
+        zone: 'Significantly Overvalued',
+        zoneColor: '#EF4444',
+        severity: 5,
+        marketCapDate: '2026-03-07',
+        gdpDate: '2025-10-01',
+        historical: [
+            { date: '2022-01-01', ratio: 188.7 },
+            { date: '2022-04-01', ratio: 156.2 },
+            { date: '2022-07-01', ratio: 152.8 },
+            { date: '2022-10-01', ratio: 145.1 },
+            { date: '2023-01-01', ratio: 151.3 },
+            { date: '2023-04-01', ratio: 158.7 },
+            { date: '2023-07-01', ratio: 162.4 },
+            { date: '2023-10-01', ratio: 155.9 },
+            { date: '2024-01-01', ratio: 170.2 },
+            { date: '2024-04-01', ratio: 175.8 },
+            { date: '2024-07-01', ratio: 178.3 },
+            { date: '2024-10-01', ratio: 180.1 },
+            { date: '2025-01-01', ratio: 176.4 },
+            { date: '2025-04-01', ratio: 179.9 },
+            { date: '2025-07-01', ratio: 182.1 },
+            { date: '2025-10-01', ratio: 181.7 },
+            { date: '2026-01-01', ratio: 183.5 }
+        ]
+    }
+};
+
+var activeChart = 'modern';
+var globalData = null;
+
+function formatDate(dateStr) {
+    var d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function formatBillions(val) {
+    if (val >= 1000) return '$' + (val / 1000).toFixed(1) + 'T';
+    return '$' + val.toFixed(0) + 'B';
+}
+
+function positionNeedle(needleId, value, min, max) {
+    var clamped = Math.max(min, Math.min(max, value));
+    var pct = ((clamped - min) / (max - min)) * 100;
+    var el = document.getElementById(needleId);
+    if (el) el.style.left = pct + '%';
+}
+
+function renderComposite(data) {
+    var el = document.getElementById('compositeSignal');
+    el.textContent = data.composite.signal;
+    el.style.color = data.composite.color;
+
+    document.getElementById('dotModern').style.background = data.modernBuffett.zoneColor;
+    document.getElementById('dotErp').style.background = data.erp.zoneColor;
+    document.getElementById('dotClassic').style.background = data.classicBuffett.zoneColor;
+}
+
+function renderModern(m) {
+    document.getElementById('modernValue').textContent = m.value.toFixed(2);
+    document.getElementById('modernValue').style.color = m.zoneColor;
+    document.getElementById('modernZone').textContent = m.zone;
+    document.getElementById('modernZone').style.color = m.zoneColor;
+    document.getElementById('modernSp500').textContent = '$' + m.sp500Price.toLocaleString();
+    document.getElementById('modernDate').textContent = formatDate(m.date);
+    // Needle: range 0 to 5
+    positionNeedle('modernNeedle', m.value, 0, 5);
+}
+
+function renderErp(e) {
+    document.getElementById('erpValue').textContent = e.value.toFixed(2);
+    document.getElementById('erpValue').style.color = e.zoneColor;
+    document.getElementById('erpZone').textContent = e.zone;
+    document.getElementById('erpZone').style.color = e.zoneColor;
+    document.getElementById('erpEarningsYield').textContent = e.earningsYield.toFixed(2) + '%';
+    document.getElementById('erpTreasury').textContent = e.treasuryYield.toFixed(2) + '%';
+    document.getElementById('erpDate').textContent = formatDate(e.date);
+    // Needle: range -3 to 7 (inverted: high ERP = right = stocks attractive)
+    positionNeedle('erpNeedle', e.value, -3, 7);
+}
+
+function renderClassic(c) {
+    document.getElementById('classicValue').textContent = c.value.toFixed(1);
+    document.getElementById('classicValue').style.color = c.zoneColor;
+    document.getElementById('classicZone').textContent = c.zone;
+    document.getElementById('classicZone').style.color = c.zoneColor;
+    document.getElementById('classicMarketCap').textContent = formatBillions(c.marketCap);
+    document.getElementById('classicGdp').textContent = formatBillions(c.gdp);
+    document.getElementById('classicMcDate').textContent = formatDate(c.marketCapDate);
+    document.getElementById('classicGdpDate').textContent = formatDate(c.gdpDate);
+    // Needle: range 50 to 220
+    positionNeedle('classicNeedle', c.value, 50, 220);
+}
+
+function drawChart(chartType) {
+    if (!globalData) return;
+    var canvas = document.getElementById('historyChart');
+    if (!canvas) return;
+
+    var historical, lineColor, labelSuffix, fairValue;
+    if (chartType === 'modern') {
+        historical = globalData.modernBuffett.historical.map(function(d) { return { date: d.date, value: d.value }; });
+        lineColor = '#14B89C';
+        labelSuffix = 'x';
+        fairValue = null;
+    } else if (chartType === 'erp') {
+        historical = globalData.erp.historical.map(function(d) { return { date: d.date, value: d.value }; });
+        lineColor = '#3B82F6';
+        labelSuffix = '%';
+        fairValue = 0;
+    } else {
+        historical = globalData.classicBuffett.historical.map(function(d) { return { date: d.date, value: d.ratio }; });
+        lineColor = '#F97316';
+        labelSuffix = '%';
+        fairValue = 100;
+    }
+
+    var dpr = window.devicePixelRatio || 1;
+    var rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    var W = rect.width, H = rect.height;
+    var pad = { top: 20, right: 20, bottom: 40, left: 50 };
+    var cW = W - pad.left - pad.right;
+    var cH = H - pad.top - pad.bottom;
+
+    if (!historical || !historical.length) {
+        ctx.fillStyle = '#6B7A8D';
+        ctx.font = '14px DM Sans, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Historical data unavailable', W / 2, H / 2);
+        return;
+    }
+
+    var values = historical.map(function(d) { return d.value; });
+    var minVal = Math.min.apply(null, values);
+    var maxVal = Math.max.apply(null, values);
+    var range = maxVal - minVal;
+    minVal = minVal - range * 0.15;
+    maxVal = maxVal + range * 0.15;
+    if (fairValue !== null) {
+        minVal = Math.min(minVal, fairValue - 5);
+        maxVal = Math.max(maxVal, fairValue + 5);
+    }
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    var gridCount = 5;
+    for (var g = 0; g <= gridCount; g++) {
+        var gVal = minVal + ((maxVal - minVal) / gridCount) * g;
+        var gY = pad.top + cH - ((gVal - minVal) / (maxVal - minVal)) * cH;
+        ctx.beginPath();
+        ctx.moveTo(pad.left, gY);
+        ctx.lineTo(W - pad.right, gY);
+        ctx.stroke();
+        ctx.fillStyle = '#3a4555';
+        ctx.font = '11px DM Mono, monospace';
+        ctx.textAlign = 'right';
+        ctx.fillText(gVal.toFixed(1) + labelSuffix, pad.left - 8, gY + 4);
+    }
+
+    // Fair value line
+    if (fairValue !== null && fairValue >= minVal && fairValue <= maxVal) {
+        var fY = pad.top + cH - ((fairValue - minVal) / (maxVal - minVal)) * cH;
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, fY);
+        ctx.lineTo(W - pad.right, fY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+
+    // Data line
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    historical.forEach(function(d, i) {
+        var x = pad.left + (i / (historical.length - 1)) * cW;
+        var y = pad.top + cH - ((d.value - minVal) / (maxVal - minVal)) * cH;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Gradient fill
+    var gradient = ctx.createLinearGradient(0, pad.top, 0, pad.top + cH);
+    gradient.addColorStop(0, lineColor.replace(')', ', 0.15)').replace('rgb', 'rgba'));
+    gradient.addColorStop(1, lineColor.replace(')', ', 0)').replace('rgb', 'rgba'));
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    historical.forEach(function(d, i) {
+        var x = pad.left + (i / (historical.length - 1)) * cW;
+        var y = pad.top + cH - ((d.value - minVal) / (maxVal - minVal)) * cH;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.lineTo(pad.left + cW, pad.top + cH);
+    ctx.lineTo(pad.left, pad.top + cH);
+    ctx.closePath();
+    ctx.fill();
+
+    // Data points
+    historical.forEach(function(d, i) {
+        var x = pad.left + (i / (historical.length - 1)) * cW;
+        var y = pad.top + cH - ((d.value - minVal) / (maxVal - minVal)) * cH;
+        ctx.fillStyle = lineColor;
+        ctx.beginPath();
+        ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+    });
+
+    // X-axis dates
+    ctx.fillStyle = '#3a4555';
+    ctx.font = '10px DM Mono, monospace';
+    ctx.textAlign = 'center';
+    var step = Math.max(1, Math.floor(historical.length / 6));
+    for (var i = 0; i < historical.length; i += step) {
+        var x = pad.left + (i / (historical.length - 1)) * cW;
+        ctx.fillText(historical[i].date.substring(0, 7), x, H - pad.bottom + 20);
+    }
+    if ((historical.length - 1) % step !== 0) {
+        var lastX = pad.left + cW;
+        ctx.fillText(historical[historical.length - 1].date.substring(0, 7), lastX, H - pad.bottom + 20);
+    }
+}
+
+function renderData(data, isLive) {
+    globalData = data;
+
+    document.getElementById('loadingSection').style.display = 'none';
+    document.getElementById('indicatorsSection').style.display = 'block';
+    document.getElementById('chartSection').style.display = 'block';
+
+    renderComposite(data);
+    renderModern(data.modernBuffett);
+    renderErp(data.erp);
+    renderClassic(data.classicBuffett);
+    drawChart(activeChart);
+
+    if (!isLive) {
+        document.getElementById('dataSourceText').textContent = 'Demo data shown — configure FRED_API_KEY for live data';
+    }
+}
+
+// Chart tab switching
+document.querySelectorAll('.chart-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.chart-tab').forEach(function(t) { t.classList.remove('chart-tab--active'); });
+        tab.classList.add('chart-tab--active');
+        activeChart = tab.getAttribute('data-chart');
+        drawChart(activeChart);
+    });
+});
+
+// Fetch live data, fall back to demo
+function init() {
+    fetch('/.netlify/functions/market-health')
+        .then(function(res) {
+            if (!res.ok) throw new Error('API returned ' + res.status);
+            return res.json();
+        })
+        .then(function(data) {
+            if (data.error) throw new Error(data.error);
+            renderData(data, true);
+        })
+        .catch(function() {
+            renderData(DEMO_DATA, false);
+        });
+}
+
+// Nav scroll
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+
+// Redraw chart on resize
+var resizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() { drawChart(activeChart); }, 200);
+});
+
+init();
+</script>
+
+</body>
+</html>
