@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <script src="/cookie-consent.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>DCF Valuation Made Simple: How to Calculate a Stock's Intrinsic Value — LIUV Blog</title>
+    <meta name="description" content="Learn the 4-step Discounted Cash Flow model that Warren Buffett has used for over 60 years. A beginner-friendly guide to calculating what any stock is actually worth.">
+    <meta property="og:title" content="DCF Valuation Made Simple: How to Calculate a Stock's Intrinsic Value — LIUV Blog">
+    <meta property="og:description" content="Learn the 4-step Discounted Cash Flow model that Warren Buffett has used for over 60 years. A beginner-friendly guide to calculating what any stock is actually worth.">
+    <meta property="og:image" content="/blog/images/LIUV_Newsletter_Cover_1920x1080.png">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="/blog/images/LIUV_Newsletter_Cover_1920x1080.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ========================================
+           CSS VARIABLES — LIUV Brand Palette
+           ======================================== */
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+        }
+
+        /* ========================================
+           RESET & BASE
+           ======================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: var(--accent-teal);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        a:hover { opacity: 0.8; }
+
+        img { max-width: 100%; display: block; }
+
+        /* ========================================
+           LAYOUT
+           ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ========================================
+           ANIMATED BACKGROUND
+           ======================================== */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.07;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow--teal {
+            background: var(--accent-teal);
+            top: -200px;
+            right: -100px;
+        }
+
+        .bg-glow--purple {
+            background: #A78BFA;
+            bottom: 20%;
+            left: -200px;
+        }
+
+        /* ========================================
+           NAVIGATION
+           ======================================== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            background: rgba(6, 9, 16, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+
+        .nav__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .nav__logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .nav__logomark {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 28px;
+        }
+
+        .nav__logomark span {
+            display: block;
+            width: 5px;
+            border-radius: 2px;
+            background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4));
+        }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+
+        .nav__wordmark {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: var(--text-primary);
+        }
+
+        .nav__tagline {
+            font-family: var(--font-body);
+            font-weight: 500;
+            font-size: 10px;
+            letter-spacing: 4px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: -2px;
+        }
+
+        .nav__links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            list-style: none;
+        }
+
+        .nav__links a {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+            letter-spacing: 0.3px;
+        }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+
+        .nav__cta {
+            background: var(--accent-teal);
+            color: var(--bg-primary) !important;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .nav__cta:hover {
+            opacity: 1 !important;
+            box-shadow: 0 0 30px var(--accent-teal-glow);
+            transform: translateY(-1px);
+        }
+
+        .nav__mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* ========================================
+           ARTICLE LAYOUT
+           ======================================== */
+        .article {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 160px 24px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .article__back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            transition: color 0.2s;
+        }
+        .article__back:hover { color: var(--accent-teal); opacity: 1; }
+
+        .article__category {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 16px;
+        }
+
+        .article__title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .article__meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .article__meta .separator {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--text-dim);
+        }
+
+        /* ========================================
+           ARTICLE CONTENT
+           ======================================== */
+        .article__body h2 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1.3;
+            margin-top: 56px;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .article__body h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .article__body p {
+            font-size: 17px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .article__body strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .article__body em {
+            color: var(--accent-teal);
+            font-style: italic;
+        }
+
+        .article__body blockquote {
+            margin: 40px 0;
+            padding: 32px 36px;
+            background: var(--bg-card);
+            border-left: 3px solid var(--accent-teal);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .article__body blockquote p {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .article__body blockquote p:last-child {
+            margin-bottom: 0;
+        }
+
+        .article__body blockquote cite {
+            font-family: var(--font-body);
+            font-style: normal;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .article__body ul, .article__body ol {
+            margin: 0 0 24px 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .article__body li {
+            font-size: 17px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            padding-left: 24px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .article__body li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 12px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-teal);
+        }
+
+        .article__body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 32px 0;
+            font-size: 14px;
+        }
+
+        .article__body thead th {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(20, 184, 156, 0.2);
+        }
+
+        .article__body tbody td {
+            padding: 12px 16px;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .article__body tbody tr:hover td {
+            background: rgba(20, 184, 156, 0.03);
+        }
+
+        .article__body tbody td:first-child {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .article__body tbody tr:last-child td {
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: none;
+        }
+
+        .article__callout {
+            margin: 48px 0;
+            padding: 36px;
+            background: linear-gradient(135deg, rgba(20, 184, 156, 0.06), rgba(167, 139, 250, 0.03));
+            border: 1px solid rgba(20, 184, 156, 0.12);
+            border-radius: 12px;
+        }
+
+        .article__callout-title {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-teal);
+            margin-bottom: 12px;
+        }
+
+        .article__callout p {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        .article__divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent-teal-dim);
+            margin: 56px 0;
+        }
+
+        .article__formula {
+            margin: 32px 0;
+            padding: 24px 32px;
+            background: var(--bg-card);
+            border: 1px solid rgba(20, 184, 156, 0.1);
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 15px;
+            color: var(--accent-teal);
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .article__result {
+            margin: 40px 0;
+            padding: 32px;
+            background: var(--bg-card);
+            border: 1px solid rgba(20, 184, 156, 0.15);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .article__result-label {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .article__result-value {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 400;
+            color: var(--accent-teal);
+            margin-bottom: 8px;
+        }
+
+        .article__result-detail {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* CTA at end of article */
+        .article__cta {
+            margin-top: 64px;
+            padding: 48px 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(20, 184, 156, 0.12);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .article__cta h3 {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            margin-bottom: 16px;
+        }
+
+        .article__cta p {
+            font-size: 16px;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto 28px;
+            line-height: 1.7;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-teal);
+            color: var(--bg-primary);
+            padding: 16px 36px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-primary:hover {
+            color: var(--bg-primary);
+            box-shadow: 0 0 40px var(--accent-teal-glow);
+            transform: translateY(-2px);
+            opacity: 1;
+        }
+
+        /* ========================================
+           FOOTER
+           ======================================== */
+        .footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer__inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+        }
+
+        .footer__brand p {
+            color: var(--text-muted);
+            font-size: 14px;
+            max-width: 300px;
+            margin-top: 16px;
+            line-height: 1.6;
+        }
+
+        .footer__links {
+            display: flex;
+            gap: 64px;
+        }
+
+        .footer__col-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .footer__col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer__col a {
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+
+        .footer__bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .footer__copy {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .footer__legal {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer__legal a {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* ========================================
+           ANIMATIONS
+           ======================================== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeUp 0.8s ease forwards;
+        }
+
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+
+        /* ========================================
+           RESPONSIVE
+           ======================================== */
+        @media (max-width: 768px) {
+            .nav__links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(6, 9, 16, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                padding: 16px 24px 24px;
+                gap: 0;
+                border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+            }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+
+            .article { padding-top: 120px; }
+
+            .article__body h2 { font-size: 24px; }
+
+            .article__body blockquote {
+                padding: 24px;
+            }
+
+            .article__body table {
+                font-size: 12px;
+            }
+
+            .article__body thead th,
+            .article__body tbody td {
+                padding: 10px 12px;
+            }
+
+            .article__result-value {
+                font-size: 36px;
+            }
+
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+        }
+
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+
+        /* Language Selector */
+        .lang-selector {
+            margin-top: 16px;
+        }
+
+        .lang-selector__label {
+            font-size: 12px;
+            color: var(--text-dim);
+            display: block;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .lang-selector__select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            font-size: 13px;
+            padding: 8px 32px 8px 12px;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%236B7A8D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .lang-selector__select:hover,
+        .lang-selector__select:focus {
+            border-color: var(--accent-teal);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- ========== NAVIGATION ========== -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark">
+                <span></span><span></span><span></span><span></span>
+            </div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html">Resources</a></li>
+            <li><a href="/blog.html" class="active">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- ========== ARTICLE ========== -->
+<article class="article">
+
+    <a href="/blog.html" class="article__back fade-in fade-in--d1">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to Blog
+    </a>
+
+    <div class="article__category fade-in fade-in--d1">Education</div>
+
+    <h1 class="article__title fade-in fade-in--d2">DCF Valuation Made Simple: How to Calculate a Stock's <em style="font-style:italic;color:var(--accent-teal);">Intrinsic Value</em></h1>
+
+    <div class="article__meta fade-in fade-in--d3">
+        <span>March 14, 2026</span>
+        <span class="separator"></span>
+        <span>7 min read</span>
+        <span class="separator"></span>
+        <span>LIUV Research</span>
+    </div>
+
+    <div class="article__body fade-in fade-in--d3">
+
+        <p>Most people buy stocks the same way they buy lottery tickets &mdash; hoping the price goes up, without really knowing why it should.</p>
+
+        <p>Value investors do the opposite. Before buying a single share, they ask one fundamental question: <strong>what is this business actually worth?</strong></p>
+
+        <p>The tool that answers that question is called a <strong>Discounted Cash Flow model</strong>, or DCF. It sounds intimidating. It isn't. At its core, it's just a structured way of answering: <em>"How much cash will this business generate over its lifetime, and what is that worth to me today?"</em></p>
+
+        <p>This is the same approach Warren Buffett has used for over 60 years. Let's break it down simply.</p>
+
+        <h2>Start Here: Why Future Money Is Worth Less Than Today's Money</h2>
+
+        <p>Imagine I offered you two choices:</p>
+
+        <ul>
+            <li><strong>Option A:</strong> $1,000 today</li>
+            <li><strong>Option B:</strong> $1,000 three years from now</li>
+        </ul>
+
+        <p>You'd take Option A &mdash; obviously. Money today can be invested and grown. Money in the future is uncertain and delayed.</p>
+
+        <p>This simple idea &mdash; that <strong>a dollar today is worth more than a dollar tomorrow</strong> &mdash; is the entire foundation of a DCF model.</p>
+
+        <p>When we value a business, we estimate all the cash it will generate in the future, then "discount" those amounts back to what they're worth right now. Add them all up, and you get the business's <strong>intrinsic value</strong> &mdash; what it's truly worth, independent of what the stock market says.</p>
+
+        <blockquote>
+            <p>"Price is what you pay. Value is what you get."</p>
+            <cite>&mdash; Warren Buffett</cite>
+        </blockquote>
+
+        <p>If the stock is trading below that number, you may have found a bargain. If it's trading above it, you're overpaying.</p>
+
+        <h2>The 4 Steps of a DCF (In Plain English)</h2>
+
+        <h3>Step 1: How much cash does the business generate today?</h3>
+
+        <p>We start with <strong>Free Cash Flow (FCF)</strong> &mdash; the cash a business has left over after paying all its operating expenses and investing back into itself. Think of it as the actual profit the owner gets to keep.</p>
+
+        <div class="article__formula">
+            Free Cash Flow = Cash from Operations &minus; Capital Expenditures
+        </div>
+
+        <p>Both numbers are publicly available in every company's annual report. For our example, let's say a business generates <strong>$100M in Free Cash Flow</strong> this year.</p>
+
+        <h3>Step 2: How fast will that cash grow?</h3>
+
+        <p>Next, we estimate how the business will grow over the next 5&ndash;10 years. This requires honest judgment based on the company's history, its competitive position, and the industry it operates in.</p>
+
+        <p>Let's assume a conservative <strong>7% annual growth rate</strong> for 5 years:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Free Cash Flow</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Year 1</td><td>$107M</td></tr>
+                <tr><td>Year 2</td><td>$115M</td></tr>
+                <tr><td>Year 3</td><td>$123M</td></tr>
+                <tr><td>Year 4</td><td>$131M</td></tr>
+                <tr><td>Year 5</td><td>$140M</td></tr>
+            </tbody>
+        </table>
+
+        <div class="article__callout">
+            <div class="article__callout-title">Graham's Rule of Thumb</div>
+            <p>Always be conservative. It's better to underestimate and find a genuine bargain than to assume rosy growth and overpay.</p>
+        </div>
+
+        <h3>Step 3: Discount those cash flows back to today</h3>
+
+        <p>Now we apply the discount. We're essentially asking: <em>"What is $107M one year from now worth to me today?"</em></p>
+
+        <p>We use a <strong>discount rate</strong> &mdash; typically 9&ndash;10% for a stable business &mdash; to reflect the risk involved and what we could earn investing elsewhere.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Future Cash Flow</th>
+                    <th>Worth Today (at 9%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Year 1</td><td>$107M</td><td>$98M</td></tr>
+                <tr><td>Year 2</td><td>$115M</td><td>$97M</td></tr>
+                <tr><td>Year 3</td><td>$123M</td><td>$95M</td></tr>
+                <tr><td>Year 4</td><td>$131M</td><td>$93M</td></tr>
+                <tr><td>Total (Years 1&ndash;5)</td><td>$140M</td><td>~$474M</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Step 4: Add the Terminal Value</h3>
+
+        <p>A business doesn't stop generating cash after 5 years. The <strong>Terminal Value</strong> captures everything beyond your forecast period &mdash; and it's usually the largest part of the total value.</p>
+
+        <p>We estimate it by assuming the business keeps growing at a slow, sustainable rate (around 2&ndash;3% per year, roughly in line with long-run economic growth) forever.</p>
+
+        <p>Using our numbers, the Terminal Value discounted back to today comes to approximately <strong>~$1,400M</strong>.</p>
+
+        <div class="article__result">
+            <div class="article__result-label">Total Intrinsic Value</div>
+            <div class="article__result-value">$9.37</div>
+            <div class="article__result-detail">per share &mdash; based on $474M + $1,400M = ~$1,874M across 200M shares</div>
+        </div>
+
+        <p>If the stock is currently trading at $7.50, you're looking at a potential <strong>margin of safety of ~20%</strong> &mdash; the buffer between what you pay and what the business is worth. That buffer is your protection if something goes wrong.</p>
+
+        <h2>The Catch: Small Assumptions, Big Consequences</h2>
+
+        <p>Here's the honest limitation of DCF: <strong>the output is only as good as your inputs.</strong></p>
+
+        <ul>
+            <li>Change your growth assumption from 7% to 10%, and the intrinsic value jumps dramatically</li>
+            <li>Use a discount rate that's too low, and every stock looks cheap</li>
+            <li>This is why disciplined investors always run <strong>multiple scenarios</strong> &mdash; optimistic, base case, and pessimistic &mdash; and only buy when a stock looks undervalued in all three</li>
+        </ul>
+
+        <p>Doing this rigorously for a single stock takes several hours. Keeping it updated across a portfolio of 20&ndash;30 stocks? That's practically a full-time job.</p>
+
+        <h2>This Is Exactly What LIUV Does &mdash; Instantly</h2>
+
+        <p>LIUV's AI agents run DCF models continuously across thousands of stocks &mdash; pulling live financial data, applying appropriate discount rates, and stress-testing assumptions across multiple scenarios.</p>
+
+        <ul>
+            <li><strong>Live financial data</strong>, continuously updated as companies file new reports</li>
+            <li><strong>Sector-appropriate discount rates</strong> calibrated to each industry's risk profile</li>
+            <li><strong>Multi-scenario stress testing</strong> across bull, base, and bear cases</li>
+            <li><strong>Thousands of stocks analyzed 24/7</strong> &mdash; not just the ones you already know about</li>
+        </ul>
+
+        <div class="article__callout">
+            <div class="article__callout-title">The LIUV Approach</div>
+            <p>The methodology is the same one Buffett has used for decades. The difference is that LIUV does in seconds what used to take analysts hours &mdash; and makes that same level of analysis available to every investor, not just those with Bloomberg terminals and research teams.</p>
+        </div>
+
+        <div class="article__divider"></div>
+
+        <p><strong>The question isn't whether DCF works.</strong> Buffett has proven that over six decades. The question is whether you have the tools to apply it consistently, across your entire watchlist, without spending your weekends buried in spreadsheets. For the first time, you do.</p>
+
+        <div class="article__divider"></div>
+
+        <p style="font-size: 13px; color: var(--text-dim); line-height: 1.6;">The financial examples in this article use simplified hypothetical figures for educational purposes. They do not represent any specific public company. Always conduct your own due diligence before making investment decisions. See our <a href="/compliance.html">compliance page</a> for full disclosures.</p>
+
+    </div>
+
+    <!-- Article CTA -->
+    <div class="article__cta">
+        <h3>See the intrinsic value of any stock in <em style="font-style:italic;color:var(--accent-teal);">seconds</em></h3>
+        <p>LIUV's AI-powered DCF calculator applies the Buffett/Graham methodology to every stock in the market &mdash; so you always know what you're paying for.</p>
+        <a href="/#pricing" class="btn-primary">
+            Start Your 7-Day Free Trial
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+    </div>
+
+</article>
+
+<!-- ========== FOOTER ========== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+                <div class="lang-selector">
+                    <label class="lang-selector__label" for="lang-select">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align: middle; margin-right: 6px;">
+                            <circle cx="8" cy="8" r="7" stroke="#6B7A8D" stroke-width="1.2"/>
+                            <ellipse cx="8" cy="8" rx="3.5" ry="7" stroke="#6B7A8D" stroke-width="1.2"/>
+                            <line x1="1" y1="8" x2="15" y2="8" stroke="#6B7A8D" stroke-width="1.2"/>
+                        </svg>
+                        Language
+                    </label>
+                    <select id="lang-select" class="lang-selector__select" onchange="if(this.value==='pt'){window.location.href='/blog/pt/dcf-valuation-made-simple.html'}">
+                        <option value="en" selected>English</option>
+                        <option value="pt">Portugu&#234;s</option>
+                    </select>
+                </div>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:contact@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:contact@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
