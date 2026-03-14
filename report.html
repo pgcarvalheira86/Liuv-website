@@ -199,12 +199,13 @@
             emptyEl.style.display = 'none';
             withOb.forEach(function (u) {
                 const ob = u.onboarding;
+                const planDisplay = (u.plan && String(u.plan).trim()) || (ob.plan ? String(ob.plan).charAt(0).toUpperCase() + String(ob.plan).slice(1).toLowerCase() : '—');
                 const prefsStr = ob.preferences && typeof ob.preferences === 'object'
                     ? JSON.stringify(ob.preferences)
                     : (ob.preferences != null ? String(ob.preferences) : '—');
                 const updated = ob.updatedAt ? new Date(ob.updatedAt).toLocaleString() : '—';
                 const tr = document.createElement('tr');
-                tr.innerHTML = '<td>' + escapeHtml(u.email || '') + '</td><td>' + escapeHtml(ob.plan || '—') + '</td><td>' + escapeHtml(String(ob.completedStep != null ? ob.completedStep : '—')) + '</td><td>' + escapeHtml(updated) + '</td><td class="report-preferences" title="' + escapeHtml(prefsStr) + '">' + escapeHtml(prefsStr.length > 80 ? prefsStr.slice(0, 80) + '…' : prefsStr) + '</td>';
+                tr.innerHTML = '<td>' + escapeHtml(u.email || '') + '</td><td>' + escapeHtml(planDisplay) + '</td><td>' + escapeHtml(String(ob.completedStep != null ? ob.completedStep : '—')) + '</td><td>' + escapeHtml(updated) + '</td><td class="report-preferences" title="' + escapeHtml(prefsStr) + '">' + escapeHtml(prefsStr.length > 80 ? prefsStr.slice(0, 80) + '…' : prefsStr) + '</td>';
                 tbody.appendChild(tr);
             });
         }
