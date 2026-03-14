@@ -64,3 +64,8 @@
   from = "/api/analysis"
   to = "/.netlify/functions/analysis"
   status = 200
+
+[[redirects]]
+  from = "/api/admin/analysis-report"
+  to = "/.netlify/functions/admin-analysis-report"
+  status = 200
