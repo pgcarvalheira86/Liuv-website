@@ -9,9 +9,8 @@ const USER_PREFIX = 'user:';
 const USER_STATS_PREFIX = 'user-stats:';
 
 const ADMIN_EMAILS = [
-  'admin@liuv.io',
-  'contact@liuv.io',
   'puneet@liuv.io',
+  'pedro@liuv.io',
 ];
 
 function isAdmin(email) {
