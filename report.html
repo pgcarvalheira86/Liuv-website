@@ -54,6 +54,9 @@
         .report-denied { padding: 48px 24px; text-align: center; color: var(--text-muted); font-size: 16px; }
         .report-denied a { margin-top: 16px; display: inline-block; }
         .report-loading { padding: 48px; text-align: center; color: var(--text-muted); }
+        .report-section { margin-bottom: 32px; }
+        .report-section__title { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: var(--text-primary); }
+        .report-preferences { font-size: 12px; color: var(--text-muted); max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         footer { text-align: center; padding: 24px; font-size: 13px; color: var(--text-dim); }
     </style>
 </head>
@@ -69,8 +72,8 @@
 
     <main class="main">
         <div class="report-header">
-            <h1 class="report-title">Stock analysis report</h1>
-            <p class="report-sub">Stocks analysed per user and count per stock. Admin only.</p>
+            <h1 class="report-title">Admin report</h1>
+            <p class="report-sub">Onboarding and stock analysis per user. Admin only.</p>
         </div>
 
         <div id="reportDenied" class="report-denied" style="display: none;">
@@ -87,19 +90,42 @@
                     <option value="">All users</option>
                 </select>
             </div>
-            <div class="report-table-wrap">
-                <table class="report-table">
-                    <thead>
-                        <tr>
-                            <th>User (email)</th>
-                            <th>Stock</th>
-                            <th class="num">Times analysed</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reportTableBody"></tbody>
-                </table>
+
+            <div class="report-section">
+                <h2 class="report-section__title">Onboarding</h2>
+                <div class="report-table-wrap">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>User (email)</th>
+                                <th>Plan</th>
+                                <th>Completed step</th>
+                                <th>Updated</th>
+                                <th>Preferences</th>
+                            </tr>
+                        </thead>
+                        <tbody id="onboardingTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="onboardingEmpty" class="report-empty" style="display: none;">No onboarding data.</div>
             </div>
-            <div id="reportEmpty" class="report-empty" style="display: none;">No analysis data yet.</div>
+
+            <div class="report-section">
+                <h2 class="report-section__title">Stock analysis</h2>
+                <div class="report-table-wrap">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>User (email)</th>
+                                <th>Stock</th>
+                                <th class="num">Times analysed</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="reportEmpty" class="report-empty" style="display: none;">No analysis data yet.</div>
+            </div>
         </div>
     </main>
 
@@ -138,7 +164,14 @@
             document.getElementById('reportLoading').style.display = 'none';
             document.getElementById('reportContent').style.display = 'block';
             buildFilter();
+            renderOnboarding();
             renderTable();
+        }
+
+        function getFilteredUsers() {
+            const filterEmail = document.getElementById('userFilter').value.trim().toLowerCase();
+            if (!filterEmail) return reportData.users;
+            return reportData.users.filter(function (u) { return (u.email || '').toLowerCase() === filterEmail; });
         }
 
         function buildFilter() {
@@ -150,17 +183,39 @@
                 opt.textContent = u.email || '(no email)';
                 sel.appendChild(opt);
             });
-            sel.addEventListener('change', renderTable);
+            sel.onchange = function () { renderOnboarding(); renderTable(); };
+        }
+
+        function renderOnboarding() {
+            const users = getFilteredUsers();
+            const tbody = document.getElementById('onboardingTableBody');
+            const emptyEl = document.getElementById('onboardingEmpty');
+            tbody.innerHTML = '';
+            const withOb = users.filter(function (u) { return u.onboarding; });
+            if (withOb.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+            withOb.forEach(function (u) {
+                const ob = u.onboarding;
+                const prefsStr = ob.preferences && typeof ob.preferences === 'object'
+                    ? JSON.stringify(ob.preferences)
+                    : (ob.preferences != null ? String(ob.preferences) : '—');
+                const updated = ob.updatedAt ? new Date(ob.updatedAt).toLocaleString() : '—';
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + escapeHtml(u.email || '') + '</td><td>' + escapeHtml(ob.plan || '—') + '</td><td>' + escapeHtml(String(ob.completedStep != null ? ob.completedStep : '—')) + '</td><td>' + escapeHtml(updated) + '</td><td class="report-preferences" title="' + escapeHtml(prefsStr) + '">' + escapeHtml(prefsStr.length > 80 ? prefsStr.slice(0, 80) + '…' : prefsStr) + '</td>';
+                tbody.appendChild(tr);
+            });
         }
 
         function renderTable() {
-            const filterEmail = document.getElementById('userFilter').value.trim().toLowerCase();
+            const users = getFilteredUsers();
             const tbody = document.getElementById('reportTableBody');
             const emptyEl = document.getElementById('reportEmpty');
             tbody.innerHTML = '';
             let rows = [];
-            reportData.users.forEach(function (u) {
-                if (filterEmail && (u.email || '').toLowerCase() !== filterEmail) return;
+            users.forEach(function (u) {
                 const counts = u.counts || {};
                 Object.keys(counts).sort().forEach(function (ticker) {
                     rows.push({ email: u.email, ticker: ticker, count: counts[ticker] });
