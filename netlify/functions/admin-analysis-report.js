@@ -58,6 +58,7 @@ export async function handler(event) {
         email: user.email || email,
         name: user.name || '',
         id: user.id || null,
+        plan: user.plan || null,
         onboarding,
         counts,
       });
