@@ -178,15 +178,30 @@ Include 3 scenarios: Low, Medium, High.`,
   },
 };
 
-function parseJsonFromContent(content) {
-  const raw = (content || '').trim();
+function extractJsonString(content) {
+  const raw = (content || '').trim().replace(/^\uFEFF/, '');
   const codeMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
-  const toParse = codeMatch ? codeMatch[1].trim() : raw;
-  try {
-    return JSON.parse(toParse);
-  } catch {
-    return null;
+  return codeMatch ? codeMatch[1].trim() : raw;
+}
+
+function sanitizeJsonString(s) {
+  return s
+    .replace(/,(\s*[}\]])/g, '$1')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n');
+}
+
+function parseJsonFromContent(content) {
+  const toParse = extractJsonString(content);
+  if (!toParse) return null;
+  for (const str of [toParse, sanitizeJsonString(toParse)]) {
+    try {
+      return JSON.parse(str);
+    } catch (_) {
+      continue;
+    }
   }
+  return null;
 }
 
 async function runStep(ticker, step, apiKey, yahooContext) {
@@ -194,45 +209,58 @@ async function runStep(ticker, step, apiKey, yahooContext) {
   if (!config) throw new Error('Invalid step');
 
   const userContent = typeof config.user === 'function' ? config.user(ticker, yahooContext || null) : config.user;
+  const body = {
+    model: MODEL,
+    max_tokens: config.max_tokens,
+    system: config.system,
+    messages: [{ role: 'user', content: userContent }],
+  };
+  const headers = {
+    'Content-Type': 'application/json',
+    'x-api-key': (apiKey || '').trim(),
+    'anthropic-version': '2023-06-01',
+  };
 
-  const res = await fetch(ANTHROPIC_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': (apiKey || '').trim(),
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: config.max_tokens,
-      system: config.system,
-      messages: [{ role: 'user', content: userContent }],
-    }),
-  });
+  async function requestAndParse() {
+    const res = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+    });
 
-  if (!res.ok) {
-    const raw = await res.text();
-    let errBody;
-    try {
-      errBody = JSON.parse(raw);
-    } catch {
-      errBody = { error: raw };
+    if (!res.ok) {
+      const raw = await res.text();
+      let errBody;
+      try {
+        errBody = JSON.parse(raw);
+      } catch {
+        errBody = { error: raw };
+      }
+      const msg =
+        errBody.error?.message
+        || errBody.error?.type
+        || (typeof errBody.error === 'string' ? errBody.error : null)
+        || (raw && raw.length < 300 ? raw : null)
+        || `API error ${res.status}`;
+      throw new Error(msg);
     }
-    const msg =
-      errBody.error?.message
-      || errBody.error?.type
-      || (typeof errBody.error === 'string' ? errBody.error : null)
-      || (raw && raw.length < 300 ? raw : null)
-      || `API error ${res.status}`;
-    throw new Error(msg);
+
+    const data = await res.json();
+    const block = data.content?.find((b) => b.type === 'text');
+    const content = block?.text?.trim();
+    if (!content) throw new Error('Empty response from AI');
+    const parsed = parseJsonFromContent(content);
+    return { content, parsed };
   }
 
-  const data = await res.json();
-  const block = data.content?.find((b) => b.type === 'text');
-  const content = block?.text?.trim();
-  if (!content) throw new Error('Empty response from AI');
-  const parsed = parseJsonFromContent(content);
-  return { raw: content, data: parsed };
+  let result = await requestAndParse();
+  if (result.parsed === null) {
+    result = await requestAndParse();
+  }
+  if (result.parsed === null) {
+    throw new Error('AI returned invalid JSON. Try again.');
+  }
+  return { raw: result.content, data: result.parsed };
 }
 
 export async function handler(event) {

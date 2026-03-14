@@ -775,7 +775,15 @@
                         body: JSON.stringify({ ticker, step, refresh }),
                         credentials: 'include',
                     });
-                    const data = await res.json();
+                    let data;
+                    const text = await res.text();
+                    try {
+                        data = text ? JSON.parse(text) : {};
+                    } catch (_) {
+                        resultEl.classList.add('analysis-result--error');
+                        resultEl.innerHTML = '<span class="analysis-result__ticker">' + ticker + '</span>Invalid response from server (step ' + step + '). Try again or uncheck "Use latest price data".';
+                        return;
+                    }
 
                     if (!res.ok) {
                         resultEl.classList.add('analysis-result--error');
@@ -792,9 +800,11 @@
                     }
                 }
                 resultEl.classList.remove('analysis-result--error');
-            } catch {
+            } catch (err) {
                 resultEl.classList.add('analysis-result--error');
-                resultEl.innerHTML = '<span class="analysis-result__ticker">' + ticker + '</span>Network error. Check your connection and try again.';
+                const isNetwork = err && (err.name === 'TypeError' || err.message === 'Failed to fetch');
+                const msg = isNetwork ? 'Network error. Check your connection and try again.' : 'Something went wrong for this ticker. Try again or uncheck "Use latest price data".';
+                resultEl.innerHTML = '<span class="analysis-result__ticker">' + ticker + '</span>' + escapeHtml(msg);
             } finally {
                 btn.disabled = false;
                 btnText.textContent = 'Run analysis';
