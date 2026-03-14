@@ -1,7 +1,11 @@
 import { connectLambda, getStore } from '@netlify/blobs';
 import { getTokenFromCookie, verifyToken, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
 
-const CACHE_STORE_NAME = 'analysis-cache';
+const USERS_STORE = 'users';
+const ONBOARDING_STORE = 'onboarding';
+const ANALYSIS_STORE = 'analysis-cache';
+const EMAIL_PREFIX = 'email:';
+const USER_PREFIX = 'user:';
 const USER_STATS_PREFIX = 'user-stats:';
 
 const ADMIN_EMAILS = [
@@ -35,14 +39,29 @@ export async function handler(event) {
 
     if (!isAdmin(payload.email)) return jsonResponse({ error: 'Forbidden' }, 403);
 
-    const store = getStore(CACHE_STORE_NAME);
-    const { blobs } = await store.list({ prefix: USER_STATS_PREFIX });
+    const usersStore = getStore(USERS_STORE);
+    const onboardingStore = getStore(ONBOARDING_STORE);
+    const analysisStore = getStore(ANALYSIS_STORE);
+    const { blobs: userKeys } = await usersStore.list({ prefix: EMAIL_PREFIX });
     const users = [];
-    for (const { key } of blobs) {
-      const email = key.slice(USER_STATS_PREFIX.length);
-      const raw = await store.get(key, { type: 'json' });
-      const counts = raw && typeof raw === 'object' ? raw : {};
-      users.push({ email, counts });
+    for (const { key } of userKeys) {
+      const email = key.slice(EMAIL_PREFIX.length);
+      const userRaw = await usersStore.get(key, { type: 'json' });
+      const user = userRaw && typeof userRaw === 'object' ? userRaw : { id: null, email, name: '' };
+      let onboarding = null;
+      if (user.id) {
+        const ob = await onboardingStore.get(USER_PREFIX + user.id, { type: 'json' });
+        if (ob && typeof ob === 'object') onboarding = ob;
+      }
+      const countsRaw = await analysisStore.get(USER_STATS_PREFIX + email, { type: 'json' });
+      const counts = countsRaw && typeof countsRaw === 'object' ? countsRaw : {};
+      users.push({
+        email: user.email || email,
+        name: user.name || '',
+        id: user.id || null,
+        onboarding,
+        counts,
+      });
     }
     users.sort((a, b) => (a.email || '').localeCompare(b.email || ''));
 
