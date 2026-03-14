@@ -1,4 +1,4 @@
-import { connectLambda } from '@netlify/blobs';
+import { connectLambda, getStore } from '@netlify/blobs';
 import { getTokenFromCookie, verifyToken, findUserByEmail, updateUser, getStripeCustomerMapping, jsonResponse, setBlobsContextFromEvent } from '../../lib/auth-utils.js';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
@@ -22,30 +22,45 @@ async function loadEnvIfNeeded() {
 
 const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
 const MODEL = (process.env.ANALYSIS_MODEL || 'claude-haiku-4-5').trim() || 'claude-haiku-4-5';
-const YAHOO_CACHE_TTL_MS = 5 * 60 * 1000;
-const STEP_CACHE_TTL_MS = 30 * 60 * 1000;
+const CACHE_STORE_NAME = 'analysis-cache';
 
-const analysisCache = new Map();
-
-function getCached(key, ttlMs = STEP_CACHE_TTL_MS) {
-  const entry = analysisCache.get(key);
-  const maxAge = entry?.ttlMs ?? ttlMs;
-  if (!entry || Date.now() - entry.ts > maxAge) {
-    if (entry) analysisCache.delete(key);
+async function getCachedBlob(store, key) {
+  try {
+    const entry = await store.get(key, { type: 'json' });
+    return entry ?? undefined;
+  } catch (e) {
+    console.warn('[ANALYSIS] Cache read error:', e.message);
     return undefined;
   }
-  return entry.value;
 }
 
-function setCached(key, value, ttlMs = STEP_CACHE_TTL_MS) {
-  analysisCache.set(key, { value, ts: Date.now(), ttlMs });
+async function setCachedBlob(store, key, value) {
+  try {
+    await store.setJSON(key, value);
+  } catch (e) {
+    console.warn('[ANALYSIS] Cache write error:', e.message);
+  }
+}
+
+async function recordAnalysisForUser(store, email, ticker) {
+  if (!email || !ticker) return;
+  const key = 'user-stats:' + String(email).trim().toLowerCase();
+  try {
+    const raw = await store.get(key, { type: 'json' });
+    const counts = raw && typeof raw === 'object' ? { ...raw } : {};
+    const t = ticker.toUpperCase();
+    counts[t] = (counts[t] || 0) + 1;
+    await store.setJSON(key, counts);
+  } catch (e) {
+    console.warn('[ANALYSIS] User stats write error:', e.message);
+  }
 }
 
 function fmtNum(v) {
   return v != null && v !== '' && !Number.isNaN(Number(v)) ? (Number(v) >= 1 ? Number(v).toFixed(2) : Number(v).toFixed(3)) : '—';
 }
 
-async function getFinnhubContext(ticker, skipCache = false) {
+async function getFinnhubContext(ticker, skipCache, store) {
   await loadEnvIfNeeded();
   const apiKey = (process.env.FINNHUB_API_KEY || '').trim();
   if (!apiKey) {
@@ -53,11 +68,11 @@ async function getFinnhubContext(ticker, skipCache = false) {
     return null;
   }
   const cacheKey = 'finnhub:' + ticker.toUpperCase();
-  if (!skipCache) {
-    const cached = getCached(cacheKey, YAHOO_CACHE_TTL_MS);
-    if (cached !== undefined) {
+  if (!skipCache && store) {
+    const cached = await getCachedBlob(store, cacheKey);
+    if (cached?.v != null) {
       console.log('[ANALYSIS] Finnhub: using cache for', ticker);
-      return cached;
+      return cached.v;
     }
   }
   const base = 'https://finnhub.io/api/v1';
@@ -116,7 +131,7 @@ ${metricsLine}
 
 Other data:
 ${parts.join('\n')}`;
-    setCached(cacheKey, context, YAHOO_CACHE_TTL_MS);
+    if (store) await setCachedBlob(store, cacheKey, { v: context });
     console.log('[ANALYSIS] Finnhub: fetched', ticker, 'price=', price ?? 'n/a', 'eps=', eps ?? 'n/a', 'pe=', pe ?? 'n/a');
     return context;
   } catch (err) {
@@ -280,10 +295,12 @@ export async function handler(event) {
       return jsonResponse({ error: 'Active subscription required to run analysis' }, 403);
     }
 
+    const store = getStore(CACHE_STORE_NAME);
     const stepCacheKey = 'step:' + ticker + ':' + step;
     if (!refresh) {
-      const cached = getCached(stepCacheKey);
-      if (cached !== undefined) {
+      const cached = await getCachedBlob(store, stepCacheKey);
+      if (cached && (cached.raw != null || cached.data != null)) {
+        if (step === 5) await recordAnalysisForUser(store, payload.email, ticker);
         return jsonResponse({
           ticker,
           step,
@@ -296,7 +313,7 @@ export async function handler(event) {
 
     let marketContext = null;
     try {
-      marketContext = await getFinnhubContext(ticker, refresh);
+      marketContext = await getFinnhubContext(ticker, refresh, store);
       if (marketContext == null) {
         console.warn('[ANALYSIS] Using placeholder market data (Finnhub returned no data for', ticker + ')');
         const header = 'Current Price | EPS TTM | P/E TTM | P/FCF TTM | ROE TTM | ROIC TTM';
@@ -313,8 +330,9 @@ ${placeholderLine}`;
 
     try {
       const result = await runStep(ticker, step, apiKey, marketContext);
-      const payload = { raw: result.raw, data: result.data };
-      setCached(stepCacheKey, payload);
+      const stepPayload = { raw: result.raw, data: result.data };
+      await setCachedBlob(store, stepCacheKey, stepPayload);
+      if (step === 5) await recordAnalysisForUser(store, payload.email, ticker);
       return jsonResponse({
         ticker,
         step,

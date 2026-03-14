@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Analysis Report — LIUV Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; }
+        a { color: var(--accent-teal); text-decoration: none; }
+        .nav {
+            padding: 20px 0;
+            background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(20, 184, 156, 0.08);
+        }
+        .nav__inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--text-primary); font-weight: 700; }
+        .nav__right { display: flex; align-items: center; gap: 16px; }
+        .nav__logout { font-size: 13px; color: var(--text-dim); cursor: pointer; background: none; border: 1px solid rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 6px; font-family: var(--font-body); }
+        .main { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; }
+        .report-header { margin-bottom: 24px; }
+        .report-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .report-sub { font-size: 14px; color: var(--text-muted); }
+        .report-toolbar { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .report-toolbar label { font-size: 14px; color: var(--text-muted); }
+        .report-toolbar select {
+            font-family: var(--font-body); font-size: 14px;
+            background: var(--bg-card); color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            padding: 8px 12px; min-width: 220px;
+        }
+        .report-table-wrap { overflow-x: auto; border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; background: var(--bg-card); }
+        .report-table { width: 100%; border-collapse: collapse; }
+        .report-table th, .report-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); }
+        .report-table th { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 600; }
+        .report-table tr:last-child td { border-bottom: none; }
+        .report-table tbody tr:hover { background: rgba(20, 184, 156, 0.04); }
+        .report-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+        .report-empty { padding: 48px 24px; text-align: center; color: var(--text-muted); }
+        .report-denied { padding: 48px 24px; text-align: center; color: var(--text-muted); font-size: 16px; }
+        .report-denied a { margin-top: 16px; display: inline-block; }
+        .report-loading { padding: 48px; text-align: center; color: var(--text-muted); }
+        footer { text-align: center; padding: 24px; font-size: 13px; color: var(--text-dim); }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav__inner">
+            <a href="/dashboard.html" class="nav__logo">← Dashboard</a>
+            <div class="nav__right">
+                <button type="button" class="nav__logout" id="logoutBtn">Sign Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main">
+        <div class="report-header">
+            <h1 class="report-title">Stock analysis report</h1>
+            <p class="report-sub">Stocks analysed per user and count per stock. Admin only.</p>
+        </div>
+
+        <div id="reportDenied" class="report-denied" style="display: none;">
+            <p>You don’t have access to this page.</p>
+            <a href="/dashboard.html">Back to dashboard</a>
+        </div>
+
+        <div id="reportLoading" class="report-loading">Loading…</div>
+
+        <div id="reportContent" style="display: none;">
+            <div class="report-toolbar">
+                <label for="userFilter">Filter by user</label>
+                <select id="userFilter">
+                    <option value="">All users</option>
+                </select>
+            </div>
+            <div class="report-table-wrap">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>User (email)</th>
+                            <th>Stock</th>
+                            <th class="num">Times analysed</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody"></tbody>
+                </table>
+            </div>
+            <div id="reportEmpty" class="report-empty" style="display: none;">No analysis data yet.</div>
+        </div>
+    </main>
+
+    <footer>&copy; 2026 LIUV Ventures.</footer>
+
+    <script>
+        let reportData = { users: [] };
+
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/auth/check', { credentials: 'include' });
+                const data = await res.json();
+                if (!data.authenticated) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+                return data.user;
+            } catch {
+                window.location.href = '/login.html';
+                return null;
+            }
+        }
+
+        async function loadReport() {
+            const res = await fetch('/api/admin/analysis-report', { credentials: 'include' });
+            if (res.status === 403) {
+                document.getElementById('reportLoading').style.display = 'none';
+                document.getElementById('reportDenied').style.display = 'block';
+                return;
+            }
+            if (!res.ok) {
+                document.getElementById('reportLoading').textContent = 'Failed to load report.';
+                return;
+            }
+            reportData = await res.json();
+            document.getElementById('reportLoading').style.display = 'none';
+            document.getElementById('reportContent').style.display = 'block';
+            buildFilter();
+            renderTable();
+        }
+
+        function buildFilter() {
+            const sel = document.getElementById('userFilter');
+            sel.innerHTML = '<option value="">All users</option>';
+            reportData.users.forEach(function (u) {
+                const opt = document.createElement('option');
+                opt.value = u.email || '';
+                opt.textContent = u.email || '(no email)';
+                sel.appendChild(opt);
+            });
+            sel.addEventListener('change', renderTable);
+        }
+
+        function renderTable() {
+            const filterEmail = document.getElementById('userFilter').value.trim().toLowerCase();
+            const tbody = document.getElementById('reportTableBody');
+            const emptyEl = document.getElementById('reportEmpty');
+            tbody.innerHTML = '';
+            let rows = [];
+            reportData.users.forEach(function (u) {
+                if (filterEmail && (u.email || '').toLowerCase() !== filterEmail) return;
+                const counts = u.counts || {};
+                Object.keys(counts).sort().forEach(function (ticker) {
+                    rows.push({ email: u.email, ticker: ticker, count: counts[ticker] });
+                });
+            });
+            if (rows.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+            rows.forEach(function (r) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + escapeHtml(r.email || '') + '</td><td>' + escapeHtml(r.ticker) + '</td><td class="num">' + Number(r.count) + '</td>';
+                tbody.appendChild(tr);
+            });
+        }
+
+        function escapeHtml(s) {
+            const div = document.createElement('div');
+            div.textContent = s;
+            return div.innerHTML;
+        }
+
+        function logout() {
+            fetch('/api/auth/logout', { method: 'POST' }).catch(function(){});
+            window.location.href = '/';
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        (async function init() {
+            await checkAuth();
+            await loadReport();
+        })();
+    </script>
+</body>
+</html>
