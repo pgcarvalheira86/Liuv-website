@@ -191,21 +191,24 @@
             const tbody = document.getElementById('onboardingTableBody');
             const emptyEl = document.getElementById('onboardingEmpty');
             tbody.innerHTML = '';
-            const withOb = users.filter(function (u) { return u.onboarding; });
-            if (withOb.length === 0) {
+            if (users.length === 0) {
                 emptyEl.style.display = 'block';
                 return;
             }
             emptyEl.style.display = 'none';
-            withOb.forEach(function (u) {
+            users.forEach(function (u) {
                 const ob = u.onboarding;
                 const planDisplay = (u.plan && String(u.plan).trim()) ? String(u.plan) : 'NO PLAN';
-                const prefsStr = ob.preferences && typeof ob.preferences === 'object'
-                    ? JSON.stringify(ob.preferences)
-                    : (ob.preferences != null ? String(ob.preferences) : '—');
-                const updated = ob.updatedAt ? new Date(ob.updatedAt).toLocaleString() : '—';
+                const completedStep = ob && ob.completedStep != null ? String(ob.completedStep) : '—';
+                const updated = ob && ob.updatedAt ? new Date(ob.updatedAt).toLocaleString() : '—';
+                let prefsStr = '—';
+                if (ob && ob.preferences != null) {
+                    prefsStr = ob.preferences && typeof ob.preferences === 'object'
+                        ? JSON.stringify(ob.preferences)
+                        : String(ob.preferences);
+                }
                 const tr = document.createElement('tr');
-                tr.innerHTML = '<td>' + escapeHtml(u.email || '') + '</td><td>' + escapeHtml(planDisplay) + '</td><td>' + escapeHtml(String(ob.completedStep != null ? ob.completedStep : '—')) + '</td><td>' + escapeHtml(updated) + '</td><td class="report-preferences" title="' + escapeHtml(prefsStr) + '">' + escapeHtml(prefsStr.length > 80 ? prefsStr.slice(0, 80) + '…' : prefsStr) + '</td>';
+                tr.innerHTML = '<td>' + escapeHtml(u.email || '') + '</td><td>' + escapeHtml(planDisplay) + '</td><td>' + escapeHtml(completedStep) + '</td><td>' + escapeHtml(updated) + '</td><td class="report-preferences" title="' + escapeHtml(prefsStr) + '">' + escapeHtml(prefsStr.length > 80 ? prefsStr.slice(0, 80) + '…' : prefsStr) + '</td>';
                 tbody.appendChild(tr);
             });
         }
