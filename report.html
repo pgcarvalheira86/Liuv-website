@@ -199,6 +199,7 @@
             emptyEl.style.display = 'none';
             withOb.forEach(function (u) {
                 const ob = u.onboarding;
+                const planDisplay = (u.plan && String(u.plan).trim()) ? String(u.plan) : 'NO PLAN';
                 const prefsStr = ob.preferences && typeof ob.preferences === 'object'
                     ? JSON.stringify(ob.preferences)
                     : (ob.preferences != null ? String(ob.preferences) : '—');
