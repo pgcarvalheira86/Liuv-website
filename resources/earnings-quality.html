@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/cookie-consent.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/liuv-favicon-32.png">
+    <title>Earnings Quality Analyzer — LIUV | Free Value Investing Tool</title>
+    <meta name="description" content="Analyze earnings quality using the Beneish M-Score, Altman Z-Score, and Buffett's Owner Earnings. Detect value traps and earnings manipulation. Free, no signup required.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #060910;
+            --bg-card: #0c1019;
+            --bg-card-hover: #111827;
+            --accent-teal: #14B89C;
+            --accent-teal-dim: rgba(20, 184, 156, 0.15);
+            --accent-teal-glow: rgba(20, 184, 156, 0.3);
+            --text-primary: #E8ECF1;
+            --text-muted: #6B7A8D;
+            --text-dim: #3a4555;
+            --font-body: 'DM Sans', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --font-mono: 'DM Mono', monospace;
+            --success: #1A7A4A;
+            --warning: #E8A020;
+            --danger: #C0392B;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-body); background-color: var(--bg-primary); color: var(--text-primary); font-size: 15px; line-height: 1.7; overflow-x: hidden; }
+        a { color: var(--accent-teal); text-decoration: none; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+        /* Background */
+        .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(20, 184, 156, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 156, 0.03) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0; }
+        .bg-glow { position: fixed; width: 600px; height: 600px; border-radius: 50%; filter: blur(150px); opacity: 0.07; pointer-events: none; z-index: 0; }
+        .bg-glow--teal { background: var(--accent-teal); top: -200px; right: -100px; }
+        .bg-glow--purple { background: #A78BFA; bottom: 20%; left: -200px; }
+
+        /* Navigation */
+        .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 0; transition: all 0.3s ease; background: rgba(6, 9, 16, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+        .nav__inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .nav__logo { display: flex; align-items: center; gap: 14px; }
+        .nav__logomark { display: flex; align-items: flex-end; gap: 3px; height: 28px; }
+        .nav__logomark span { display: block; width: 5px; border-radius: 2px; background: linear-gradient(to top, var(--accent-teal), rgba(20, 184, 156, 0.4)); }
+        .nav__logomark span:nth-child(1) { height: 40%; }
+        .nav__logomark span:nth-child(2) { height: 60%; }
+        .nav__logomark span:nth-child(3) { height: 80%; }
+        .nav__logomark span:nth-child(4) { height: 100%; }
+        .nav__wordmark { font-family: var(--font-body); font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--text-primary); }
+        .nav__tagline { font-family: var(--font-body); font-weight: 500; font-size: 10px; letter-spacing: 4px; color: var(--text-muted); text-transform: uppercase; margin-top: -2px; }
+        .nav__links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav__links a { color: var(--text-muted); font-size: 14px; font-weight: 500; transition: color 0.2s; letter-spacing: 0.3px; }
+        .nav__links a:hover { color: var(--text-primary); opacity: 1; }
+        .nav__links a.active { color: var(--accent-teal); }
+        .nav__cta { background: var(--accent-teal); color: var(--bg-primary) !important; padding: 10px 24px; border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .nav__cta:hover { opacity: 1 !important; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+        .nav__mobile-toggle { display: none; background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
+
+        /* Breadcrumb */
+        .breadcrumb { padding: 120px 0 0; position: relative; z-index: 1; }
+        .breadcrumb__list { display: flex; align-items: center; gap: 8px; list-style: none; font-size: 13px; }
+        .breadcrumb__list li { color: var(--text-muted); }
+        .breadcrumb__list li a { color: var(--text-muted); }
+        .breadcrumb__list li a:hover { color: var(--accent-teal); }
+        .breadcrumb__sep { color: var(--text-dim); }
+
+        /* Hero */
+        .tool-hero { padding: 32px 0 48px; position: relative; z-index: 1; }
+        .tool-hero__overline { font-size: 12px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+        .tool-hero__overline::before { content: ''; display: block; width: 32px; height: 1px; background: var(--accent-teal); }
+        .tool-hero__title { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 400; line-height: 1.15; margin-bottom: 16px; }
+        .tool-hero__subtitle { font-size: 16px; color: var(--text-muted); max-width: 700px; line-height: 1.7; }
+
+        /* Tool Layout */
+        .tool-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .tool-panel { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; }
+        .tool-panel--accent { border-color: rgba(20, 184, 156, 0.15); }
+        .tool-panel__title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .tool-panel__desc { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+        /* Form */
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 6px; }
+        .form-hint { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+        .form-input { width: 100%; padding: 10px 14px; background: var(--bg-primary); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; color: var(--text-primary); font-family: var(--font-mono); font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .form-input:focus { border-color: var(--accent-teal); }
+        .form-btn { width: 100%; padding: 14px 28px; background: var(--accent-teal); color: var(--bg-primary); border: none; border-radius: 6px; font-family: var(--font-body); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+        .form-btn:hover { opacity: 0.9; box-shadow: 0 0 30px var(--accent-teal-glow); }
+
+        /* Section headers inside input panel */
+        .input-section { margin-bottom: 20px; }
+        .input-section__title { font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-teal); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid rgba(20, 184, 156, 0.15); }
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* Slider */
+        .slider-group { margin-bottom: 16px; }
+        .slider-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .slider-value { font-family: var(--font-mono); font-size: 14px; color: var(--accent-teal); font-weight: 500; }
+        .form-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 3px; outline: none; }
+        .form-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent-teal); cursor: pointer; }
+        .form-slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--accent-teal); cursor: pointer; border: none; }
+
+        /* Results */
+        .result-placeholder { text-align: center; padding: 48px 20px; color: var(--text-dim); font-size: 14px; }
+
+        /* Verdict Cards */
+        .verdict-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+        .verdict-card { background: var(--bg-primary); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 20px 16px; text-align: center; }
+        .verdict-card__module { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+        .verdict-card__score { font-family: var(--font-mono); font-size: 28px; font-weight: 500; margin-bottom: 6px; }
+        .verdict-card__badge { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 4px 12px; border-radius: 4px; margin-bottom: 8px; }
+        .verdict-card__badge--clean { color: var(--success); background: rgba(26, 122, 74, 0.15); }
+        .verdict-card__badge--watch { color: var(--warning); background: rgba(232, 160, 32, 0.15); }
+        .verdict-card__badge--redflag { color: var(--danger); background: rgba(192, 57, 43, 0.15); }
+        .verdict-card__text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+        /* Composite Verdict */
+        .composite-verdict { text-align: center; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .composite-verdict--high { background: rgba(26, 122, 74, 0.1); border: 1px solid rgba(26, 122, 74, 0.25); }
+        .composite-verdict--good { background: rgba(26, 122, 74, 0.08); border: 1px solid rgba(26, 122, 74, 0.2); }
+        .composite-verdict--elevated { background: rgba(232, 160, 32, 0.1); border: 1px solid rgba(232, 160, 32, 0.25); }
+        .composite-verdict--serious { background: rgba(192, 57, 43, 0.1); border: 1px solid rgba(192, 57, 43, 0.25); }
+        .composite-verdict__label { font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+        .composite-verdict__text { font-size: 13px; color: var(--text-muted); }
+
+        /* Premium CTA inline */
+        .premium-cta-inline { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 20px; display: none; }
+        .premium-cta-inline__text { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.6; }
+        .premium-cta-inline__btn { display: inline-block; padding: 10px 24px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 13px; transition: all 0.2s; }
+        .premium-cta-inline__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        /* Breakdown Panels */
+        .breakdown-panels { position: relative; z-index: 1; margin-bottom: 48px; }
+        .breakdown-panel { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+        .breakdown-panel__header { padding: 20px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .breakdown-panel__header:hover { background: rgba(255, 255, 255, 0.02); }
+        .breakdown-panel__title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+        .breakdown-panel__toggle { font-size: 18px; color: var(--text-muted); transition: transform 0.3s; }
+        .breakdown-panel__toggle--open { transform: rotate(180deg); }
+        .breakdown-panel__body { padding: 0 24px 24px; display: none; }
+        .breakdown-panel__body--open { display: block; }
+
+        /* Gauge */
+        .gauge { margin: 20px 0; }
+        .gauge__track { height: 12px; border-radius: 6px; position: relative; overflow: visible; }
+        .gauge__track--mscore { background: linear-gradient(90deg, var(--danger) 0%, var(--warning) 45%, var(--success) 75%, var(--success) 100%); }
+        .gauge__track--zscore { background: linear-gradient(90deg, var(--danger) 0%, var(--warning) 40%, var(--success) 70%, var(--success) 100%); }
+        .gauge__marker { position: absolute; top: -6px; width: 4px; height: 24px; background: var(--text-primary); border-radius: 2px; transform: translateX(-50%); transition: left 0.5s ease; box-shadow: 0 0 8px rgba(255,255,255,0.3); }
+        .gauge__labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: var(--text-muted); }
+        .gauge__threshold { position: absolute; top: -2px; width: 2px; height: 16px; background: rgba(255,255,255,0.4); }
+
+        /* Variable Table */
+        .var-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .var-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-dim); padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+        .var-table td { padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.03); font-size: 13px; vertical-align: top; }
+        .var-table td:first-child { font-weight: 600; color: var(--text-primary); white-space: nowrap; padding-right: 16px; }
+        .var-table td:nth-child(2) { font-family: var(--font-mono); font-size: 14px; white-space: nowrap; padding-right: 16px; }
+        .var-table td:nth-child(3) { white-space: nowrap; padding-right: 16px; }
+        .var-table td:last-child { color: var(--text-muted); }
+        .var-signal { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+        .var-signal--ok { background: var(--success); }
+        .var-signal--elevated { background: var(--warning); }
+        .var-signal--high { background: var(--danger); }
+
+        /* OE comparison */
+        .oe-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+        .oe-metric { background: var(--bg-primary); border-radius: 8px; padding: 16px; text-align: center; }
+        .oe-metric__label { font-size: 11px; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+        .oe-metric__value { font-family: var(--font-mono); font-size: 22px; font-weight: 500; }
+
+        /* Citation */
+        .panel-citation { font-size: 11px; color: var(--text-dim); margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.04); font-style: italic; }
+
+        /* Signals count */
+        .signals-count { font-size: 13px; color: var(--text-muted); margin-top: 12px; padding: 10px 14px; background: var(--bg-primary); border-radius: 6px; }
+
+        /* Formula Box */
+        .formula-box { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 12px; padding: 32px; position: relative; z-index: 1; margin-bottom: 48px; }
+        .formula-box__title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+        .formula-box__formula { font-family: var(--font-mono); font-size: 15px; color: var(--accent-teal); text-align: center; padding: 16px; background: var(--bg-primary); border-radius: 8px; margin-bottom: 16px; line-height: 1.8; }
+        .formula-box__explain { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+        .formula-box__explain strong { color: var(--text-primary); }
+        .formula-section { margin-bottom: 24px; }
+        .formula-section:last-child { margin-bottom: 0; }
+        .formula-section__title { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
+
+        /* CTA */
+        .premium-cta { background: linear-gradient(135deg, rgba(20, 184, 156, 0.08), rgba(167, 139, 250, 0.04)); border: 1px solid rgba(20, 184, 156, 0.15); border-radius: 12px; padding: 40px; text-align: center; position: relative; z-index: 1; margin-bottom: 48px; }
+        .premium-cta__title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+        .premium-cta__text { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .premium-cta__btn { display: inline-block; padding: 12px 32px; background: var(--accent-teal); color: var(--bg-primary); border-radius: 6px; font-weight: 600; font-size: 14px; transition: all 0.2s; }
+        .premium-cta__btn:hover { opacity: 1; box-shadow: 0 0 30px var(--accent-teal-glow); transform: translateY(-1px); }
+
+        /* Disclaimer */
+        .disclaimer { background: var(--bg-card); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 20px 24px; font-size: 12px; color: var(--text-dim); line-height: 1.7; position: relative; z-index: 1; margin-bottom: 48px; }
+        .disclaimer strong { color: var(--text-muted); }
+
+        /* Footer */
+        .footer { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 64px 0 32px; position: relative; z-index: 1; margin-top: 40px; }
+        .footer__inner { display: flex; justify-content: space-between; gap: 80px; }
+        .footer__brand { max-width: 320px; }
+        .footer__brand p { color: var(--text-muted); font-size: 14px; margin-top: 16px; }
+        .footer__links { display: flex; gap: 80px; }
+        .footer__col-title { font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; color: var(--text-primary); }
+        .footer__col ul { list-style: none; }
+        .footer__col li { margin-bottom: 10px; }
+        .footer__col a { color: var(--text-muted); font-size: 14px; transition: color 0.2s; }
+        .footer__col a:hover { color: var(--text-primary); opacity: 1; }
+        .footer__bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); }
+        .footer__copy { color: var(--text-dim); font-size: 13px; }
+        .footer__legal { display: flex; gap: 24px; }
+        .footer__legal a { color: var(--text-dim); font-size: 13px; }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(20px); animation: fadeUp 0.6s ease forwards; }
+        .fade-in--d1 { animation-delay: 0.1s; }
+        .fade-in--d2 { animation-delay: 0.2s; }
+        .fade-in--d3 { animation-delay: 0.3s; }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 1024px) {
+            .tool-layout { grid-template-columns: 1fr; max-width: 700px; margin-left: auto; margin-right: auto; }
+        }
+        @media (max-width: 768px) {
+            .nav__links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; background: rgba(6, 9, 16, 0.95); backdrop-filter: blur(20px); padding: 16px 24px 24px; gap: 0; border-bottom: 1px solid rgba(20, 184, 156, 0.08); }
+            .nav__links--open { display: flex; }
+            .nav__links li { padding: 12px 0; }
+            .nav__links .nav__cta { display: inline-block; margin-top: 8px; text-align: center; }
+            .nav__mobile-toggle { display: block; }
+            .footer__inner { flex-direction: column; gap: 40px; }
+            .footer__links { gap: 40px; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+            .verdict-cards { grid-template-columns: 1fr; }
+            .input-row { grid-template-columns: 1fr; }
+            .oe-comparison { grid-template-columns: 1fr; }
+            .var-table { font-size: 12px; }
+            .var-table td:last-child { display: none; }
+        }
+        @media (max-width: 480px) {
+            .footer__links { flex-direction: column; gap: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow--teal"></div>
+<div class="bg-glow bg-glow--purple"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav__inner">
+        <a href="/" class="nav__logo">
+            <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+            <div>
+                <div class="nav__wordmark">LIUV</div>
+                <div class="nav__tagline">AI Wealth Agent</div>
+            </div>
+        </a>
+        <ul class="nav__links">
+            <li><a href="/#agents">Agents</a></li>
+            <li><a href="/#pricing">Pricing</a></li>
+            <li><a href="/resources.html" class="active">Resources</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/careers.html">Team</a></li>
+            <li><a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="nav__cta">Start 7-Day Free Trial</a></li>
+        </ul>
+        <button class="nav__mobile-toggle" onclick="document.querySelector('.nav__links').classList.toggle('nav__links--open')" aria-label="Menu">&#9776;</button>
+    </div>
+</nav>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb container">
+    <ul class="breadcrumb__list">
+        <li><a href="/">Home</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li><a href="/resources.html">Resources</a></li>
+        <li class="breadcrumb__sep">/</li>
+        <li>Earnings Quality Analyzer</li>
+    </ul>
+</div>
+
+<!-- Hero -->
+<section class="tool-hero container fade-in fade-in--d1">
+    <div class="tool-hero__overline">Free Tool</div>
+    <h1 class="tool-hero__title">Earnings Quality <em style="font-style:italic;color:var(--accent-teal);">Analyzer</em></h1>
+    <p class="tool-hero__subtitle">Are the earnings real &mdash; and is this business financially sound? Run three institutional-grade tests on any stock: the Beneish M-Score detects earnings manipulation, the Altman Z-Score predicts financial distress, and Buffett's Owner Earnings reveals true cash generation. The Beneish M-Score would have flagged Enron as a likely earnings manipulator &mdash; one year before its collapse.</p>
+</section>
+
+<!-- Disclaimer (visible without scrolling per spec) -->
+<section class="container fade-in fade-in--d2" style="margin-bottom:24px;">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This tool is for educational purposes only and does not constitute investment advice. The Beneish M-Score and Altman Z-Score are statistical models with known limitations &mdash; they identify risk signals, not certainties. Always consult a qualified financial adviser before making investment decisions.
+    </div>
+</section>
+
+<!-- Calculator -->
+<section class="container fade-in fade-in--d2">
+    <div class="tool-layout">
+        <!-- Input Panel -->
+        <div class="tool-panel" style="max-height: none; overflow-y: auto;">
+            <div class="tool-panel__title">Enter Financial Data</div>
+            <div class="tool-panel__desc">Enter data from the company's two most recent annual reports (Year t = current, Year t-1 = prior year). Find these on Yahoo Finance, SEC filings, or any financial data provider.</div>
+
+            <div class="input-section">
+                <div class="input-section__title">Income Statement</div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="revenue_t">Revenue (Year t)</label>
+                        <input class="form-input" type="number" id="revenue_t" placeholder="e.g. 50000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="revenue_t1">Revenue (Year t-1)</label>
+                        <input class="form-input" type="number" id="revenue_t1" placeholder="e.g. 45000000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="grossProfit_t">Gross Profit (Year t)</label>
+                        <input class="form-input" type="number" id="grossProfit_t" placeholder="e.g. 20000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="grossProfit_t1">Gross Profit (Year t-1)</label>
+                        <input class="form-input" type="number" id="grossProfit_t1" placeholder="e.g. 18000000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="sga_t">SG&A Expense (Year t)</label>
+                        <input class="form-input" type="number" id="sga_t" placeholder="e.g. 5000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="sga_t1">SG&A Expense (Year t-1)</label>
+                        <input class="form-input" type="number" id="sga_t1" placeholder="e.g. 4500000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="depreciation_t">Depreciation & Amort. (Year t)</label>
+                        <input class="form-input" type="number" id="depreciation_t" placeholder="e.g. 2000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="depreciation_t1">Depreciation & Amort. (Year t-1)</label>
+                        <input class="form-input" type="number" id="depreciation_t1" placeholder="e.g. 1800000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="ebit">EBIT (Year t)</label>
+                        <input class="form-input" type="number" id="ebit" placeholder="e.g. 8000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="netIncome">Net Income (Year t)</label>
+                        <input class="form-input" type="number" id="netIncome" placeholder="e.g. 6000000000" step="any">
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-section__title">Balance Sheet</div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="totalAssets_t">Total Assets (Year t)</label>
+                        <input class="form-input" type="number" id="totalAssets_t" placeholder="e.g. 100000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="totalAssets_t1">Total Assets (Year t-1)</label>
+                        <input class="form-input" type="number" id="totalAssets_t1" placeholder="e.g. 95000000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="currentAssets_t">Current Assets (Year t)</label>
+                        <input class="form-input" type="number" id="currentAssets_t" placeholder="e.g. 30000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="currentAssets_t1">Current Assets (Year t-1)</label>
+                        <input class="form-input" type="number" id="currentAssets_t1" placeholder="e.g. 28000000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="ppe_t">Net PP&E (Year t)</label>
+                        <input class="form-input" type="number" id="ppe_t" placeholder="e.g. 40000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="ppe_t1">Net PP&E (Year t-1)</label>
+                        <input class="form-input" type="number" id="ppe_t1" placeholder="e.g. 38000000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="receivables_t">Receivables (Year t)</label>
+                        <input class="form-input" type="number" id="receivables_t" placeholder="e.g. 5000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="receivables_t1">Receivables (Year t-1)</label>
+                        <input class="form-input" type="number" id="receivables_t1" placeholder="e.g. 4500000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="workingCapital_t">Working Capital (Year t)</label>
+                        <input class="form-input" type="number" id="workingCapital_t" placeholder="e.g. 15000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="workingCapital_t1">Working Capital (Year t-1)</label>
+                        <input class="form-input" type="number" id="workingCapital_t1" placeholder="e.g. 14000000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="cash_t">Cash & Equivalents (Year t)</label>
+                        <input class="form-input" type="number" id="cash_t" placeholder="e.g. 10000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="cash_t1">Cash & Equivalents (Year t-1)</label>
+                        <input class="form-input" type="number" id="cash_t1" placeholder="e.g. 9000000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="taxPayable_t">Current Tax Payable (Year t)</label>
+                        <input class="form-input" type="number" id="taxPayable_t" placeholder="e.g. 500000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="taxPayable_t1">Current Tax Payable (Year t-1)</label>
+                        <input class="form-input" type="number" id="taxPayable_t1" placeholder="e.g. 450000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="currentLiabilities_t">Current Liabilities (Year t)</label>
+                        <input class="form-input" type="number" id="currentLiabilities_t" placeholder="e.g. 15000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="currentLiabilities_t1">Current Liabilities (Year t-1)</label>
+                        <input class="form-input" type="number" id="currentLiabilities_t1" placeholder="e.g. 14000000000" step="any">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="longTermDebt_t">Long-Term Debt (Year t)</label>
+                        <input class="form-input" type="number" id="longTermDebt_t" placeholder="e.g. 20000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="longTermDebt_t1">Long-Term Debt (Year t-1)</label>
+                        <input class="form-input" type="number" id="longTermDebt_t1" placeholder="e.g. 19000000000" step="any">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="retainedEarnings">Retained Earnings (Year t)</label>
+                    <input class="form-input" type="number" id="retainedEarnings" placeholder="e.g. 30000000000" step="any">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="totalLiabilities">Total Liabilities (Year t)</label>
+                    <input class="form-input" type="number" id="totalLiabilities" placeholder="e.g. 50000000000" step="any">
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-section__title">Cash Flow & Market Data</div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="totalCapex">Total CapEx (Year t)</label>
+                        <input class="form-input" type="number" id="totalCapex" placeholder="e.g. 5000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="nonCashCharges">Other Non-Cash Charges (Year t)</label>
+                        <input class="form-input" type="number" id="nonCashCharges" placeholder="e.g. 500000000" step="any" value="0">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="form-group">
+                        <label class="form-label" for="marketCap">Market Cap ($)</label>
+                        <input class="form-input" type="number" id="marketCap" placeholder="e.g. 150000000000" step="any">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="sharesOutstanding">Shares Outstanding</label>
+                        <input class="form-input" type="number" id="sharesOutstanding" placeholder="e.g. 5000000000" step="any">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="companyType">Company Type</label>
+                    <select class="form-input" id="companyType" style="cursor:pointer;">
+                        <option value="manufacturing">Manufacturing / Industrial</option>
+                        <option value="nonManufacturing">Non-Manufacturing / Services</option>
+                    </select>
+                    <div class="form-hint">Determines which Altman Z-Score formula is applied</div>
+                </div>
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-label">
+                    <label class="form-label" for="maintenanceCapexPct" style="margin-bottom:0">Maintenance CapEx (% of Total CapEx)</label>
+                    <span class="slider-value" id="capexPctDisplay">50%</span>
+                </div>
+                <input class="form-slider" type="range" id="maintenanceCapexPct" min="20" max="100" value="50" step="5">
+                <div class="form-hint">Maintenance CapEx is not separately disclosed in financial statements. The default 50% is a conservative estimate. Adjust to reflect your own analysis.</div>
+            </div>
+
+            <button class="form-btn" type="button" onclick="calculate()">Analyze Earnings Quality</button>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="tool-panel tool-panel--accent" id="resultsPanel">
+            <div class="tool-panel__title">Earnings Quality Analysis</div>
+            <div class="tool-panel__desc">Three institutional-grade tests for earnings quality and financial health</div>
+
+            <div id="resultPlaceholder" class="result-placeholder">
+                Enter financial data from two annual reports to run the Beneish M-Score, Altman Z-Score, and Owner Earnings analysis.
+            </div>
+
+            <div id="resultContent" style="display:none;">
+                <!-- Three Verdict Cards -->
+                <div class="verdict-cards">
+                    <div class="verdict-card" id="beneishCard">
+                        <div class="verdict-card__module">Beneish M-Score</div>
+                        <div class="verdict-card__score" id="beneishScore">--</div>
+                        <div class="verdict-card__badge" id="beneishBadge">--</div>
+                        <div class="verdict-card__text" id="beneishText"></div>
+                    </div>
+                    <div class="verdict-card" id="altmanCard">
+                        <div class="verdict-card__module">Altman Z-Score</div>
+                        <div class="verdict-card__score" id="altmanScore">--</div>
+                        <div class="verdict-card__badge" id="altmanBadge">--</div>
+                        <div class="verdict-card__text" id="altmanText"></div>
+                    </div>
+                    <div class="verdict-card" id="oeCard">
+                        <div class="verdict-card__module">Owner Earnings</div>
+                        <div class="verdict-card__score" id="oeScore">--</div>
+                        <div class="verdict-card__badge" id="oeBadge">--</div>
+                        <div class="verdict-card__text" id="oeText"></div>
+                    </div>
+                </div>
+
+                <!-- Composite Verdict -->
+                <div class="composite-verdict" id="compositeVerdict">
+                    <div class="composite-verdict__label" id="compositeLabel">--</div>
+                    <div class="composite-verdict__text" id="compositeText"></div>
+                </div>
+
+                <!-- Premium CTA inline -->
+                <div class="premium-cta-inline" id="premiumCtaInline">
+                    <div class="premium-cta-inline__text" id="premiumCtaText"></div>
+                    <a id="premiumCtaBtn" href="#" target="_blank" class="premium-cta-inline__btn">Sign Up Free</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Breakdown Panels -->
+<section class="container breakdown-panels" id="breakdownPanels" style="display:none;">
+    <!-- Beneish M-Score Breakdown -->
+    <div class="breakdown-panel fade-in">
+        <div class="breakdown-panel__header" onclick="togglePanel(this)">
+            <div class="breakdown-panel__title">
+                <span>Beneish M-Score Breakdown</span>
+                <span class="verdict-card__badge" id="beneishBadge2" style="margin-left:8px;font-size:10px;">--</span>
+            </div>
+            <span class="breakdown-panel__toggle breakdown-panel__toggle--open">&#9660;</span>
+        </div>
+        <div class="breakdown-panel__body breakdown-panel__body--open">
+            <div class="gauge">
+                <div class="gauge__track gauge__track--mscore">
+                    <div class="gauge__marker" id="mscoreMarker" style="left:50%"></div>
+                </div>
+                <div class="gauge__labels">
+                    <span>Red Flag (&gt; -1.78)</span>
+                    <span>Watch</span>
+                    <span>Clean (&lt; -2.22)</span>
+                </div>
+            </div>
+            <div id="beneishSignals" class="signals-count"></div>
+            <table class="var-table">
+                <thead>
+                    <tr><th>Variable</th><th>Value</th><th>Signal</th><th>What It Measures</th></tr>
+                </thead>
+                <tbody id="beneishTable"></tbody>
+            </table>
+            <div class="panel-citation">Beneish M-Score: Messod D. Beneish, "The Detection of Earnings Manipulation," Financial Analysts Journal, 1999.</div>
+        </div>
+    </div>
+
+    <!-- Altman Z-Score Breakdown -->
+    <div class="breakdown-panel fade-in">
+        <div class="breakdown-panel__header" onclick="togglePanel(this)">
+            <div class="breakdown-panel__title">
+                <span>Altman Z-Score Breakdown</span>
+                <span class="verdict-card__badge" id="altmanBadge2" style="margin-left:8px;font-size:10px;">--</span>
+            </div>
+            <span class="breakdown-panel__toggle breakdown-panel__toggle--open">&#9660;</span>
+        </div>
+        <div class="breakdown-panel__body breakdown-panel__body--open">
+            <div class="gauge">
+                <div class="gauge__track gauge__track--zscore">
+                    <div class="gauge__marker" id="zscoreMarker" style="left:50%"></div>
+                </div>
+                <div class="gauge__labels">
+                    <span>Distress</span>
+                    <span>Grey Zone</span>
+                    <span>Safe</span>
+                </div>
+            </div>
+            <div id="altmanFormula" style="font-size:12px;color:var(--text-dim);margin-bottom:12px;"></div>
+            <table class="var-table">
+                <thead>
+                    <tr><th>Variable</th><th>Value</th><th>What It Measures</th></tr>
+                </thead>
+                <tbody id="altmanTable"></tbody>
+            </table>
+            <div class="panel-citation">Altman Z-Score: Edward I. Altman, "Financial Ratios, Discriminant Analysis and the Prediction of Corporate Bankruptcy," Journal of Finance, 1968.</div>
+        </div>
+    </div>
+
+    <!-- Owner Earnings Breakdown -->
+    <div class="breakdown-panel fade-in">
+        <div class="breakdown-panel__header" onclick="togglePanel(this)">
+            <div class="breakdown-panel__title">
+                <span>Owner Earnings Breakdown</span>
+                <span class="verdict-card__badge" id="oeBadge2" style="margin-left:8px;font-size:10px;">--</span>
+            </div>
+            <span class="breakdown-panel__toggle breakdown-panel__toggle--open">&#9660;</span>
+        </div>
+        <div class="breakdown-panel__body breakdown-panel__body--open">
+            <div class="oe-comparison">
+                <div class="oe-metric">
+                    <div class="oe-metric__label">Reported Net Income</div>
+                    <div class="oe-metric__value" id="oeNetIncome">--</div>
+                </div>
+                <div class="oe-metric">
+                    <div class="oe-metric__label">Owner Earnings</div>
+                    <div class="oe-metric__value" id="oeOwnerEarnings" style="color:var(--accent-teal);">--</div>
+                </div>
+            </div>
+            <table class="var-table">
+                <thead>
+                    <tr><th>Metric</th><th>Value</th><th>Interpretation</th></tr>
+                </thead>
+                <tbody id="oeTable"></tbody>
+            </table>
+            <div style="font-size:12px;color:var(--text-dim);margin-top:12px;padding:10px 14px;background:var(--bg-primary);border-radius:6px;">
+                <strong style="color:var(--text-muted);">CapEx note:</strong> Maintenance CapEx is not separately disclosed in financial statements. The figure above uses <span id="capexNote">50</span>% of total CapEx as an approximation. Adjust the slider to reflect your own estimate.
+            </div>
+            <div class="panel-citation">Owner Earnings: Warren Buffett, Berkshire Hathaway Annual Letter, 1986.</div>
+        </div>
+    </div>
+</section>
+
+<!-- Formula Explanation -->
+<section class="container fade-in fade-in--d3">
+    <div class="formula-box">
+        <div class="formula-box__title">How the Earnings Quality Analyzer Works</div>
+
+        <div class="formula-section">
+            <div class="formula-section__title">1. Beneish M-Score &mdash; Earnings Manipulation Detection</div>
+            <div class="formula-box__formula">M = &minus;4.84 + 0.920(DSRI) + 0.528(GMI) + 0.404(AQI) + 0.892(SGI)<br>+ 0.115(DEPI) &minus; 0.172(SGAI) + 4.679(TATA) &minus; 0.327(LVGI)</div>
+            <div class="formula-box__explain">
+                <p>Developed by Professor Messod Beneish in 1999, the M-Score uses eight financial ratios to estimate the probability that a company is manipulating its reported earnings. An M-Score <strong>above &minus;1.78</strong> indicates a high probability of manipulation (Red Flag). The model famously would have flagged <strong>Enron</strong> as a likely manipulator one year before its collapse.</p>
+            </div>
+        </div>
+
+        <div class="formula-section">
+            <div class="formula-section__title">2. Altman Z-Score &mdash; Financial Distress Prediction</div>
+            <div class="formula-box__formula">Z = 1.2(X1) + 1.4(X2) + 3.3(X3) + 0.6(X4) + 1.0(X5)</div>
+            <div class="formula-box__explain">
+                <p>Created by Professor Edward Altman in 1968, the Z-Score combines five financial ratios to predict the likelihood of corporate bankruptcy within two years. A Z-Score <strong>below 1.81</strong> places the company in the "distress zone" (Red Flag). A separate formula is used for non-manufacturing companies, omitting the asset turnover variable to avoid sector bias.</p>
+            </div>
+        </div>
+
+        <div class="formula-section">
+            <div class="formula-section__title">3. Owner Earnings &mdash; Buffett's True Profitability Metric</div>
+            <div class="formula-box__formula">OE = Net Income + D&A + Non-Cash Charges &minus; Maintenance CapEx &minus; &Delta;Working Capital</div>
+            <div class="formula-box__explain">
+                <p>Introduced by Warren Buffett in his 1986 Berkshire Hathaway letter, Owner Earnings strips away accounting conventions to reveal how much cash a business truly generates for its owners. When Owner Earnings are <strong>significantly less than reported Net Income</strong> (OE/NI ratio below 0.5), it's a red flag that reported profits may be overstated by non-cash accruals.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Premium CTA -->
+<section class="container">
+    <div class="premium-cta fade-in fade-in--d3">
+        <div class="premium-cta__title">Want deeper analysis powered by AI?</div>
+        <div class="premium-cta__text">LIUV's Portfolio Advisor agent runs these earnings quality tests alongside 7 other valuation pillars &mdash; DCF modeling, moat analysis, management quality, and more &mdash; automatically for your entire portfolio.</div>
+        <a href="https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a" target="_blank" class="premium-cta__btn">Start 7-Day Free Trial</a>
+    </div>
+</section>
+
+<!-- Disclaimer (bottom) -->
+<section class="container">
+    <div class="disclaimer">
+        <strong>Disclaimer:</strong> This tool is for educational purposes only and does not constitute investment advice. The Beneish M-Score and Altman Z-Score are statistical models with known limitations &mdash; they identify risk signals, not certainties. Scores computed by LIUV using published academic formulas. Always consult a qualified financial adviser before making investment decisions. Past performance does not guarantee future results. LIUV does not guarantee the accuracy of user-entered data.
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a href="/" class="nav__logo">
+                    <div class="nav__logomark"><span></span><span></span><span></span><span></span></div>
+                    <div>
+                        <div class="nav__wordmark">LIUV</div>
+                        <div class="nav__tagline">AI Wealth Agent</div>
+                    </div>
+                </a>
+                <p>Democratizing institutional-grade investment intelligence through autonomous AI agents.</p>
+            </div>
+            <div class="footer__links">
+                <div class="footer__col">
+                    <div class="footer__col-title">Product</div>
+                    <ul>
+                        <li><a href="/#agents">AI Agents</a></li>
+                        <li><a href="/#pricing">Pricing</a></li>
+                        <li><a href="/resources.html">Free Resources</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Company</div>
+                    <ul>
+                        <li><a href="/blog.html">Blog</a></li>
+                        <li><a href="/compliance.html">Compliance</a></li>
+                        <li><a href="/careers.html">Team</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <div class="footer__col-title">Connect</div>
+                    <ul>
+                        <li><a href="https://linkedin.com/company/liuv" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://github.com/pgcarvalheira86" target="_blank">GitHub</a></li>
+                        <li><a href="mailto:pedro@liuv.io">Email Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <div class="footer__copy">&copy; 2026 LIUV Ventures. All rights reserved.</div>
+            <div class="footer__legal">
+                <a href="/privacy-policy.html">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="/compliance.html">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+// CapEx slider live update
+var capexSlider = document.getElementById('maintenanceCapexPct');
+capexSlider.addEventListener('input', function() {
+    document.getElementById('capexPctDisplay').textContent = this.value + '%';
+    document.getElementById('capexNote').textContent = this.value;
+});
+
+// Toggle breakdown panels
+function togglePanel(header) {
+    var body = header.nextElementSibling;
+    var toggle = header.querySelector('.breakdown-panel__toggle');
+    body.classList.toggle('breakdown-panel__body--open');
+    toggle.classList.toggle('breakdown-panel__toggle--open');
+}
+
+// Format large numbers
+function fmtNum(n) {
+    if (n === null || n === undefined || isNaN(n)) return '--';
+    var abs = Math.abs(n);
+    if (abs >= 1e12) return (n < 0 ? '-' : '') + '$' + (abs / 1e12).toFixed(2) + 'T';
+    if (abs >= 1e9) return (n < 0 ? '-' : '') + '$' + (abs / 1e9).toFixed(2) + 'B';
+    if (abs >= 1e6) return (n < 0 ? '-' : '') + '$' + (abs / 1e6).toFixed(2) + 'M';
+    if (abs >= 1e3) return (n < 0 ? '-' : '') + '$' + (abs / 1e3).toFixed(0) + 'K';
+    return '$' + n.toFixed(2);
+}
+
+function getVal(id) {
+    var v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? null : v;
+}
+
+function setBadge(el, verdict) {
+    el.className = 'verdict-card__badge';
+    if (verdict === 'Clean' || verdict === 'Strong') {
+        el.classList.add('verdict-card__badge--clean');
+        el.textContent = verdict === 'Strong' ? 'Strong' : 'Clean';
+    } else if (verdict === 'Watch' || verdict === 'Moderate') {
+        el.classList.add('verdict-card__badge--watch');
+        el.textContent = verdict === 'Moderate' ? 'Moderate' : 'Watch';
+    } else if (verdict === 'Weak') {
+        el.classList.add('verdict-card__badge--watch');
+        el.textContent = 'Weak';
+    } else {
+        el.classList.add('verdict-card__badge--redflag');
+        el.textContent = 'Red Flag';
+    }
+}
+
+function calculate() {
+    // Gather all inputs
+    var fields = {
+        revenue_t: getVal('revenue_t'), revenue_t1: getVal('revenue_t1'),
+        grossProfit_t: getVal('grossProfit_t'), grossProfit_t1: getVal('grossProfit_t1'),
+        sga_t: getVal('sga_t'), sga_t1: getVal('sga_t1'),
+        depreciation_t: getVal('depreciation_t'), depreciation_t1: getVal('depreciation_t1'),
+        ebit: getVal('ebit'), netIncome: getVal('netIncome'),
+        totalAssets_t: getVal('totalAssets_t'), totalAssets_t1: getVal('totalAssets_t1'),
+        currentAssets_t: getVal('currentAssets_t'), currentAssets_t1: getVal('currentAssets_t1'),
+        ppe_t: getVal('ppe_t'), ppe_t1: getVal('ppe_t1'),
+        receivables_t: getVal('receivables_t'), receivables_t1: getVal('receivables_t1'),
+        workingCapital_t: getVal('workingCapital_t'), workingCapital_t1: getVal('workingCapital_t1'),
+        cash_t: getVal('cash_t'), cash_t1: getVal('cash_t1'),
+        taxPayable_t: getVal('taxPayable_t'), taxPayable_t1: getVal('taxPayable_t1'),
+        currentLiabilities_t: getVal('currentLiabilities_t'), currentLiabilities_t1: getVal('currentLiabilities_t1'),
+        longTermDebt_t: getVal('longTermDebt_t'), longTermDebt_t1: getVal('longTermDebt_t1'),
+        retainedEarnings: getVal('retainedEarnings'), totalLiabilities: getVal('totalLiabilities'),
+        totalCapex: getVal('totalCapex'), nonCashCharges: getVal('nonCashCharges') || 0,
+        marketCap: getVal('marketCap'), sharesOutstanding: getVal('sharesOutstanding')
+    };
+
+    // Validate minimum required fields
+    var requiredBase = ['revenue_t', 'revenue_t1', 'totalAssets_t', 'totalAssets_t1', 'netIncome'];
+    for (var i = 0; i < requiredBase.length; i++) {
+        if (fields[requiredBase[i]] === null) {
+            alert('Please fill in at least: Revenue (both years), Total Assets (both years), and Net Income.');
+            return;
+        }
+    }
+
+    if (fields.totalAssets_t <= 0 || fields.totalAssets_t1 <= 0) {
+        alert('Total Assets must be positive values.');
+        return;
+    }
+    if (fields.revenue_t <= 0 || fields.revenue_t1 <= 0) {
+        alert('Revenue must be positive values.');
+        return;
+    }
+
+    // === BENEISH M-SCORE ===
+    var beneishResult = null;
+    var beneishReq = ['receivables_t', 'receivables_t1', 'grossProfit_t', 'grossProfit_t1',
+        'currentAssets_t', 'currentAssets_t1', 'ppe_t', 'ppe_t1', 'depreciation_t', 'depreciation_t1',
+        'sga_t', 'sga_t1', 'workingCapital_t', 'workingCapital_t1', 'cash_t', 'cash_t1',
+        'taxPayable_t', 'taxPayable_t1', 'currentLiabilities_t', 'currentLiabilities_t1',
+        'longTermDebt_t', 'longTermDebt_t1'];
+    var beneishOk = true;
+    for (var j = 0; j < beneishReq.length; j++) {
+        if (fields[beneishReq[j]] === null) { beneishOk = false; break; }
+    }
+
+    if (beneishOk) {
+        // Guard division by zero
+        var recRev_t1 = fields.receivables_t1 / fields.revenue_t1;
+        var gpRev_t = fields.grossProfit_t / fields.revenue_t;
+        var aqDenom_t1 = 1 - (fields.currentAssets_t1 + fields.ppe_t1) / fields.totalAssets_t1;
+        var depPpe_t = fields.depreciation_t / (fields.depreciation_t + fields.ppe_t);
+        var sgaRev_t1 = fields.sga_t1 / fields.revenue_t1;
+
+        if (recRev_t1 !== 0 && gpRev_t !== 0 && aqDenom_t1 !== 0 && depPpe_t !== 0 && sgaRev_t1 !== 0) {
+            var dsri = (fields.receivables_t / fields.revenue_t) / recRev_t1;
+            var gmi = (fields.grossProfit_t1 / fields.revenue_t1) / gpRev_t;
+            var aqi = (1 - (fields.currentAssets_t + fields.ppe_t) / fields.totalAssets_t) / aqDenom_t1;
+            var sgi = fields.revenue_t / fields.revenue_t1;
+            var depi = (fields.depreciation_t1 / (fields.depreciation_t1 + fields.ppe_t1)) / depPpe_t;
+            var sgai = (fields.sga_t / fields.revenue_t) / sgaRev_t1;
+            var tata = ((fields.workingCapital_t - fields.workingCapital_t1) - (fields.cash_t - fields.cash_t1) - (fields.taxPayable_t - fields.taxPayable_t1) - fields.depreciation_t) / fields.totalAssets_t;
+            var lvgi = ((fields.currentLiabilities_t + fields.longTermDebt_t) / fields.totalAssets_t) / ((fields.currentLiabilities_t1 + fields.longTermDebt_t1) / fields.totalAssets_t1);
+
+            var mScore = -4.84 + (0.920 * dsri) + (0.528 * gmi) + (0.404 * aqi) + (0.892 * sgi) + (0.115 * depi) - (0.172 * sgai) + (4.679 * tata) - (0.327 * lvgi);
+            var mVerdict = mScore > -1.78 ? 'RedFlag' : mScore > -2.22 ? 'Watch' : 'Clean';
+
+            var elevatedCount = [
+                dsri > 1.1, gmi > 1.1, aqi > 1.1, sgi > 1.2,
+                depi > 1.1, sgai > 1.1, tata > 0.031, lvgi > 1.1
+            ].filter(Boolean).length;
+
+            beneishResult = {
+                score: mScore, verdict: mVerdict,
+                vars: { dsri: dsri, gmi: gmi, aqi: aqi, sgi: sgi, depi: depi, sgai: sgai, tata: tata, lvgi: lvgi },
+                elevated: elevatedCount
+            };
+        }
+    }
+
+    // === ALTMAN Z-SCORE ===
+    var altmanResult = null;
+    if (fields.retainedEarnings !== null && fields.ebit !== null && fields.marketCap !== null && fields.totalLiabilities !== null) {
+        var wc = fields.workingCapital_t !== null ? fields.workingCapital_t : 0;
+        var x1 = wc / fields.totalAssets_t;
+        var x2 = fields.retainedEarnings / fields.totalAssets_t;
+        var x3 = fields.ebit / fields.totalAssets_t;
+        var x4 = fields.totalLiabilities !== 0 ? fields.marketCap / fields.totalLiabilities : 0;
+
+        var compType = document.getElementById('companyType').value;
+        var zScore, zZone, zVerdict, zFormula, zVars;
+
+        if (compType === 'nonManufacturing') {
+            zScore = (6.56 * x1) + (3.26 * x2) + (6.72 * x3) + (1.05 * x4);
+            zZone = zScore > 2.6 ? 'Safe' : zScore > 1.1 ? 'Grey' : 'Distress';
+            zFormula = 'Non-Manufacturing';
+            zVars = { x1: x1, x2: x2, x3: x3, x4: x4 };
+        } else {
+            var x5 = fields.revenue_t / fields.totalAssets_t;
+            zScore = (1.2 * x1) + (1.4 * x2) + (3.3 * x3) + (0.6 * x4) + (1.0 * x5);
+            zZone = zScore > 2.99 ? 'Safe' : zScore > 1.81 ? 'Grey' : 'Distress';
+            zFormula = 'Manufacturing';
+            zVars = { x1: x1, x2: x2, x3: x3, x4: x4, x5: x5 };
+        }
+        zVerdict = zZone === 'Safe' ? 'Clean' : zZone === 'Grey' ? 'Watch' : 'RedFlag';
+        altmanResult = { score: zScore, verdict: zVerdict, zone: zZone, formula: zFormula, vars: zVars };
+    }
+
+    // === OWNER EARNINGS ===
+    var oeResult = null;
+    if (fields.totalCapex !== null && fields.marketCap !== null && fields.sharesOutstanding !== null) {
+        var maintPct = parseInt(document.getElementById('maintenanceCapexPct').value) / 100;
+        var maintCapex = fields.totalCapex * maintPct;
+        var deltaWC = (fields.workingCapital_t !== null && fields.workingCapital_t1 !== null) ? (fields.workingCapital_t - fields.workingCapital_t1) : 0;
+        var oe = fields.netIncome + fields.depreciation_t + fields.nonCashCharges - maintCapex - deltaWC;
+        var oeps = fields.sharesOutstanding !== 0 ? oe / fields.sharesOutstanding : 0;
+        var oeYield = fields.marketCap !== 0 ? oe / fields.marketCap : 0;
+        var oeNiRatio = fields.netIncome !== 0 ? oe / fields.netIncome : 0;
+        var oeVerdict = oeNiRatio >= 1.0 ? 'Strong' : oeNiRatio >= 0.8 ? 'Moderate' : oeNiRatio >= 0.5 ? 'Weak' : 'RedFlag';
+        oeResult = { oe: oe, oeps: oeps, oeYield: oeYield, oeNiRatio: oeNiRatio, verdict: oeVerdict };
+    }
+
+    // === RENDER RESULTS ===
+    document.getElementById('resultPlaceholder').style.display = 'none';
+    document.getElementById('resultContent').style.display = 'block';
+    document.getElementById('breakdownPanels').style.display = 'block';
+
+    // Beneish card
+    if (beneishResult) {
+        document.getElementById('beneishScore').textContent = beneishResult.score.toFixed(2);
+        document.getElementById('beneishScore').style.color = beneishResult.verdict === 'Clean' ? 'var(--success)' : beneishResult.verdict === 'Watch' ? 'var(--warning)' : 'var(--danger)';
+        setBadge(document.getElementById('beneishBadge'), beneishResult.verdict);
+        setBadge(document.getElementById('beneishBadge2'), beneishResult.verdict);
+        document.getElementById('beneishText').textContent = beneishResult.verdict === 'Clean' ? 'No significant manipulation signals detected' : beneishResult.verdict === 'Watch' ? 'Elevated signals — investigate further' : 'Likely earnings manipulation — high risk';
+
+        // M-Score gauge: range -4 to 0, markers at -2.22 and -1.78
+        var mGaugePos = Math.min(100, Math.max(0, ((beneishResult.score + 4) / 4) * 100));
+        document.getElementById('mscoreMarker').style.left = mGaugePos + '%';
+
+        // Signals
+        document.getElementById('beneishSignals').innerHTML = '<strong style="color:var(--text-primary)">' + beneishResult.elevated + ' of 8</strong> signals elevated';
+
+        // Variable table
+        var bVars = [
+            { name: 'DSRI', val: beneishResult.vars.dsri, threshold: 1.1, desc: 'Days Sales Receivable Index — disproportionate receivables growth' },
+            { name: 'GMI', val: beneishResult.vars.gmi, threshold: 1.1, desc: 'Gross Margin Index — deteriorating margins' },
+            { name: 'AQI', val: beneishResult.vars.aqi, threshold: 1.1, desc: 'Asset Quality Index — capitalization of expenses' },
+            { name: 'SGI', val: beneishResult.vars.sgi, threshold: 1.2, desc: 'Sales Growth Index — unsustainable revenue growth' },
+            { name: 'DEPI', val: beneishResult.vars.depi, threshold: 1.1, desc: 'Depreciation Index — slowing depreciation to boost earnings' },
+            { name: 'SGAI', val: beneishResult.vars.sgai, threshold: 1.1, desc: 'SG&A Expense Index — declining sales efficiency' },
+            { name: 'TATA', val: beneishResult.vars.tata, threshold: 0.031, desc: 'Total Accruals to Total Assets — accrual-driven earnings' },
+            { name: 'LVGI', val: beneishResult.vars.lvgi, threshold: 1.1, desc: 'Leverage Index — increasing financial leverage' }
+        ];
+        var bTableHTML = '';
+        for (var k = 0; k < bVars.length; k++) {
+            var v = bVars[k];
+            var isElevated = v.val > v.threshold;
+            var signalClass = isElevated ? 'var-signal--elevated' : 'var-signal--ok';
+            if (v.name === 'TATA' && v.val > 0.05) signalClass = 'var-signal--high';
+            else if (isElevated && v.val > v.threshold * 1.5) signalClass = 'var-signal--high';
+            bTableHTML += '<tr><td>' + v.name + '</td><td>' + v.val.toFixed(3) + '</td><td><span class="var-signal ' + signalClass + '"></span>' + (isElevated ? 'Elevated' : 'Normal') + '</td><td>' + v.desc + '</td></tr>';
+        }
+        document.getElementById('beneishTable').innerHTML = bTableHTML;
+    } else {
+        document.getElementById('beneishScore').textContent = 'N/A';
+        document.getElementById('beneishScore').style.color = 'var(--text-dim)';
+        document.getElementById('beneishBadge').textContent = 'Insufficient Data';
+        document.getElementById('beneishBadge').className = 'verdict-card__badge verdict-card__badge--watch';
+        document.getElementById('beneishBadge2').textContent = 'N/A';
+        document.getElementById('beneishText').textContent = 'Beneish M-Score requires two years of complete financial data.';
+        document.getElementById('beneishTable').innerHTML = '<tr><td colspan="4" style="color:var(--text-dim);text-align:center;">Insufficient data to compute M-Score variables.</td></tr>';
+        document.getElementById('beneishSignals').innerHTML = '';
+    }
+
+    // Altman card
+    if (altmanResult) {
+        document.getElementById('altmanScore').textContent = altmanResult.score.toFixed(2);
+        document.getElementById('altmanScore').style.color = altmanResult.verdict === 'Clean' ? 'var(--success)' : altmanResult.verdict === 'Watch' ? 'var(--warning)' : 'var(--danger)';
+        setBadge(document.getElementById('altmanBadge'), altmanResult.verdict);
+        setBadge(document.getElementById('altmanBadge2'), altmanResult.verdict);
+        document.getElementById('altmanText').textContent = altmanResult.zone === 'Safe' ? 'Low distress risk' : altmanResult.zone === 'Grey' ? 'Elevated risk — monitor closely' : 'High bankruptcy risk within 2 years';
+        document.getElementById('altmanFormula').textContent = 'Using ' + altmanResult.formula + ' formula based on selected company type.';
+
+        // Z-Score gauge: range 0 to 5
+        var zGaugePos = Math.min(100, Math.max(0, (altmanResult.score / 5) * 100));
+        document.getElementById('zscoreMarker').style.left = zGaugePos + '%';
+
+        var zVarDefs = [
+            { name: 'X1', desc: 'Working Capital / Total Assets — short-term liquidity' },
+            { name: 'X2', desc: 'Retained Earnings / Total Assets — cumulative profitability' },
+            { name: 'X3', desc: 'EBIT / Total Assets — operating efficiency' },
+            { name: 'X4', desc: 'Market Cap / Total Liabilities — equity cushion' },
+            { name: 'X5', desc: 'Revenue / Total Assets — asset turnover' }
+        ];
+        var zTableHTML = '';
+        for (var m = 0; m < zVarDefs.length; m++) {
+            var key = 'x' + (m + 1);
+            if (altmanResult.vars[key] !== undefined) {
+                zTableHTML += '<tr><td>' + zVarDefs[m].name + '</td><td>' + altmanResult.vars[key].toFixed(3) + '</td><td>' + zVarDefs[m].desc + '</td></tr>';
+            }
+        }
+        document.getElementById('altmanTable').innerHTML = zTableHTML;
+    } else {
+        document.getElementById('altmanScore').textContent = 'N/A';
+        document.getElementById('altmanScore').style.color = 'var(--text-dim)';
+        document.getElementById('altmanBadge').textContent = 'Insufficient Data';
+        document.getElementById('altmanBadge').className = 'verdict-card__badge verdict-card__badge--watch';
+        document.getElementById('altmanBadge2').textContent = 'N/A';
+        document.getElementById('altmanText').textContent = 'Requires EBIT, Retained Earnings, Market Cap, and Total Liabilities.';
+        document.getElementById('altmanTable').innerHTML = '<tr><td colspan="3" style="color:var(--text-dim);text-align:center;">Insufficient data to compute Z-Score variables.</td></tr>';
+    }
+
+    // OE card
+    if (oeResult) {
+        document.getElementById('oeScore').textContent = (oeResult.oeYield * 100).toFixed(1) + '%';
+        document.getElementById('oeScore').style.color = oeResult.verdict === 'Strong' ? 'var(--success)' : oeResult.verdict === 'Moderate' ? 'var(--warning)' : 'var(--danger)';
+        setBadge(document.getElementById('oeBadge'), oeResult.verdict);
+        setBadge(document.getElementById('oeBadge2'), oeResult.verdict);
+        var oeTexts = { Strong: 'Cash generation exceeds reported earnings', Moderate: 'Reasonable alignment between earnings and cash', Weak: 'Earnings significantly exceed cash generation', RedFlag: 'Reported earnings are largely non-cash' };
+        document.getElementById('oeText').textContent = oeTexts[oeResult.verdict];
+
+        // OE comparison
+        document.getElementById('oeNetIncome').textContent = fmtNum(fields.netIncome);
+        document.getElementById('oeOwnerEarnings').textContent = fmtNum(oeResult.oe);
+
+        // OE metrics table
+        var oeTableHTML = '';
+        oeTableHTML += '<tr><td>Owner Earnings</td><td>' + fmtNum(oeResult.oe) + '</td><td>True cash generated for owners</td></tr>';
+        oeTableHTML += '<tr><td>OE Per Share</td><td>$' + oeResult.oeps.toFixed(2) + '</td><td>Per-share cash generation</td></tr>';
+        oeTableHTML += '<tr><td>OE Yield</td><td style="color:var(--accent-teal);">' + (oeResult.oeYield * 100).toFixed(1) + '%</td><td>Real return on price paid</td></tr>';
+        var ratioColor = oeResult.verdict === 'Strong' ? 'var(--success)' : oeResult.verdict === 'Moderate' ? 'var(--warning)' : 'var(--danger)';
+        oeTableHTML += '<tr><td>OE / NI Ratio</td><td style="color:' + ratioColor + ';">' + oeResult.oeNiRatio.toFixed(2) + 'x</td><td>Quality of reported earnings — below 0.8 is a warning</td></tr>';
+        document.getElementById('oeTable').innerHTML = oeTableHTML;
+    } else {
+        document.getElementById('oeScore').textContent = 'N/A';
+        document.getElementById('oeScore').style.color = 'var(--text-dim)';
+        document.getElementById('oeBadge').textContent = 'Insufficient Data';
+        document.getElementById('oeBadge').className = 'verdict-card__badge verdict-card__badge--watch';
+        document.getElementById('oeBadge2').textContent = 'N/A';
+        document.getElementById('oeText').textContent = 'Requires CapEx, Market Cap, and Shares Outstanding.';
+        document.getElementById('oeNetIncome').textContent = fmtNum(fields.netIncome);
+        document.getElementById('oeOwnerEarnings').textContent = '--';
+        document.getElementById('oeTable').innerHTML = '<tr><td colspan="3" style="color:var(--text-dim);text-align:center;">Insufficient data to compute Owner Earnings.</td></tr>';
+    }
+
+    // === COMPOSITE VERDICT ===
+    var verdicts = [];
+    if (beneishResult) verdicts.push(beneishResult.verdict);
+    if (altmanResult) verdicts.push(altmanResult.verdict);
+    if (oeResult) verdicts.push(oeResult.verdict === 'Strong' || oeResult.verdict === 'Moderate' ? 'Clean' : oeResult.verdict === 'Weak' ? 'Watch' : 'RedFlag');
+
+    var redFlags = verdicts.filter(function(v) { return v === 'RedFlag'; }).length;
+    var cleanCount = verdicts.filter(function(v) { return v === 'Clean'; }).length;
+    var watchCount = verdicts.filter(function(v) { return v === 'Watch'; }).length;
+
+    var compEl = document.getElementById('compositeVerdict');
+    var compLabel = document.getElementById('compositeLabel');
+    var compText = document.getElementById('compositeText');
+    compEl.className = 'composite-verdict';
+
+    var ctaInline = document.getElementById('premiumCtaInline');
+    var ctaText = document.getElementById('premiumCtaText');
+    var ctaBtn = document.getElementById('premiumCtaBtn');
+
+    if (redFlags >= 2) {
+        compEl.classList.add('composite-verdict--serious');
+        compLabel.textContent = 'Serious Concerns — Significant Due Diligence Required';
+        compLabel.style.color = 'var(--danger)';
+        compText.textContent = 'Multiple red flags detected across earnings quality tests. Exercise extreme caution before investing.';
+        ctaInline.style.display = 'block';
+        ctaText.textContent = "LIUV's AI has identified elevated risk signals in this company's financials. Get the full AI-generated accounting quality report — including the specific line items driving these flags and comparable companies with cleaner earnings profiles.";
+        ctaBtn.textContent = 'Unlock Full Analysis — Sign Up Free';
+        ctaBtn.href = 'https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a?utm_source=earnings_quality&utm_content=red_flag_cta';
+    } else if (redFlags >= 1) {
+        compEl.classList.add('composite-verdict--elevated');
+        compLabel.textContent = 'Elevated Risk — Verify Before Investing';
+        compLabel.style.color = 'var(--warning)';
+        compText.textContent = 'One or more modules flagged elevated risk. Deeper analysis is recommended before committing capital.';
+        ctaInline.style.display = 'block';
+        ctaText.textContent = "LIUV's AI has identified elevated risk signals in this company's financials. Get the full AI-generated accounting quality report — including the specific line items driving these flags and comparable companies with cleaner earnings profiles.";
+        ctaBtn.textContent = 'Unlock Full Analysis — Sign Up Free';
+        ctaBtn.href = 'https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a?utm_source=earnings_quality&utm_content=red_flag_cta';
+    } else if (cleanCount === verdicts.length && verdicts.length === 3) {
+        compEl.classList.add('composite-verdict--high');
+        compLabel.textContent = 'High Earnings Quality';
+        compLabel.style.color = 'var(--success)';
+        compText.textContent = 'All three modules show clean signals. Earnings appear reliable and the business is financially sound.';
+        ctaInline.style.display = 'block';
+        ctaText.textContent = "This company passes LIUV's earnings quality filters. Want to see if it also passes the full 10-Pillar value investing analysis?";
+        ctaBtn.textContent = 'Run Full LIUV Analysis — Sign Up Free';
+        ctaBtn.href = 'https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a?utm_source=earnings_quality&utm_content=clean_cta';
+    } else if (cleanCount >= 2 && watchCount <= 1) {
+        compEl.classList.add('composite-verdict--good');
+        compLabel.textContent = 'Good Earnings Quality';
+        compLabel.style.color = 'var(--success)';
+        compText.textContent = 'Mostly clean signals with minor caution areas. Overall earnings quality appears acceptable.';
+        ctaInline.style.display = 'block';
+        ctaText.textContent = "This company shows some caution signals worth investigating. LIUV's AI can run a full qualitative accounting review and compare earnings quality against its sector peers.";
+        ctaBtn.textContent = 'See Full Analysis — Sign Up Free';
+        ctaBtn.href = 'https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a?utm_source=earnings_quality&utm_content=watch_cta';
+    } else {
+        compEl.classList.add('composite-verdict--elevated');
+        compLabel.textContent = 'Elevated Risk — Verify Before Investing';
+        compLabel.style.color = 'var(--warning)';
+        compText.textContent = 'Multiple caution signals detected. Additional due diligence is recommended.';
+        ctaInline.style.display = 'block';
+        ctaText.textContent = "This company shows some caution signals worth investigating. LIUV's AI can run a full qualitative accounting review and compare earnings quality against its sector peers.";
+        ctaBtn.textContent = 'See Full Analysis — Sign Up Free';
+        ctaBtn.href = 'https://buy.stripe.com/3cIeV5cqRf2K2IyaCDcjS0a?utm_source=earnings_quality&utm_content=watch_cta';
+    }
+
+    // Scroll to results
+    document.getElementById('resultsPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Nav scroll
+window.addEventListener('scroll', function() {
+    document.querySelector('.nav').style.padding = window.scrollY > 50 ? '12px 0' : '20px 0';
+});
+</script>
+
+</body>
+</html>
